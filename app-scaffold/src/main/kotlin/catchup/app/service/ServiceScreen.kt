@@ -15,8 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -64,9 +68,6 @@ import catchup.di.AppScope
 import catchup.di.ContextualFactory
 import catchup.di.DataMode
 import catchup.di.DataMode.OFFLINE
-import catchup.pullrefresh.PullRefreshIndicator
-import catchup.pullrefresh.pullRefresh
-import catchup.pullrefresh.rememberPullRefreshState
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
 import catchup.service.api.Service
@@ -303,24 +304,31 @@ constructor(
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(ServiceScreen::class, AppScope::class)
 @Composable
 fun Service(state: State, modifier: Modifier = Modifier) {
   val refreshLoadState by rememberUpdatedState(state.items.loadState.refresh)
-  val pullRefreshState = rememberPullRefreshState(false, onRefresh = state.items::refresh)
-  Box(modifier.pullRefresh(pullRefreshState)) {
+  val pullRefreshState = rememberPullToRefreshState()
+  PullToRefreshBox(
+    modifier = modifier,
+    isRefreshing = refreshLoadState == LoadState.Loading,
+    state = pullRefreshState,
+    onRefresh = state.items::refresh,
+    indicator = {
+      PullToRefreshDefaults.Indicator(
+        state = pullRefreshState,
+        isRefreshing = refreshLoadState == LoadState.Loading,
+        color = state.themeColor,
+        modifier = Modifier.align(Alignment.TopCenter),
+      )
+    },
+  ) {
     if (state is VisualState) {
       VisualServiceUi(state.items, state.themeColor, state.eventSink)
     } else {
       TextServiceUi(state.items, state.themeColor, state.eventSink)
     }
-
-    PullRefreshIndicator(
-      refreshing = refreshLoadState == LoadState.Loading,
-      state = pullRefreshState,
-      contentColor = state.themeColor,
-      modifier = Modifier.align(Alignment.TopCenter),
-    )
   }
 }
 
