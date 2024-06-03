@@ -5,6 +5,7 @@ import catchup.di.AppScope
 import catchup.di.SingleIn
 import catchup.sqldelight.SqlDriverFactory
 import catchup.util.kotlin.NullableLruCache
+import dagger.Lazy
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,12 +17,15 @@ import okhttp3.OkHttpClient
 @SingleIn(AppScope::class)
 class UnfurlerRepository
 @Inject
-constructor(okHttpClient: OkHttpClient, sqlDriverFactory: SqlDriverFactory) {
+constructor(private val okHttpClient: Lazy<OkHttpClient>, sqlDriverFactory: SqlDriverFactory) {
   private val db = UnfurlerDatabase(sqlDriverFactory.create(UnfurlerDatabase.Schema, "unfurler.db"))
 
   // Note: Unfurler maintains its own internal 100-item in-memory cache but no API to expose check
   // it, so we disable it by setting cacheSize to 0.
-  private val unfurler = Unfurler(httpClient = okHttpClient, cacheSize = 0)
+  private val unfurler by lazy {
+    // Initialized lazily so that it's off the main thread
+    Unfurler(httpClient = okHttpClient.get(), cacheSize = 0)
+  }
 
   private val cache = NullableLruCache<String, UnfurlResult>(maxSize = 100)
 
@@ -34,12 +38,10 @@ constructor(okHttpClient: OkHttpClient, sqlDriverFactory: SqlDriverFactory) {
       db.unfurlsQueries.getUnfurl(url, ::UnfurlResult).executeAsOneOrNull()?.let { dbResult ->
         return@withContext dbResult
       }
-      println("No DB result for $url")
       val unfurlerResult =
         unfurler.unfurl(url)?.let(UnfurlResult::fromInternalResult) ?: return@withContext null
       // TODO make an alias table instead? We do this because urls may be different
       for (key in listOf(url, unfurlerResult.url).distinct()) {
-        println("Inserting unfurl for $key. Original was $url.")
         db.unfurlsQueries.insert(
           url = key,
           title = unfurlerResult.title,
