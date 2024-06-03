@@ -55,8 +55,6 @@ if (!useProjectIsolation) {
   apply(plugin = libs.plugins.spotless.get().pluginId)
 }
 
-val useK2 = findProperty("kotlin.experimental.tryK2")?.toString().toBoolean()
-
 skippy {
   mergeOutputs = true
   global {
