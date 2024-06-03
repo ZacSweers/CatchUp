@@ -39,12 +39,12 @@ kotlin {
         implementation(projects.serviceApi)
       }
     }
-    val jvmMain by getting {
+    jvmMain {
       dependencies {
         implementation(libs.anvil.annotations)
       }
     }
-    val androidMain by getting {
+    androidMain {
       dependencies {
         implementation(libs.anvil.annotations)
       }
