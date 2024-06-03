@@ -11,17 +11,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -56,7 +53,6 @@ import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SUMMARIZE
 import catchup.app.service.ServiceScreen.Event.ItemClicked
 import catchup.app.service.ServiceScreen.Event.MarkClicked
-import catchup.app.service.bookmarks.BookmarkIconScreen
 import catchup.compose.CatchUpTheme
 import catchup.compose.ContentAlphas
 import catchup.compose.ScrollToTopHandler
@@ -66,11 +62,11 @@ import catchup.service.api.Mark
 import catchup.service.api.canBeSummarized
 import catchup.util.kotlin.format
 import catchup.util.primaryLocale
-import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.retained.rememberRetained
 import dev.zacsweers.catchup.app.scaffold.R
 import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @Composable
 fun TextServiceUi(
@@ -119,25 +115,14 @@ fun TextServiceUi(
           Column(Modifier.animateContentSize()) {
             TextItem(item, themeColor) { eventSink(MarkClicked(item)) }
             if (index == expandedItemIndex) {
-              Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-              ) {
-                val bookmarkIconScreen =
-                  remember(item.id) { BookmarkIconScreen(item.id, themeColor.toArgb()) }
-                CircuitContent(bookmarkIconScreen)
-                TextActionItem(Icons.Filled.Share, themeColor, "Share") {
-                  eventSink(ItemActionClicked(item, SHARE))
-                }
-                TextActionItem(
-                  Icons.Filled.Info,
-                  themeColor,
-                  "Summarize",
-                  enabled = item.canBeSummarized,
-                ) {
-                  eventSink(ItemActionClicked(item, SUMMARIZE))
-                }
-              }
+              ActionRow(
+                modifier = Modifier.padding(bottom = 8.dp),
+                itemId = item.id,
+                themeColor = themeColor,
+                onShareClick = { eventSink(ItemActionClicked(item, SHARE)) },
+                canBeSummarized = item.canBeSummarized,
+                onSummarizeClick = { eventSink(ItemActionClicked(item, SUMMARIZE)) },
+              )
             }
           }
         }
@@ -245,24 +230,51 @@ fun RowScope.DetailColumn(
 }
 
 @Composable
-private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
-  if (item.score != null || item.tag != null || item.timestamp != null) {
-    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-      item.score?.let { score ->
+private fun ItemHeader(item: CatchUpItem, themeColor: Color, modifier: Modifier = Modifier) {
+  TextItemHeader(
+    score = item.score?.second?.toLong(),
+    scorePrefix = item.score?.first?.let { "$it " },
+    tag = item.tag,
+    tagHintColor = item.tagHintColor?.let(::Color) ?: themeColor,
+    timestamp = item.timestamp,
+    themeColor = themeColor,
+    modifier = modifier,
+  )
+}
+
+@Composable
+fun TextItemHeader(
+  score: Long?,
+  tag: String?,
+  timestamp: Instant?,
+  modifier: Modifier = Modifier,
+  scorePrefix: String? = null,
+  themeColor: Color = LocalContentColor.current,
+  tagHintColor: Color = themeColor,
+) {
+  if (score != null || tag != null || timestamp != null) {
+    Row(
+      modifier = modifier,
+      verticalAlignment = Alignment.Bottom,
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+      score?.let { score ->
         Text(
-          text = "${score.first} ${score.second.toLong().format()}",
+          text = "${scorePrefix.orEmpty()}${score.format()}",
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.labelSmall,
           color = themeColor,
+          maxLines = 1,
         )
       }
-      item.tag?.let { tag ->
-        if (item.score != null) {
+      tag?.let { tag ->
+        if (score != null) {
           Text(
             text = " • ",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.labelSmall,
-            color = item.tagHintColor?.let(::Color) ?: themeColor,
+            color = tagHintColor,
+            maxLines = 1,
           )
         }
         val primaryLocale = LocalContext.current.primaryLocale
@@ -274,14 +286,16 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.labelSmall,
           color = themeColor,
+          maxLines = 1,
         )
       }
-      item.timestamp?.let { timestamp ->
-        if (item.score != null || item.tag != null) {
+      timestamp?.let { timestamp ->
+        if (score != null || tag != null) {
           Text(
             text = " • ",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
+            maxLines = 1,
           )
         }
         val millis = timestamp.toEpochMilliseconds()
@@ -296,6 +310,7 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
               .toString(),
           style = MaterialTheme.typography.labelSmall,
           color = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium),
+          maxLines = 1,
         )
       }
     }
@@ -303,24 +318,48 @@ private fun ItemHeader(item: CatchUpItem, themeColor: Color) {
 }
 
 @Composable
-private fun ItemFooter(item: CatchUpItem) {
+private fun ItemFooter(item: CatchUpItem, modifier: Modifier = Modifier) {
+  TextItemFooter(author = item.author, source = item.source, modifier = modifier)
+}
+
+@Composable
+fun TextItemFooter(author: String?, source: String?, modifier: Modifier = Modifier) {
   val textColor = MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlphas.Medium)
-  if (item.author != null || item.source != null) {
-    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+  if (author != null || source != null) {
+    Row(
+      modifier = modifier,
+      verticalAlignment = Alignment.Bottom,
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
       // Author
-      item.author
+      author
         ?.takeUnless { it.isBlank() }
         ?.let { author ->
-          Text(text = author, style = MaterialTheme.typography.labelSmall, color = textColor)
+          Text(
+            text = author,
+            style = MaterialTheme.typography.labelSmall,
+            color = textColor,
+            maxLines = 1,
+          )
         }
       // Source
-      item.source
+      source
         ?.takeUnless { it.isBlank() }
         ?.let { source ->
-          if (item.author != null) {
-            Text(text = " — ", style = MaterialTheme.typography.labelSmall, color = textColor)
+          if (author != null) {
+            Text(
+              text = " — ",
+              style = MaterialTheme.typography.labelSmall,
+              color = textColor,
+              maxLines = 1,
+            )
           }
-          Text(text = source, style = MaterialTheme.typography.labelSmall, color = textColor)
+          Text(
+            text = source,
+            style = MaterialTheme.typography.labelSmall,
+            color = textColor,
+            maxLines = 1,
+          )
         }
     }
   }

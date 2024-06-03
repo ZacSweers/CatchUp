@@ -15,6 +15,7 @@
  */
 package catchup.service.uplabs
 
+import catchup.service.uplabs.model.UplabsComments
 import catchup.service.uplabs.model.UplabsImage
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -27,6 +28,12 @@ interface UplabsApi {
     @Query("days_ago") daysAgo: Int, // Default 0
     @Query("page") page: Int, // Default 1
   ): List<UplabsImage>
+
+  @GET("/comments.json")
+  suspend fun getComments(
+    @Query("commentable_id") id: Long,
+    @Query("commentable_type") type: String = "post",
+  ): UplabsComments
 
   companion object {
     private const val HOST = "www.uplabs.com"

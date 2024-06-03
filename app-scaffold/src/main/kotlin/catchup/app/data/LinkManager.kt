@@ -121,6 +121,18 @@ constructor(
     return match >= IntentFilter.MATCH_CATEGORY_HOST && match <= IntentFilter.MATCH_CATEGORY_PATH
   }
 
+  override fun shareUrl(url: HttpUrl, title: String?): Boolean {
+    val context = currentActivity ?: return false
+    val intent =
+      Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, url.toString())
+        title?.let { putExtra(Intent.EXTRA_TITLE, it) }
+      }
+    context.startActivity(Intent.createChooser(intent, "Share URL"))
+    return true
+  }
+
   override suspend fun openUrl(url: HttpUrl, accentColor: Color): Boolean {
     val context = currentActivity ?: return false
     // TODO this isn't great, should we make a StateFlow backed by this?

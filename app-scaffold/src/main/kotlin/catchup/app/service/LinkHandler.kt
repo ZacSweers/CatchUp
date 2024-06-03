@@ -19,25 +19,30 @@ import android.net.Uri
 import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.compose.ui.graphics.Color
-import catchup.app.data.LinkManager
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 interface LinkHandler {
   @CheckResult
   suspend fun openUrl(url: HttpUrl, @ColorInt accentColor: Color = Color.Unspecified): Boolean
+
+  @CheckResult fun shareUrl(url: HttpUrl, title: String? = null): Boolean
 }
 
-suspend fun LinkManager.openUrl(
+suspend fun LinkHandler.openUrl(
   url: String,
   @ColorInt accentColor: Color = Color.Unspecified,
 ): Boolean {
   return openUrl(url.toHttpUrl(), accentColor)
 }
 
-suspend fun LinkManager.openUrl(
+suspend fun LinkHandler.openUrl(
   uri: Uri,
   @ColorInt accentColor: Color = Color.Unspecified,
 ): Boolean {
   return openUrl(uri.toString(), accentColor)
+}
+
+fun LinkHandler.shareUrl(url: String, title: String? = null): Boolean {
+  return shareUrl(url.toHttpUrl(), title)
 }

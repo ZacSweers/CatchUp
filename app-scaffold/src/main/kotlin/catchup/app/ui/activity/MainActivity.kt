@@ -32,10 +32,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import catchup.app.CatchUpPreferences
 import catchup.app.data.LinkManager
 import catchup.app.home.HomeScreen
+import catchup.app.service.openUrl
 import catchup.app.util.customtabs.CustomTabActivityHelper
 import catchup.appconfig.AppConfig
 import catchup.base.ui.RootContent
@@ -65,6 +68,7 @@ import dagger.Module
 import dagger.multibindings.Multibinds
 import javax.inject.Inject
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 @ActivityKey(MainActivity::class)
@@ -134,12 +138,20 @@ constructor(
         )
       }
 
+      val uriHandler =
+        object : UriHandler {
+          override fun openUri(uri: String) {
+            runBlocking { linkManager.openUrl(uri) }
+          }
+        }
+
       val displayFeatures = calculateDisplayFeatures(this)
       CompositionLocalProvider(
         LocalDisplayFeatures provides displayFeatures,
         // Override LocalContext to one that's set to our daynight modes, as many compose APIs use
         // LocalContext under the hood
         LocalContext provides contextToUse,
+        LocalUriHandler provides uriHandler,
       ) {
         CatchUpTheme(useDarkTheme = useDarkTheme, isDynamicColor = useDynamicTheme) {
           CircuitCompositionLocals(circuit) {

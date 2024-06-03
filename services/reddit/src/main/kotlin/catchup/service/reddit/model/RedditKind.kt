@@ -25,4 +25,5 @@ internal enum class RedditKind(val derivedClass: Class<out RedditObject>) {
   @Json(name = "t1") T1(RedditComment::class.java),
   @Json(name = "t3") T3(RedditLink::class.java),
   @Json(name = "Listing") LISTING(RedditListing::class.java),
+  @Json(name = "more") MORE(RedditMore::class.java),
 }

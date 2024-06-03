@@ -15,11 +15,9 @@
  */
 package catchup.app.data
 
-import android.content.Context
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
-import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.bookmarks.db.Bookmark
 import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
 import catchup.di.AppScope
@@ -28,7 +26,7 @@ import catchup.di.DataMode
 import catchup.di.SingleIn
 import catchup.service.db.CatchUpDatabase
 import catchup.service.db.CatchUpDbItem
-import catchup.util.injection.qualifiers.ApplicationContext
+import catchup.sqldelight.SqlDriverFactory
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Binds
 import dagger.Lazy
@@ -56,13 +54,13 @@ abstract class CatchUpDatabaseModule {
     // Unscoped, the real DB instance is a singleton
     @Provides
     fun provideBookmarksDatabaseFactory(
-      @ApplicationContext context: Context,
+      factory: SqlDriverFactory,
       realDb: Lazy<BookmarksDatabase>,
     ): ContextualFactory<DataMode, BookmarksDatabase> {
       return ContextualFactory { mode ->
         when (mode) {
           // Fakes are unscoped but that's fine, they're in-memory and whatever
-          DataMode.FAKE -> createDb(context, null)
+          DataMode.FAKE -> createDb(factory, null)
           else -> realDb.get()
         }
       }
@@ -71,12 +69,12 @@ abstract class CatchUpDatabaseModule {
     // Singleton instance of the "real" db
     @Provides
     @SingleIn(AppScope::class)
-    fun provideBookmarksDatabase(@ApplicationContext context: Context): BookmarksDatabase =
-      createDb(context, "catchup.db")
+    fun provideBookmarksDatabase(factory: SqlDriverFactory): BookmarksDatabase =
+      createDb(factory, "catchup.db")
 
-    private fun createDb(context: Context, dbName: String?): BookmarksDatabase {
+    private fun createDb(factory: SqlDriverFactory, dbName: String?): BookmarksDatabase {
       return BookmarksDatabase(
-        AndroidSqliteDriver(BookmarksDatabase.Schema, context, dbName),
+        factory.create(BookmarksDatabase.Schema, dbName),
         Bookmark.Adapter(InstantColumnAdapter),
         CatchUpDbItem.Adapter(
           InstantColumnAdapter,

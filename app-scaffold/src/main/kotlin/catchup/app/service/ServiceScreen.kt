@@ -1,6 +1,5 @@
 package catchup.app.service
 
-import android.content.Intent
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +37,7 @@ import androidx.paging.LoadState
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.map
@@ -54,9 +53,11 @@ import catchup.app.service.ServiceScreen.Event.MarkClicked
 import catchup.app.service.ServiceScreen.State
 import catchup.app.service.ServiceScreen.State.TextState
 import catchup.app.service.ServiceScreen.State.VisualState
+import catchup.app.service.detail.ServiceDetailScreen
 import catchup.app.ui.activity.ImageViewerScreen
 import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
+import catchup.compose.rememberRetainedCoroutineScope
 import catchup.compose.rememberRippleCompat
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
@@ -80,7 +81,6 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import com.slack.circuitx.android.IntentScreen
 import com.slack.circuitx.overlays.showFullScreenOverlay
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -160,39 +160,63 @@ constructor(
     val eventSink: (Event) -> Unit = rememberEventSink { event ->
       when (event) {
         is ItemClicked -> {
-          scope.launch {
-            if (service.meta().isVisual) {
-              val info = event.item.imageInfo!!
-              overlayHost.showFullScreenOverlay(
-                ImageViewerScreen(
-                  info.imageId,
-                  info.detailUrl,
-                  isBitmap = !info.animatable,
-                  info.cacheKey,
-                  info.sourceUrl,
-                )
+          // TODO what's the best way to handle these
+          if (event.item.detailKey != null) {
+            navigator.goTo(
+              ServiceDetailScreen(
+                serviceId = event.item.serviceId!!,
+                itemId = event.item.id,
+                id = event.item.detailKey!!,
+                title = event.item.title,
+                // TODO we should be able to put this in an item if available
+                text = "",
+                imageUrl =
+                  if (event.item.contentType == ContentType.IMAGE) event.item.clickUrl else null,
+                // TODO this needs to be conditional. For example, we don't want selftext links
+                //  here. Maybe a new external link property?
+                linkUrl = event.item.clickUrl,
+                score = event.item.score?.second?.toLong() ?: 0L,
+                commentsCount = event.item.mark?.text?.toIntOrNull() ?: 0,
+                tag = event.item.tag,
+                author = event.item.author,
+                timestamp = event.item.timestamp?.toEpochMilliseconds(),
               )
-            } else {
-              val url = event.item.clickUrl!!
-              if (event.item.contentType == ContentType.IMAGE) {
-                // TODO generalize this
-                val bestGuessIsBitmap =
-                  url.toHttpUrl().pathSegments.last().let { path ->
-                    path.endsWith(".jpg", ignoreCase = true) ||
-                      path.endsWith(".png", ignoreCase = true) ||
-                      path.endsWith(".gif", ignoreCase = true)
-                  }
+            )
+          } else {
+            scope.launch {
+              if (service.meta().isVisual) {
+                val info = event.item.imageInfo!!
                 overlayHost.showFullScreenOverlay(
                   ImageViewerScreen(
-                    id = url,
-                    url = url,
-                    isBitmap = bestGuessIsBitmap,
-                    alias = null,
-                    sourceUrl = url,
+                    info.imageId,
+                    info.detailUrl,
+                    isBitmap = !info.animatable,
+                    info.cacheKey,
+                    info.sourceUrl,
                   )
                 )
               } else {
-                linkManager.openUrl(url, themeColor)
+                val url = event.item.clickUrl!!
+                if (event.item.contentType == ContentType.IMAGE) {
+                  // TODO generalize this
+                  val bestGuessIsBitmap =
+                    url.toHttpUrl().pathSegments.last().let { path ->
+                      path.endsWith(".jpg", ignoreCase = true) ||
+                        path.endsWith(".png", ignoreCase = true) ||
+                        path.endsWith(".gif", ignoreCase = true)
+                    }
+                  overlayHost.showFullScreenOverlay(
+                    ImageViewerScreen(
+                      id = url,
+                      url = url,
+                      isBitmap = bestGuessIsBitmap,
+                      alias = null,
+                      sourceUrl = url,
+                    )
+                  )
+                } else {
+                  linkManager.openUrl(url, themeColor)
+                }
               }
             }
           }
@@ -201,13 +225,7 @@ constructor(
           val url = event.item.clickUrl!!
           when (event.action) {
             SHARE -> {
-              val shareIntent =
-                Intent().apply {
-                  action = Intent.ACTION_SEND
-                  putExtra(Intent.EXTRA_TEXT, "${event.item.title}\n\n${event.item.clickUrl}")
-                  type = "text/plain"
-                }
-              navigator.goTo(IntentScreen(Intent.createChooser(shareIntent, "Share")))
+              linkManager.shareUrl(url, event.item.title)
             }
             SUMMARIZE -> {
               scope.launch {
@@ -225,15 +243,18 @@ constructor(
     }
 
     val dataMode by catchUpPreferences.dataMode.collectAsState()
+    val pagingScope = rememberRetainedCoroutineScope()
+
     // Changes to DataMode in settings will trigger a restart, but not bad to key explicitly here
     // too
-    val itemsFlow =
+    // We use Paging's `cachedIn` operator with our retained CoroutineScope
+    val items =
       rememberRetained(dataMode) {
-        // TODO
-        //  preference page size
-        createPager(service, dataMode, 50)
-      }
-    val items = itemsFlow.collectAsLazyPagingItems()
+          // TODO
+          //  preference page size
+          createPager(service, dataMode, 20).cachedIn(pagingScope)
+        }
+        .collectAsLazyPagingItems()
     return when (service.meta().isVisual) {
       true -> VisualState(items = items, themeColor = themeColor, eventSink = eventSink)
       false -> TextState(items = items, themeColor = themeColor, eventSink = eventSink)
@@ -343,9 +364,10 @@ fun LoadingView(themeColor: Color, modifier: Modifier = Modifier) {
 
 @Composable
 fun LoadingItem(modifier: Modifier = Modifier) {
-  CircularProgressIndicator(
-    modifier =
-      modifier.fillMaxWidth().padding(16.dp).wrapContentWidth(Alignment.CenterHorizontally),
-    color = MaterialTheme.colorScheme.outline,
-  )
+  Box(modifier = modifier.fillMaxWidth().padding(16.dp)) {
+    CircularProgressIndicator(
+      modifier = Modifier.align(Alignment.Center),
+      color = MaterialTheme.colorScheme.outline,
+    )
+  }
 }

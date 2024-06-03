@@ -1,0 +1,58 @@
+query PostAndComments($postId: ID!, $commentsOrder: CommentsOrder!) {
+    post(id: $postId) {
+        id
+        name
+        description
+        votesCount
+        tagline
+        createdAt
+        featuredAt
+        slug
+        url
+        commentsCount
+        website
+        votesCount
+        thumbnail {
+            url
+        }
+        topics {
+            totalCount
+            edges {
+                node {
+                    name
+                }
+            }
+        }
+        makers {
+            username
+        }
+        comments(order: $commentsOrder) {
+            edges {
+                node {
+                    id
+                    body
+                    createdAt
+                    votesCount
+                    user {
+                        username
+                    }
+                    replies {
+                        totalCount
+                        edges {
+                            node {
+                                id
+                                body
+                                createdAt
+                                votesCount
+                                user {
+                                    username
+                                }
+                                # TODO more replies?
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

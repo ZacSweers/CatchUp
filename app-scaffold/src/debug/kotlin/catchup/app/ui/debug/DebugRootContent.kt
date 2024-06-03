@@ -1,6 +1,7 @@
 package catchup.app.ui.debug
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -10,8 +11,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import catchup.app.data.DebugPreferences
 import catchup.base.ui.DefaultRootContent
 import catchup.base.ui.RootContent
@@ -73,7 +77,12 @@ class DebugRootContent @Inject constructor(private val debugPreferences: DebugPr
       ModalNavigationDrawer(
         drawerContent = {
           CompositionLocalProvider(LocalLayoutDirection provides original) {
-            ModalDrawerSheet(windowInsets = WindowInsets(0, 0, 0, 0)) {
+            // Max width of 80% of screen width
+            val maxWidth = LocalConfiguration.current.screenWidthDp.dp * 0.85f
+            ModalDrawerSheet(
+              modifier = Modifier.widthIn(max = maxWidth),
+              windowInsets = WindowInsets(0, 0, 0, 0),
+            ) {
               CircuitContent(screen = DebugSettingsScreen, onNavEvent = navigator::onNavEvent)
             }
           }

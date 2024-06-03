@@ -1,13 +1,10 @@
 package catchup.summarizer
 
-import android.content.Context
-import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.appconfig.AppConfig
 import catchup.di.AppScope
-import catchup.di.FakeMode
 import catchup.di.SingleIn
 import catchup.libraries.retrofitconverters.delegatingCallFactory
-import catchup.util.injection.qualifiers.ApplicationContext
+import catchup.sqldelight.SqlDriverFactory
 import catchup.util.network.AuthInterceptor
 import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
@@ -28,17 +25,8 @@ object SummarizerModule {
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideSummarizerDatabase(
-    @ApplicationContext context: Context,
-    @FakeMode isFakeMode: Boolean,
-  ): SummarizationsDatabase =
-    SummarizationsDatabase(
-      AndroidSqliteDriver(
-        SummarizationsDatabase.Schema,
-        context,
-        "summarizations.db".takeUnless { isFakeMode },
-      )
-    )
+  fun provideSummarizerDatabase(factory: SqlDriverFactory): SummarizationsDatabase =
+    SummarizationsDatabase(factory.create(SummarizationsDatabase.Schema, "summarizations.db"))
 
   @Provides
   @InternalApi

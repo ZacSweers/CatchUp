@@ -109,122 +109,6 @@ import leakcanary.LeakCanary
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 
-private fun items(
-  appConfig: AppConfig,
-  displayMetrics: DisplayMetrics,
-  cache: Cache?,
-): ImmutableList<DebugItem> {
-  if (cache == null) return persistentListOf()
-  return buildList {
-      add(Header("Network"))
-      add(
-        Element.SpinnerElement(
-          "Data Mode",
-          CatchUpPreferences.Keys.dataMode,
-          DataMode.entries.map { it.name },
-          ValueType.STRING,
-          defaultOptionIndex = DataMode.REAL.ordinal,
-        )
-      )
-      // TODO conditional based on mock mode?
-      add(
-        Element.SpinnerElement(
-          "Delay",
-          DebugPreferences.Keys.networkDelay,
-          listOf(250, 500, 1000, 2000, 3000, 5000),
-          ValueType.LONG,
-          defaultOptionIndex = 3,
-        ) { index ->
-          "${index}ms"
-        }
-      )
-      add(
-        Element.SpinnerElement(
-          "Variance",
-          DebugPreferences.Keys.networkVariancePercent,
-          listOf(20, 40, 60),
-          ValueType.INT,
-          defaultOptionIndex = 1,
-        ) { index ->
-          "${index}%"
-        }
-      )
-      add(
-        Element.SpinnerElement(
-          "Error",
-          DebugPreferences.Keys.networkFailurePercent,
-          listOf(0, 3, 10, 25, 50, 75, 100),
-          ValueType.INT,
-          defaultOptionIndex = 1,
-        ) { index ->
-          "${index}%"
-        }
-      )
-
-      add(Header("User Interface"))
-      add(
-        Element.SpinnerElement(
-          "Animations",
-          DebugPreferences.Keys.animationSpeed,
-          listOf(1, 2, 3, 5, 10),
-          ValueType.INT,
-          defaultOptionIndex = 0,
-        ) { index ->
-          if (index == 1) {
-            "Normal"
-          } else {
-            "${index}x slower"
-          }
-        }
-      )
-      add(Header("Logs"))
-      add(Element.ButtonElement("Show logs", LogsModal))
-      add(
-        Element.ButtonElement(
-          "Leak Analysis",
-          IntentScreen(LeakCanary.newLeakDisplayActivityIntent()),
-        )
-      )
-      add(Header("Build Information"))
-      add(Element.ValueElement("Name", appConfig.versionName))
-      add(Element.ValueElement("Code", appConfig.versionCode.toString()))
-      add(Element.ValueElement("Date", appConfig.timestamp))
-
-      add(Header("Device Information"))
-      add(Element.ValueElement("Make", Build.MANUFACTURER truncateAt 20))
-      add(Element.ValueElement("Model", Build.MODEL truncateAt 20))
-      add(
-        Element.ValueElement(
-          "Resolution",
-          "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}",
-        )
-      )
-      add(
-        Element.ValueElement(
-          "Density",
-          "${displayMetrics.densityDpi}dpi (${displayMetrics.bucket})",
-        )
-      )
-      add(Element.ValueElement("Release", Build.VERSION.RELEASE))
-      add(Element.ValueElement("API", appConfig.sdkInt.toString()))
-
-      add(Header("OkHttp Cache"))
-      add(Element.ValueElement("Max Size", cache.maxSize().sizeString))
-      val writeTotal = cache.writeSuccessCount() + cache.writeAbortCount()
-      val percentage = (1f * cache.writeAbortCount() / writeTotal * 100).toInt()
-      add(
-        Element.ValueElement(
-          "Write Errors",
-          "${cache.writeAbortCount()} / $writeTotal ($percentage%)",
-        )
-      )
-      add(Element.ValueElement("Request Count", cache.requestCount().toString()))
-      add(Element.ValueElement("   Network Count", cache.networkCount().toString()))
-      add(Element.ValueElement("   Hit Count", cache.hitCount().toString()))
-    }
-    .toImmutableList()
-}
-
 @Parcelize private object LogsModal : Screen
 
 @ContributesTo(AppScope::class)
@@ -237,7 +121,7 @@ object ContributorModule {
 object DebugSettingsScreen : Screen {
   data class State(
     val items: ImmutableList<DebugItem>,
-    val logsToShow: ImmutableList<LumberYard.Entry>,
+    val logsToShow: ImmutableList<Entry>,
     val eventSink: (Event) -> Unit,
   ) : CircuitUiState
 
@@ -275,8 +159,13 @@ constructor(
       produceState<Cache?>(null) { value = withContext(IO) { client.get().cache!! } }
 
     val scope = rememberStableCoroutineScope()
+    val displayMetrics = LocalContext.current.resources.displayMetrics
+    val items =
+      remember(displayMetrics, clientCache) {
+        clientCache?.let { items(displayMetrics, it) } ?: persistentListOf()
+      }
     return State(
-      items(appConfig, LocalContext.current.resources.displayMetrics, clientCache),
+      items,
       if (showLogs) {
         lumberYard.bufferedLogs()
       } else {
@@ -326,6 +215,117 @@ constructor(
     } catch (e: Exception) {
       throw RuntimeException("Unable to apply animation speed.", e)
     }
+  }
+
+  private fun items(displayMetrics: DisplayMetrics, cache: Cache): ImmutableList<DebugItem> {
+    return buildList {
+        add(Header("Network"))
+        add(
+          Element.SpinnerElement(
+            "Data Mode",
+            CatchUpPreferences.Keys.dataMode,
+            DataMode.entries.map { it.name },
+            ValueType.STRING,
+            defaultOptionIndex = DataMode.REAL.ordinal,
+          )
+        )
+        // TODO conditional based on mock mode?
+        add(
+          Element.SpinnerElement(
+            "Delay",
+            DebugPreferences.Keys.networkDelay,
+            listOf(250, 500, 1000, 2000, 3000, 5000),
+            ValueType.LONG,
+            defaultOptionIndex = 3,
+          ) { index ->
+            "${index}ms"
+          }
+        )
+        add(
+          Element.SpinnerElement(
+            "Variance",
+            DebugPreferences.Keys.networkVariancePercent,
+            listOf(20, 40, 60),
+            ValueType.INT,
+            defaultOptionIndex = 1,
+          ) { index ->
+            "${index}%"
+          }
+        )
+        add(
+          Element.SpinnerElement(
+            "Error",
+            DebugPreferences.Keys.networkFailurePercent,
+            listOf(0, 3, 10, 25, 50, 75, 100),
+            ValueType.INT,
+            defaultOptionIndex = 1,
+          ) { index ->
+            "${index}%"
+          }
+        )
+
+        add(Header("User Interface"))
+        add(
+          Element.SpinnerElement(
+            "Animations",
+            DebugPreferences.Keys.animationSpeed,
+            listOf(1, 2, 3, 5, 10),
+            ValueType.INT,
+            defaultOptionIndex = 0,
+          ) { index ->
+            if (index == 1) {
+              "Normal"
+            } else {
+              "${index}x slower"
+            }
+          }
+        )
+        add(Header("Logs"))
+        add(Element.ButtonElement("Show logs", LogsModal))
+        add(
+          Element.ButtonElement(
+            "Leak Analysis",
+            IntentScreen(LeakCanary.newLeakDisplayActivityIntent()),
+          )
+        )
+        add(Header("Build Information"))
+        add(Element.ValueElement("Name", appConfig.versionName))
+        add(Element.ValueElement("Code", appConfig.versionCode.toString()))
+        add(Element.ValueElement("Date", appConfig.timestamp))
+
+        add(Header("Device Information"))
+        add(Element.ValueElement("Make", Build.MANUFACTURER truncateAt 20))
+        add(Element.ValueElement("Model", Build.MODEL truncateAt 20))
+        add(
+          Element.ValueElement(
+            "Resolution",
+            "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}",
+          )
+        )
+        add(
+          Element.ValueElement(
+            "Density",
+            "${displayMetrics.densityDpi}dpi (${displayMetrics.bucket})",
+          )
+        )
+        add(Element.ValueElement("Release", Build.VERSION.RELEASE))
+        add(Element.ValueElement("API", appConfig.sdkInt.toString()))
+
+        add(Header("OkHttp Cache"))
+        add(Element.ValueElement("Max Size", cache.maxSize().sizeString))
+        val writeTotal = cache.writeSuccessCount() + cache.writeAbortCount()
+        val percentage = (1f * cache.writeAbortCount() / writeTotal * 100).toInt()
+        add(
+          Element.ValueElement(
+            "Write Errors",
+            "${cache.writeAbortCount()} / $writeTotal ($percentage%)",
+          )
+        )
+        add(Element.ValueElement("Request Count", cache.requestCount().toString()))
+        add(Element.ValueElement("   Network Count", cache.networkCount().toString()))
+        add(Element.ValueElement("   Hit Count", cache.hitCount().toString()))
+      }
+      .toImmutableList()
   }
 }
 

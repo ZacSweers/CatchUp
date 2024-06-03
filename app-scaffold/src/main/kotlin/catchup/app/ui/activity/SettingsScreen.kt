@@ -18,6 +18,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -45,7 +46,6 @@ import catchup.app.ui.activity.SettingsScreen.Event.NavToScreen
 import catchup.app.ui.activity.SettingsScreen.State
 import catchup.app.util.restartApp
 import catchup.base.ui.BackPressNavButton
-import catchup.base.ui.HazeScaffold
 import catchup.compose.ContentAlphas
 import catchup.compose.DisableableContent
 import catchup.compose.LocalEnabled
@@ -79,26 +79,30 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import okhttp3.Cache
 
-@ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
-@StringKey("settings")
 @Parcelize
-object SettingsScreen : Screen, DeepLinkable {
-  override fun createScreen(queryParams: ImmutableMap<String, List<String?>>): Screen =
-    SettingsScreen
+data class SettingsScreen(val showTopAppBar: Boolean = true) : Screen {
 
-  data class State(val eventSink: (Event) -> Unit) : CircuitUiState
+  @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+  @StringKey("settings")
+  object Deeplinker : DeepLinkable {
+    override fun createScreen(queryParams: ImmutableMap<String, List<String?>>): Screen =
+      SettingsScreen()
+  }
+
+  data class State(val showTopAppBar: Boolean, val eventSink: (Event) -> Unit) : CircuitUiState
 
   sealed interface Event {
     // TODO does this make sense or should the presenter decide?
     data class NavToScreen(val screen: Screen) : Event
 
-    object ClearCache : Event
+    data object ClearCache : Event
   }
 }
 
 class SettingsPresenter
 @AssistedInject
 constructor(
+  @Assisted private val screen: SettingsScreen,
   @Assisted private val navigator: Navigator,
   @ApplicationContext private val appContext: Context,
   private val cache: dagger.Lazy<Cache>,
@@ -109,7 +113,7 @@ constructor(
   @CircuitInject(SettingsScreen::class, AppScope::class)
   @AssistedFactory
   fun interface Factory {
-    fun create(navigator: Navigator): SettingsPresenter
+    fun create(screen: SettingsScreen, navigator: Navigator): SettingsPresenter
   }
 
   @Composable
@@ -134,7 +138,7 @@ constructor(
     }
 
     val scope = rememberStableCoroutineScope()
-    return State { event ->
+    return State(screen.showTopAppBar) { event ->
       when (event) {
         ClearCache -> {
           scope.launch {
@@ -218,19 +222,23 @@ constructor(
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   override fun Content(state: State, modifier: Modifier) {
-    HazeScaffold(
+    val topAppBar: @Composable () -> Unit =
+      if (state.showTopAppBar) {
+        {
+          TopAppBar(
+            title = { Text(stringResource(AppScaffoldR.string.title_activity_settings)) },
+            navigationIcon = { BackPressNavButton() },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+          )
+        }
+      } else {
+        {}
+      }
+    Scaffold(
       modifier = modifier,
       contentWindowInsets = WindowInsets(0, 0, 0, 0),
       containerColor = Color.Transparent,
-      blurTopBar = true,
-      blurBottomBar = true,
-      topBar = {
-        TopAppBar(
-          title = { Text(stringResource(AppScaffoldR.string.title_activity_settings)) },
-          navigationIcon = { BackPressNavButton() },
-          colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-        )
-      },
+      topBar = topAppBar,
     ) { innerPadding ->
       LazyColumn(
         modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)
@@ -341,7 +349,6 @@ private fun ComposableHeaderItem(text: String, displayDivider: Boolean) {
       Text(
         modifier = Modifier.padding(16.dp),
         text = text,
-        color = MaterialTheme.colorScheme.primary,
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold,
       )
@@ -390,6 +397,7 @@ private fun CheckboxPref(
         )
   ) {
     SimplePrefItem(title, subtitle, icon) {
+      // TODO switches use the primary color, which ends up being white on white.
       Switch(checked = state.value, onCheckedChange = update, enabled = LocalEnabled.current)
     }
   }

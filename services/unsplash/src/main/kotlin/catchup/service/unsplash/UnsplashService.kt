@@ -61,7 +61,7 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
   override suspend fun fetch(request: DataRequest): DataResult {
     val page = request.pageKey!!.toInt()
     return api
-      .getPhotos(page, 50)
+      .getPhotos(page, request.limit)
       .mapIndexed { index, it ->
         CatchUpItem(
           id = it.id.hashCode().toLong(),

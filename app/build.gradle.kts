@@ -337,7 +337,7 @@ abstract class GenerateLicensesAsset : DefaultTask() {
   @get:OutputFile abstract val jsonFile: RegularFileProperty
 
   private val licenseeFile: File
-    get() = File(buildDir.asFile.get(), "reports/licensee/release/artifacts.json")
+    get() = File(buildDir.asFile.get(), "reports/licensee/androidRelease/artifacts.json")
 
   @Suppress("UNCHECKED_CAST")
   @OptIn(ExperimentalStdlibApi::class)
@@ -392,9 +392,10 @@ val generateLicenseTask =
     jsonFile.set(project.layout.projectDirectory.file("src/main/assets/generated_licenses.json"))
   }
 
-generateLicenseTask.dependsOn("licenseeRelease")
+generateLicenseTask.dependsOn("licenseeAndroidRelease")
 
-tasks.matching { it.name == "licenseeDebug" }.configureEach { enabled = false }
+tasks.named { it.startsWith("licensee") && !it.endsWith("AndroidRelease") }
+  .configureEach { enabled = false }
 
 licensee {
   allow("Apache-2.0")

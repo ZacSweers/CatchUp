@@ -17,10 +17,13 @@ package catchup.app.data
 
 import android.content.Context
 import android.os.Looper
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import catchup.app.injection.DaggerSet
 import catchup.appconfig.AppConfig
 import catchup.di.AppScope
+import catchup.di.FakeMode
 import catchup.di.SingleIn
+import catchup.sqldelight.SqlDriverFactory
 import catchup.util.data.adapters.UnescapeJsonAdapter
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.injection.qualifiers.NetworkInterceptor
@@ -97,6 +100,14 @@ abstract class DataModule {
         .add(Wrapped.ADAPTER_FACTORY)
         .add(UnescapeJsonAdapter.FACTORY)
         .build()
+    }
+
+    @Provides
+    fun provideSqlDriverFactory(
+      @ApplicationContext context: Context,
+      @FakeMode isFakeMode: Boolean,
+    ): SqlDriverFactory = SqlDriverFactory { schema, name ->
+      AndroidSqliteDriver(schema, context, name.takeUnless { isFakeMode })
     }
   }
 }

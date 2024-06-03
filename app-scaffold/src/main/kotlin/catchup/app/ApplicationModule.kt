@@ -24,8 +24,6 @@ import androidx.core.content.getSystemService
 import catchup.app.data.DribbbleSizingInterceptor
 import catchup.app.data.LumberYard
 import catchup.app.data.UnsplashSizingInterceptor
-import catchup.app.util.LinkTouchMovementMethod
-import catchup.app.util.PrecomputedTextSetterCompat
 import catchup.appconfig.AppConfig
 import catchup.appconfig.AppConfigMetadataContributor
 import catchup.base.ui.VersionInfo
@@ -53,14 +51,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
 import dagger.multibindings.Multibinds
-import io.noties.markwon.Markwon
-import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
-import io.noties.markwon.ext.tables.TablePlugin
-import io.noties.markwon.ext.tasklist.TaskListPlugin
-import io.noties.markwon.image.ImagesPlugin
-import io.noties.markwon.image.coil.CoilImagesPlugin
-import io.noties.markwon.linkify.LinkifyPlugin
-import io.noties.markwon.movement.MovementMethodPlugin
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlinx.coroutines.Dispatchers
@@ -113,29 +103,6 @@ abstract class ApplicationModule {
     @SingleIn(AppScope::class)
     internal fun versionInfo(@ApplicationContext appContext: Context): VersionInfo =
       appContext.versionInfo
-
-    @Provides
-    @SingleIn(AppScope::class)
-    internal fun markwon(
-      @LazyDelegate imageLoader: ImageLoader,
-      @ApplicationContext context: Context, // TODO should use themed one from activity?
-    ): Markwon {
-      return Markwon.builder(context)
-        .textSetter(PrecomputedTextSetterCompat.create())
-        .usePlugins(
-          listOf(
-            MovementMethodPlugin.create(LinkTouchMovementMethod.getInstance()),
-            ImagesPlugin.create(),
-            StrikethroughPlugin.create(),
-            CoilImagesPlugin.create(context, imageLoader),
-            TablePlugin.create(context),
-            LinkifyPlugin.create(),
-            TaskListPlugin.create(context),
-            //            SyntaxHighlightPlugin.create(Prism4j(), Prism4jThemeDarkula(Color.BLACK))
-          )
-        )
-        .build()
-    }
 
     @AsyncInitializers
     @IntoSet

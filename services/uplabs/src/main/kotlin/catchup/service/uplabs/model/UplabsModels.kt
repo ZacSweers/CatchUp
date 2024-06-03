@@ -49,3 +49,34 @@ data class Image(
 )
 
 @JsonClass(generateAdapter = true) data class Urls(val full: String, val thumbnail: String)
+
+@JsonClass(generateAdapter = true) data class UplabsComments(val comments: List<UplabsComment>)
+
+@JsonClass(generateAdapter = true)
+data class UplabsComment(
+  @Json(name = "attachment_url") val attachmentUrl: String? = null,
+  val body: String = "Great job ",
+  @Json(name = "comment_likes_count") val commentLikesCount: Int = 0,
+  @Json(name = "created_at") val createdAt: Instant,
+  val deleted: Boolean = false,
+  val id: Long = 354347,
+  @Json(name = "likes_user_ids") val likesUserIds: List<Long> = emptyList(),
+  //  val in_reply_to_id: String =	null,
+  val persisted: Boolean = true,
+  @Json(name = "commentable_type") val commentableType: String = "Post",
+  @Json(name = "commentable_id") val commentableId: Long = 596426,
+  val replies: List<UplabsComment> = emptyList(),
+  val annotation: Boolean = false,
+  @Json(name = "annotation_x") val annotationX: Int? = null,
+  @Json(name = "annotation_y") val annotationY: Int? = null,
+  @Json(name = "annotation_label") val annotationLabel: String? = null,
+  @Json(name = "preview_url") val previewUrl: String? = null,
+  val user: UplabsUser? = null,
+)
+
+@JsonClass(generateAdapter = true)
+data class UplabsUser(
+  @Json(name = "avatar_url") val avatarUrl: String? = null,
+  @Json(name = "full_name") val fullName: String? = null,
+  val nickname: String? = null,
+)

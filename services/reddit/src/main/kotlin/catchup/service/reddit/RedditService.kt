@@ -19,16 +19,20 @@ import catchup.appconfig.AppConfig
 import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
+import catchup.service.api.Comment
 import catchup.service.api.ContentType
 import catchup.service.api.DataRequest
 import catchup.service.api.DataResult
+import catchup.service.api.Detail
 import catchup.service.api.Mark.Companion.createCommentMark
 import catchup.service.api.Service
 import catchup.service.api.ServiceKey
 import catchup.service.api.ServiceMeta
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.TextService
+import catchup.service.reddit.model.RedditComment
 import catchup.service.reddit.model.RedditLink
+import catchup.service.reddit.model.RedditListing
 import catchup.service.reddit.model.RedditObjectFactory
 import catchup.util.data.adapters.EpochInstantJsonAdapter
 import com.squareup.anvil.annotations.ContributesMultibinding
@@ -41,6 +45,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import javax.inject.Inject
 import javax.inject.Qualifier
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -83,10 +88,61 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
             serviceId = meta().id,
             // If it's a selftext, mark it as HTML for summarizing.
             contentType = if (link.isSelf) ContentType.HTML else null,
+            detailKey = link.id,
           )
         }
       DataResult(data, redditListingRedditResponse.data.after)
     }
+  }
+
+  override suspend fun fetchDetail(item: CatchUpItem, detailKey: String): Detail {
+    val (listing, redditComments) =
+      api
+        .comments(
+          id = item.detailKey!!,
+          // TODO need a better way for this
+          subreddit = item.tag!!.removePrefix("/r/"),
+        )
+        .map { it.data.children }
+
+    val detailListing = listing[0] as RedditLink
+
+    val comments =
+      redditComments
+        .filterIsInstance<RedditComment>()
+        .flatMap { comment ->
+          buildList {
+            fun recurseComment(comment: RedditComment) {
+              add(comment.toComment())
+              comment.replies?.let { repliesListing ->
+                if (repliesListing is RedditListing) {
+                  repliesListing.children.filterIsInstance<RedditComment>().forEach {
+                    recurseComment(it)
+                  }
+                }
+              }
+            }
+            recurseComment(comment)
+          }
+        }
+        .toImmutableList()
+
+    return Detail.Full(
+      id = detailListing.id,
+      itemId = item.id,
+      title = detailListing.title,
+      text = detailListing.selftext,
+      imageUrl = if (detailListing.postHint == "image") detailListing.url else null,
+      score = detailListing.score.toLong(),
+      shareUrl = detailListing.url,
+      linkUrl = detailListing.url.takeUnless { detailListing.isSelf },
+      comments = comments,
+      commentsCount = detailListing.commentsCount,
+      timestamp = detailListing.createdUtc,
+      author = "/u/" + detailListing.author,
+      tag = detailListing.subreddit,
+      allowUnfurl = !detailListing.isSelf,
+    )
   }
 }
 
@@ -168,4 +224,18 @@ object RedditModule {
         .build()
     return retrofit.create(RedditApi::class.java)
   }
+}
+
+private fun RedditComment.toComment(): Comment {
+  return Comment(
+    id = id,
+    serviceId = SERVICE_KEY,
+    author = author,
+    timestamp = createdUtc,
+    text = body,
+    score = score,
+    children = emptyList(),
+    depth = depth,
+    clickableUrls = emptyList(),
+  )
 }

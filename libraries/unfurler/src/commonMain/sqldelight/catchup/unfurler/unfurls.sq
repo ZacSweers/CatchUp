@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS unfurls (
+  url TEXT NOT NULL,
+  title TEXT,
+  description TEXT,
+  favicon TEXT,
+  thumbnail TEXT,
+  PRIMARY KEY(url)
+);
+
+insert:
+INSERT INTO unfurls(url, title, description, favicon, thumbnail)
+VALUES (?, ?, ? ,?, ?);
+
+getUnfurl:
+SELECT * FROM unfurls WHERE url = ?;

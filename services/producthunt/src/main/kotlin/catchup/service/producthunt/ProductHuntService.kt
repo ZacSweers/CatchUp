@@ -25,15 +25,18 @@ import catchup.auth.TokenStorage
 import catchup.di.AppScope
 import catchup.di.SingleIn
 import catchup.service.api.CatchUpItem
+import catchup.service.api.Comment
 import catchup.service.api.ContentType
 import catchup.service.api.DataRequest
 import catchup.service.api.DataResult
+import catchup.service.api.Detail
 import catchup.service.api.Mark.Companion.createCommentMark
 import catchup.service.api.Service
 import catchup.service.api.ServiceKey
 import catchup.service.api.ServiceMeta
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.TextService
+import catchup.service.producthunt.type.CommentsOrder
 import catchup.service.producthunt.type.DateTime
 import catchup.util.apollo.ISO8601InstantApolloAdapter
 import catchup.util.injection.qualifiers.ApplicationContext
@@ -58,6 +61,7 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import javax.inject.Inject
 import javax.inject.Qualifier
+import kotlinx.collections.immutable.toImmutableList
 import okhttp3.OkHttpClient
 import okio.Path.Companion.toOkioPath
 
@@ -101,6 +105,9 @@ constructor(
         with(node) {
           CatchUpItem(
             id = id.toLong(),
+            // TODO alas, product hunt appears to have basically
+            //  abandoned their API. https://github.com/producthunt/producthunt-api/issues/292
+            // detailKey = id,
             title = name,
             description = tagline,
             score = "▲" to votesCount,
@@ -119,6 +126,66 @@ constructor(
         val last = postsQuery.data?.posts?.edges?.last()?.node?.id
         DataResult(it, last)
       }
+  }
+
+  override suspend fun fetchDetail(item: CatchUpItem, detailKey: String): Detail {
+    val postsQuery =
+      apolloClient
+        .get()
+        .query(
+          PostAndCommentsQuery(postId = item.detailKey!!, commentsOrder = CommentsOrder.VOTES_COUNT)
+        )
+        .execute()
+
+    if (postsQuery.hasErrors()) {
+      throw DefaultApolloException(postsQuery.errors.toString())
+    }
+
+    val post = postsQuery.data?.post!!
+    return Detail.Full(
+      id = detailKey,
+      itemId = item.id,
+      title = post.name,
+      text = post.description,
+      score = post.votesCount.toLong(),
+      commentsCount = post.commentsCount,
+      linkUrl = post.website,
+      shareUrl = post.url,
+      timestamp = post.featuredAt,
+      author = null, // Always redacted now in their API
+      tag = post.topics.edges.firstOrNull()?.node?.name,
+      comments =
+        post.comments.edges
+          .map {
+            val comment = it.node
+            Comment(
+              id = comment.id,
+              serviceId = SERVICE_KEY,
+              author = comment.user.username,
+              timestamp = comment.createdAt,
+              text = comment.body,
+              score = comment.votesCount,
+              children =
+                comment.replies.edges.map {
+                  val reply = it.node
+                  Comment(
+                    id = reply.id,
+                    serviceId = SERVICE_KEY,
+                    author = reply.user.username,
+                    timestamp = reply.createdAt,
+                    text = reply.body,
+                    score = reply.votesCount,
+                    depth = 1,
+                    children = emptyList(),
+                    clickableUrls = emptyList(),
+                  )
+                },
+              depth = 0,
+              clickableUrls = emptyList(),
+            )
+          }
+          .toImmutableList(),
+    )
   }
 }
 

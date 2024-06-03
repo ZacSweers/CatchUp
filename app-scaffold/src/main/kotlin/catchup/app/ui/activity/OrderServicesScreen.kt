@@ -86,6 +86,7 @@ import catchup.compose.rememberRippleCompat
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import catchup.service.api.ServiceMeta
+import catchup.util.kotlin.mapToStateFlow
 import catchup.util.toDayContext
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
@@ -140,71 +141,75 @@ constructor(
 
   @Composable
   override fun present(): State {
-    val storedOrderState by remember { catchUpPreferences.servicesOrder }.collectAsState()
-
-    return storedOrderState?.let { storedOrder ->
-      val initialOrderedServices =
-        remember(storedOrder) {
-          serviceMetas.values.sortedBy { storedOrder.indexOf(it.id) }.toImmutableList()
+    val storedOrder by
+      remember {
+          catchUpPreferences.servicesOrder.mapToStateFlow {
+            it ?: serviceMetas.keys.toImmutableList()
+          }
         }
+        .collectAsState()
 
-      val currentDisplay =
-        remember(storedOrder) {
-          serviceMetas.values.sortedBy { storedOrder.indexOf(it.id) }.toMutableStateList()
-        }
-
-      val isChanged by remember {
-        derivedStateOf {
-          val initial = initialOrderedServices.joinToString { it.id }
-          val current = currentDisplay.joinToString { it.id }
-          initial != current
-        }
+    val initialOrderedServices =
+      remember(storedOrder) {
+        serviceMetas.values.sortedBy { storedOrder.indexOf(it.id) }.toImmutableList()
       }
 
-      var showConfirmation by remember { mutableStateOf(false) }
+    val currentDisplay =
+      remember(storedOrder) {
+        serviceMetas.values.sortedBy { storedOrder.indexOf(it.id) }.toMutableStateList()
+      }
 
-      BackHandler(enabled = isChanged && !showConfirmation) { showConfirmation = true }
+    val isChanged by remember {
+      derivedStateOf {
+        val initial = initialOrderedServices.joinToString { it.id }
+        val current = currentDisplay.joinToString { it.id }
+        initial != current
+      }
+    }
 
-      val scope = rememberStableCoroutineScope()
-      return State(
-        services = currentDisplay,
-        showSave = isChanged,
-        showConfirmation = showConfirmation,
-      ) { event ->
-        when (event) {
-          is Reorder -> {
-            currentDisplay.apply { add(event.to, removeAt(event.from)) }
+    var showConfirmation by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = isChanged && !showConfirmation) { showConfirmation = true }
+
+    val scope = rememberStableCoroutineScope()
+    return State(
+      services = currentDisplay,
+      showSave = isChanged,
+      showConfirmation = showConfirmation,
+    ) { event ->
+      when (event) {
+        is Reorder -> {
+          currentDisplay.apply { add(event.to, removeAt(event.from)) }
+        }
+        Shuffle -> {
+          currentDisplay.shuffle()
+        }
+        Save -> {
+          scope.launch {
+            save(currentDisplay)
+            navigator.pop()
           }
-          Shuffle -> {
-            currentDisplay.shuffle()
-          }
-          Save -> {
+        }
+        is DismissConfirmation -> {
+          showConfirmation = false
+          if (event.save) {
             scope.launch {
               save(currentDisplay)
               navigator.pop()
             }
+          } else if (event.pop) {
+            navigator.pop()
           }
-          is DismissConfirmation -> {
-            showConfirmation = false
-            if (event.save) {
-              scope.launch {
-                save(currentDisplay)
-                navigator.pop()
-              }
-            } else if (event.pop) {
-              navigator.pop()
-            }
-          }
-          BackPress -> {
-            if (!showConfirmation && isChanged) {
-              showConfirmation = true
-            } else {
-              navigator.pop()
-            }
+        }
+        BackPress -> {
+          if (!showConfirmation && isChanged) {
+            showConfirmation = true
+          } else {
+            navigator.pop()
           }
         }
       }
-    } ?: State(services = null)
+    }
   }
 
   private suspend fun save(newOrder: List<ServiceMeta>) {

@@ -9,18 +9,17 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import catchup.app.ui.about.AboutScreen.AboutScreenComponent
 import catchup.app.ui.about.AboutScreen.State
 import catchup.appconfig.AppConfig
-import catchup.base.ui.HazeScaffold
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
@@ -93,12 +92,7 @@ constructor(@Assisted val screen: AboutScreen, private val appConfig: AppConfig)
 @CircuitInject(AboutScreen::class, AppScope::class)
 @Composable
 fun About(state: State, modifier: Modifier = Modifier) {
-  HazeScaffold(
-    containerColor = Color.Transparent,
-    contentWindowInsets = WindowInsets(0, 0, 0, 0),
-    blurTopBar = true,
-    blurBottomBar = true,
-  ) { paddingValues ->
+  Scaffold(contentWindowInsets = WindowInsets(0, 0, 0, 0)) { paddingValues ->
     CollapsingAboutHeader(
       versionName = state.version,
       modifier = modifier.padding(paddingValues).fillMaxSize(),
