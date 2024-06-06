@@ -216,7 +216,7 @@ dependencyResolutionManagement {
 
 plugins {
   id("com.gradle.develocity") version "3.17.4"
-  id("com.dropbox.focus") version "0.5.1" apply false
+  id("com.dropbox.focus") version "0.6.0" apply false
 }
 
 val useProjectIsolation = System.getProperty("org.gradle.unsafe.isolated-projects", "false").toBoolean()
