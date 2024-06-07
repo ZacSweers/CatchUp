@@ -31,6 +31,7 @@ leakcanary = "3.0-alpha-8"
 lifecycle = "2.8.1"
 # TODO don't depend on newer until https://github.com/mikepenz/multiplatform-markdown-renderer/issues/154
 markdown = "0.16.0"
+material3-adaptive = "1.0.0-beta02"
 moshi = "1.15.1"
 moshix = "0.27.1"
 okhttp = "5.0.0-alpha.14"
@@ -146,6 +147,9 @@ compose-uiUtil = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "c
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-jb" }
 compose-material-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-jb" }
 compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
+compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "material3-adaptive" }
+compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "material3-adaptive" }
+compose-material3-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "material3-adaptive" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-database = "com.google.firebase:firebase-database:21.0.0"

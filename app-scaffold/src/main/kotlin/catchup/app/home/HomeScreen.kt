@@ -1,5 +1,7 @@
 package catchup.app.home
 
+import android.os.Parcelable
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.annotation.ColorRes
 import androidx.compose.animation.Animatable
@@ -30,6 +32,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -81,8 +87,6 @@ import catchup.deeplink.DeepLinkable
 import catchup.di.AppScope
 import catchup.service.api.ServiceMeta
 import catchup.util.toDayContext
-import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
-import com.google.accompanist.adaptive.TwoPane
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
@@ -230,7 +234,9 @@ constructor(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Parcelize class HomeItem(val id: String) : Parcelable
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 @CircuitInject(HomeScreen::class, AppScope::class)
 fun Home(state: State, modifier: Modifier = Modifier) {
@@ -244,16 +250,22 @@ fun Home(state: State, modifier: Modifier = Modifier) {
   if (foldingFeature != null) {
     // TODO
     //  try a PaneledCircuitContent where it's just a row of the backstack?
+    val navigator = rememberListDetailPaneScaffoldNavigator<HomeItem>()
 
-    TwoPane(
-      first = {
-        Box {
-          HomeList(state)
-          VerticalDivider(Modifier.align(Alignment.CenterEnd), thickness = Dp.Hairline)
+    BackHandler(navigator.canNavigateBack()) { navigator.navigateBack() }
+
+    ListDetailPaneScaffold(
+      directive = navigator.scaffoldDirective,
+      value = navigator.scaffoldValue,
+      listPane = {
+        AnimatedPane {
+          Box {
+            HomeList(state)
+            VerticalDivider(Modifier.align(Alignment.CenterEnd), thickness = Dp.Hairline)
+          }
         }
       },
-      // TODO animate content changes, ideally same as nav decoration
-      second = {
+      detailPane = {
         // TODO
         //  should probably just synthesize putting the settings in the list
         //  crossfade?
@@ -304,17 +316,6 @@ fun Home(state: State, modifier: Modifier = Modifier) {
           }
         }
       },
-      strategy = { density, layoutDirection, layoutCoordinates ->
-        // Split vertically if the height is larger than the width
-        if (layoutCoordinates.size.height >= layoutCoordinates.size.width) {
-            HorizontalTwoPaneStrategy(splitFraction = 0.4f)
-          } else {
-            HorizontalTwoPaneStrategy(splitFraction = 0.5f)
-          }
-          .calculateSplitResult(density, layoutDirection, layoutCoordinates)
-      },
-      displayFeatures = displayFeatures,
-      modifier = modifier,
     )
   } else {
     HomePager(state, modifier)
