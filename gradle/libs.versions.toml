@@ -26,7 +26,7 @@ jvmTarget = "17"
 kotlin = "2.0.0"
 kotlinx-serialization = "1.7.0"
 ksp = "2.0.0-1.0.22"
-ktfmt = "0.49"
+ktfmt = "0.51"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.8.1"
 # TODO don't depend on newer until https://github.com/mikepenz/multiplatform-markdown-renderer/issues/154
