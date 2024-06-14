@@ -215,7 +215,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version "3.17.4"
+  id("com.gradle.develocity") version "3.17.5"
   id("com.dropbox.focus") version "0.6.0" apply false
 }
 
