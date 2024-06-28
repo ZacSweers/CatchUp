@@ -30,7 +30,7 @@ ktfmt = "0.51"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.8.2"
 # TODO don't depend on newer until https://github.com/mikepenz/multiplatform-markdown-renderer/issues/154
-markdown = "0.21.0"
+markdown = "0.23.0"
 moshi = "1.15.1"
 moshix = "0.27.1"
 okhttp = "5.0.0-alpha.14"
@@ -136,7 +136,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-alpha01"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-alpha01"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.2.1"
-androidx-test-monitor = "androidx.test:monitor:1.7.0"
+androidx-test-monitor = "androidx.test:monitor:1.7.1"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-jb" }
@@ -284,9 +284,9 @@ tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", versi
 collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "collapsingToolbar" }
 
 test-junit = "junit:junit:4.13.2"
-test-truth = "com.google.truth:truth:1.4.2"
+test-truth = "com.google.truth:truth:1.4.3"
 
-xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.86.3"
+xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.90.1"
 xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.90.1"
 
 [bundles]
