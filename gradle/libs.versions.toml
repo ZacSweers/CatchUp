@@ -72,7 +72,7 @@ licensee = { id = "app.cash.licensee", version = "1.11.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.10.1" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.9.0" }
-retry = { id = "org.gradle.test-retry", version = "1.5.9" }
+retry = { id = "org.gradle.test-retry", version = "1.5.10" }
 sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
 sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
 sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sortDependencies" }
