@@ -15,14 +15,10 @@
  */
 import com.google.devtools.ksp.gradle.KspAATask
 import com.google.devtools.ksp.gradle.KspTaskJvm
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt)
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.apollo)
@@ -30,6 +26,13 @@ plugins {
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.moshix)
+}
+
+// TODO don't merge, just here for debugging
+plugins.whenPluginAdded {
+  if (this::class.qualifiedName?.contains("kapt", ignoreCase = true) == true) {
+    error("kapt applied!")
+  }
 }
 
 slack {
@@ -107,26 +110,6 @@ fun kspTaskDestinationProvider(name: String): Provider<File> {
       (kspDebugTask as TaskProvider<KspTaskJvm>).flatMap { it.destination }
     }
   return provider
-}
-
-// Workaround for https://youtrack.jetbrains.com/issue/KT-59220
-afterEvaluate {
-  val kspDebugTaskProvider = kspTaskDestinationProvider("kspDebugKotlin")
-  tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
-    source(kspDebugTaskProvider)
-  }
-  val kspReleaseTaskProvider = kspTaskDestinationProvider("kspReleaseKotlin")
-  tasks.named<KotlinCompile>("kaptGenerateStubsReleaseKotlin").configure {
-    source(kspReleaseTaskProvider)
-  }
-}
-
-tasks.withType<KaptGenerateStubsTask>().configureEach {
-  // TODO necessary until anvil supports something for K2 contribution merging
-  compilerOptions {
-    progressiveMode.set(false)
-    languageVersion.set(KotlinVersion.KOTLIN_1_9)
-  }
 }
 
 dependencies {
@@ -262,8 +245,8 @@ dependencies {
   debugImplementation(libs.retrofit.moshi)
   debugImplementation(projects.libraries.retrofitconverters)
 
-  kaptDebug(projects.libraries.tooling.spiMultibindsValidator)
-  kaptDebug(projects.libraries.tooling.spiVisualizer)
+  kspDebug(projects.libraries.tooling.spiMultibindsValidator)
+  kspDebug(projects.libraries.tooling.spiVisualizer)
 
   testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.misc.debug.flipper)
