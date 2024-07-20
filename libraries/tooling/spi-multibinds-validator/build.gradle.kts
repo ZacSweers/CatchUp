@@ -1,6 +1,5 @@
 plugins {
   alias(libs.plugins.kotlin.jvm)
-  alias(libs.plugins.kotlin.kapt)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.ksp)
 }
