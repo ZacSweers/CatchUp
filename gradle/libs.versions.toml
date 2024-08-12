@@ -8,7 +8,7 @@ appcompat = "1.7.0"
 benchmark = "1.3.0-rc01"
 compose-material3 = "1.3.0-beta05"
 emoji = "1.2.0-alpha03"
-anvil = "2.5.0-beta11"
+anvil = "0.2.2"
 apollo = "4.0.0-beta.7"
 circuit = "0.23.0"
 coil = "2.7.0"
@@ -29,7 +29,6 @@ ksp = "2.0.10-1.0.24"
 ktfmt = "0.51"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.8.4"
-# TODO don't depend on newer until https://github.com/mikepenz/multiplatform-markdown-renderer/issues/154
 markdown = "0.25.0"
 moshi = "1.15.1"
 moshix = "0.27.2"
@@ -38,7 +37,7 @@ okio = "3.9.0"
 preferences = "1.2.1"
 retrofit = "2.11.0"
 slack-lint = "0.7.4"
-sortDependencies = "0.8"
+sortDependencies = "0.7"
 sgp = "0.18.3"
 spotless = "6.25.0"
 sqldelight = "2.0.2"
@@ -48,7 +47,7 @@ xerial = "3.46.0.1"
 collapsingToolbar = "2.3.5"
 
 [plugins]
-anvil = { id = "com.squareup.anvil", version.ref = "anvil" }
+anvil = { id = "dev.zacsweers.anvil", version.ref = "anvil" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
@@ -150,9 +149,9 @@ compose-material-material3 = { module = "org.jetbrains.compose.material3:materia
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-database = "com.google.firebase:firebase-database:21.0.0"
 
-anvil-annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
-anvil-annotationsOptional = { module = "com.squareup.anvil:annotations-optional", version.ref = "anvil" }
-anvil-compiler = { module = "com.squareup.anvil:compiler", version.ref = "anvil" }
+anvil-annotations = { module = "dev.zacsweers.anvil:annotations", version.ref = "anvil" }
+anvil-annotationsOptional = { module = "dev.zacsweers.anvil:annotations-optional", version.ref = "anvil" }
+anvil-compiler = { module = "dev.zacsweers.anvil:compiler", version.ref = "anvil" }
 
 apollo-api = { module = "com.apollographql.apollo3:apollo-api", version.ref = "apollo" }
 apollo-httpcache = { module = "com.apollographql.apollo3:apollo-http-cache", version.ref = "apollo" }

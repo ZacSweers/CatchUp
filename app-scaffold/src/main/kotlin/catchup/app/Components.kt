@@ -6,7 +6,6 @@ import catchup.di.AppScope
 import catchup.di.SingleIn
 import com.squareup.anvil.annotations.MergeComponent
 import dagger.BindsInstance
-import dagger.Component
 import javax.inject.Provider
 
 @MergeComponent(AppScope::class)
@@ -17,7 +16,7 @@ interface ApplicationComponent {
 
   fun inject(application: CatchUpApplication)
 
-  @Component.Factory
+  @MergeComponent.Factory
   fun interface Factory {
     fun create(@BindsInstance application: Application): ApplicationComponent
   }

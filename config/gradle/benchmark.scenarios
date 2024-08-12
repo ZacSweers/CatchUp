@@ -1,0 +1,66 @@
+anvilKsp_appScaffold_K1_KAPT_ksp2 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K1_KAPT", "-Pksp.useKSP2=true"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+anvilKsp_appScaffold_K1_KSP_ONLY_ksp1 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K1_KSP_ONLY", "-Pksp.useKSP2=false"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+anvilKsp_appScaffold_K2_KSP_ONLY_ksp1 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K2_KSP_ONLY", "-Pksp.useKSP2=false"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+anvilKsp_appScaffold_K2_KSP_KAPT_ksp1 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K2_KSP_KAPT", "-Pksp.useKSP2=false"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+anvilKsp_appScaffold_K2_KSP_KAPT_ksp2 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K2_KSP_KAPT", "-Pksp.useKSP2=true"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+# TODO not working yet
+anvilKsp_appScaffold_K2_KSP_KAPT_ksp2_k2 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K2_KSP_KAPT", "-Pksp.useKSP2=true", "-Pkapt.use.k2=true"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}

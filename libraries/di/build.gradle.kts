@@ -30,7 +30,7 @@ kotlin {
       dependencies {
         api(libs.anvil.annotationsOptional)
         api(libs.dagger.runtime)
-}
+      }
     }
   }
 }

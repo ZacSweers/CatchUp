@@ -15,14 +15,14 @@
  */
 import com.google.devtools.ksp.gradle.KspAATask
 import com.google.devtools.ksp.gradle.KspTaskJvm
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import slack.gradle.SlackProperties
+import slack.gradle.anvil.AnvilMode
 
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt)
+  alias(libs.plugins.kotlin.kapt) apply false
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.sgp.base)
   alias(libs.plugins.apollo)
@@ -92,40 +92,37 @@ apollo {
   }
 }
 
-val useKsp2 = findProperty("ksp.useKSP2")?.toString().toBoolean()
+val anvilMode = SlackProperties(project).anvilMode
 
-@Suppress("UNCHECKED_CAST")
-fun kspTaskDestinationProvider(name: String): Provider<File> {
-  val taskType = if (useKsp2) KspAATask::class else KspTaskJvm::class
-  val kspDebugTask = tasks.named(name, taskType)
-  val provider: Provider<File> =
-    if (useKsp2) {
-      // TODO double check after KSP2 resources fix if this is right, or if we need to use the base
-      //  dir instead to make it more general
-      (kspDebugTask as TaskProvider<KspAATask>).flatMap { it.kspConfig.kotlinOutputDir }
-    } else {
-      (kspDebugTask as TaskProvider<KspTaskJvm>).flatMap { it.destination }
+if (!anvilMode.useDaggerKsp) {
+  apply(plugin = libs.plugins.kotlin.kapt.get().pluginId)
+  val useKsp2 = findProperty("ksp.useKSP2")?.toString().toBoolean()
+
+  @Suppress("UNCHECKED_CAST")
+  fun kspTaskDestinationProvider(name: String): Provider<File> {
+    val taskType = if (useKsp2) KspAATask::class else KspTaskJvm::class
+    val kspDebugTask = tasks.named(name, taskType)
+    val provider: Provider<File> =
+      if (useKsp2) {
+        // TODO double check after KSP2 resources fix if this is right, or if we need to use the base
+        //  dir instead to make it more general
+        (kspDebugTask as TaskProvider<KspAATask>).flatMap { it.kspConfig.kotlinOutputDir }
+      } else {
+        (kspDebugTask as TaskProvider<KspTaskJvm>).flatMap { it.destination }
+      }
+    return provider
+  }
+
+  // Workaround for https://youtrack.jetbrains.com/issue/KT-59220
+  afterEvaluate {
+    val kspDebugTaskProvider = kspTaskDestinationProvider("kspDebugKotlin")
+    tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
+      source(kspDebugTaskProvider)
     }
-  return provider
-}
-
-// Workaround for https://youtrack.jetbrains.com/issue/KT-59220
-afterEvaluate {
-  val kspDebugTaskProvider = kspTaskDestinationProvider("kspDebugKotlin")
-  tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
-    source(kspDebugTaskProvider)
-  }
-  val kspReleaseTaskProvider = kspTaskDestinationProvider("kspReleaseKotlin")
-  tasks.named<KotlinCompile>("kaptGenerateStubsReleaseKotlin").configure {
-    source(kspReleaseTaskProvider)
-  }
-}
-
-tasks.withType<KaptGenerateStubsTask>().configureEach {
-  // TODO necessary until anvil supports something for K2 contribution merging
-  compilerOptions {
-    progressiveMode.set(false)
-    languageVersion.set(KotlinVersion.KOTLIN_1_9)
+    val kspReleaseTaskProvider = kspTaskDestinationProvider("kspReleaseKotlin")
+    tasks.named<KotlinCompile>("kaptGenerateStubsReleaseKotlin").configure {
+      source(kspReleaseTaskProvider)
+    }
   }
 }
 
@@ -262,8 +259,13 @@ dependencies {
   debugImplementation(libs.retrofit.moshi)
   debugImplementation(projects.libraries.retrofitconverters)
 
-  kaptDebug(projects.libraries.tooling.spiMultibindsValidator)
-  kaptDebug(projects.libraries.tooling.spiVisualizer)
+  if (anvilMode.useDaggerKsp) {
+    "kspDebug"(projects.libraries.tooling.spiMultibindsValidator)
+    "kspDebug"(projects.libraries.tooling.spiVisualizer)
+  } else {
+    "kaptDebug"(projects.libraries.tooling.spiMultibindsValidator)
+    "kaptDebug"(projects.libraries.tooling.spiVisualizer)
+  }
 
   testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.misc.debug.flipper)
