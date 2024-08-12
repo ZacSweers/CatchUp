@@ -3,16 +3,16 @@ accompanist = "0.35.1-alpha"
 agp = "8.7.0-alpha05"
 androidx-activity = "1.9.0"
 androidx-core = "1.14.0-alpha01"
-androidx-sqlite = "2.5.0-alpha05"
+androidx-sqlite = "2.5.0-alpha06"
 appcompat = "1.7.0"
-benchmark = "1.3.0-beta02"
+benchmark = "1.3.0-rc01"
 compose-material3 = "1.3.0-beta05"
 emoji = "1.2.0-alpha03"
 anvil = "0.2.2"
 apollo = "4.0.0-beta.7"
 circuit = "0.23.0"
 coil = "2.7.0"
-compose = "1.7.0-beta06"
+compose = "1.7.0-beta07"
 compose-jb = "1.6.11"
 corbind = "1.11.0"
 coroutines = "1.9.0-RC"
@@ -20,12 +20,12 @@ dagger = "2.52"
 datastore = "1.1.1"
 detekt = "1.23.6"
 eithernet = "1.9.0"
-flipper = "0.261.0"
+flipper = "0.262.0"
 jdk = "21"
 jvmTarget = "17"
-kotlin = "2.0.0"
+kotlin = "2.0.10"
 kotlinx-serialization = "1.7.1"
-ksp = "2.0.0-1.0.24"
+ksp = "2.0.10-1.0.24"
 ktfmt = "0.51"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.8.4"
@@ -87,13 +87,13 @@ androidx-appCompat-resources = { module = "androidx.appcompat:appcompat-resource
 
 androidx-benchmark-macro-junit = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
 
-androidx-collection = "androidx.collection:collection:1.4.2"
+androidx-collection = "androidx.collection:collection:1.4.3"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
 androidx-customTabs = "androidx.browser:browser:1.8.0"
-androidx-design = "com.google.android.material:material:1.13.0-alpha04"
+androidx-design = "com.google.android.material:material:1.13.0-alpha05"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
@@ -126,14 +126,14 @@ androidx-compose-materialIcons = { module = "androidx.compose.material:material-
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
 androidx-compose-accompanist-systemUi = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha13"
-androidx-paging-compose = "androidx.paging:paging-compose:3.3.1"
+androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0-alpha14"
+androidx-paging-compose = "androidx.paging:paging-compose:3.3.2"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
 androidx-window = { module = "androidx.window:window", version = "1.3.0" }
 androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-alpha01"
 
-androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-alpha01"
+androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-alpha02"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.2.1"
 androidx-test-monitor = "androidx.test:monitor:1.7.1"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
@@ -221,7 +221,7 @@ markdown = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 misc-leakCanary-shark = { module = "com.squareup.leakcanary:shark", version.ref = "leakcanary" }
 misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
-misc-bugsnag = "com.bugsnag:bugsnag-android:6.6.1"
+misc-bugsnag = "com.bugsnag:bugsnag-android:6.7.0"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
