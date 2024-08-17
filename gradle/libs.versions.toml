@@ -241,7 +241,7 @@ misc-jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 misc-moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
 misc-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 misc-okio-fakeFileSystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
-misc-tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.3"
+misc-tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.14.0"
 misc-timber = "com.jakewharton.timber:timber:5.0.1"
 misc-unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
 misc-unfurl = "me.saket.unfurl:unfurl:1.7.0"
