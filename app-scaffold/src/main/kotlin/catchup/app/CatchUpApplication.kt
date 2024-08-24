@@ -111,6 +111,7 @@ class CatchUpApplication : Application() {
     )
   }
 
+  @Suppress("DEPRECATION")
   override fun onTrimMemory(level: Int) {
     super.onTrimMemory(level)
     when (level) {

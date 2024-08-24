@@ -30,7 +30,7 @@ val Context.versionInfo: VersionInfo
     return with(packageManager.getPackageInfo(packageName, 0)) {
       VersionInfo(
         code = sdk(28) { longVersionCode } ?: versionCode.toLong(),
-        name = versionName,
+        name = versionName!!,
         timestamp = timestamp,
       )
     }
