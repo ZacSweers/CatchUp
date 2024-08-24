@@ -215,12 +215,14 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version "3.17.6"
+  id("com.gradle.develocity") version "3.18"
   id("com.dropbox.focus") version "0.6.0" apply false
 }
 
-val useProjectIsolation = System.getProperty("org.gradle.unsafe.isolated-projects", "false").toBoolean()
+val useProjectIsolation =
+  System.getProperty("org.gradle.unsafe.isolated-projects", "false").toBoolean()
 val focusDisabled = System.getenv("NO_FOCUS").toBoolean()
+
 if (focusDisabled || useProjectIsolation) {
   apply(from = "settings-all.gradle.kts")
 } else {
@@ -258,6 +260,9 @@ configureIncludedBuild("sgp") { path ->
       substitute(module("com.slack.gradle:sgp")).using(project(":slack-plugin"))
       substitute(module("com.slack.gradle:sgp-agp-handler-api"))
         .using(project(":agp-handlers:agp-handler-api"))
+      substitute(module("com.slack.gradle:sgp-common")).using(project(":sgp-common"))
+      substitute(module("com.slack.gradle:skippy")).using(project(":skippy"))
+      substitute(module("com.slack.gradle:sgp-tracing")).using(project(":tracing"))
     }
   }
 }

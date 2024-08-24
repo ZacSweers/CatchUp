@@ -1,7 +1,7 @@
 package catchup.app.util
 
 import catchup.di.AppScope
-import com.squareup.anvil.annotations.optional.SingleIn
+import catchup.di.SingleIn
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
