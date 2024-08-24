@@ -1,21 +1,21 @@
 [versions]
-accompanist = "0.35.1-alpha"
-agp = "8.7.0-alpha05"
+accompanist = "0.35.2-beta"
+agp = "8.7.0-alpha07"
 androidx-activity = "1.9.0"
-androidx-core = "1.14.0-alpha01"
+androidx-core = "1.15.0-alpha02"
 androidx-sqlite = "2.5.0-alpha06"
 appcompat = "1.7.0"
-benchmark = "1.3.0-rc01"
-compose-material3 = "1.3.0-beta05"
+benchmark = "1.3.0"
+compose-material3 = "1.3.0-rc01"
 emoji = "1.2.0-alpha03"
-anvil = "0.2.2"
+anvil = "0.2.6"
 apollo = "4.0.0-beta.7"
 circuit = "0.23.0"
 coil = "2.7.0"
 compose = "1.7.0-beta07"
 compose-jb = "1.6.11"
 corbind = "1.11.0"
-coroutines = "1.9.0-RC"
+coroutines = "1.9.0-RC.2"
 dagger = "2.52"
 datastore = "1.1.1"
 detekt = "1.23.6"
@@ -37,13 +37,13 @@ okio = "3.9.0"
 preferences = "1.2.1"
 retrofit = "2.11.0"
 slack-lint = "0.7.4"
-sortDependencies = "0.7"
-sgp = "0.18.3"
+sortDependencies = "0.8"
+sgp = "0.18.4"
 spotless = "6.25.0"
 sqldelight = "2.0.2"
 telephoto = "0.12.1"
 tikxml = "0.8.15"
-xerial = "3.46.0.1"
+xerial = "3.46.1.0"
 collapsingToolbar = "2.3.5"
 
 [plugins]
@@ -135,7 +135,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-alpha01"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-alpha02"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.2.1"
-androidx-test-monitor = "androidx.test:monitor:1.7.1"
+androidx-test-monitor = "androidx.test:monitor:1.7.2"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-jb" }
@@ -209,7 +209,7 @@ javaxInject = "javax.inject:javax.inject:1"
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
-kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.6.0"
+kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.6.1"
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
@@ -227,7 +227,7 @@ misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.11.0"
-misc-debug-guava = "com.google.guava:guava:33.2.1-jre"
+misc-debug-guava = "com.google.guava:guava:33.3.0-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:3.0.0"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.3.0"
 
@@ -241,10 +241,10 @@ misc-jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 misc-moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"
 misc-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 misc-okio-fakeFileSystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
-misc-tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.13.3"
+misc-tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.14.0"
 misc-timber = "com.jakewharton.timber:timber:5.0.1"
 misc-unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
-misc-unfurl = "me.saket.unfurl:unfurl:1.7.0"
+misc-unfurl = "me.saket.unfurl:unfurl:2.2.0"
 
 moshi-core = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-shimo = "com.jakewharton.moshi:shimo:0.1.1"
