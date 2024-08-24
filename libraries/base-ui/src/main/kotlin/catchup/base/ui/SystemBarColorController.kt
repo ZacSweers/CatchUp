@@ -162,6 +162,7 @@ internal class AndroidSystemBarColorController(
   ) {
     statusBarDarkContentEnabled = darkIcons
 
+    @Suppress("DEPRECATION")
     window?.statusBarColor =
       when {
         darkIcons && windowInsetsController?.isAppearanceLightStatusBars != true -> {
@@ -183,6 +184,7 @@ internal class AndroidSystemBarColorController(
     navigationBarDarkContentEnabled = darkIcons
     isNavigationBarContrastEnforced = navigationBarContrastEnforced
 
+    @Suppress("DEPRECATION")
     window?.navigationBarColor =
       when {
         darkIcons && windowInsetsController?.isAppearanceLightNavigationBars != true -> {
