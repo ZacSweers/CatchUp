@@ -17,7 +17,6 @@ import com.google.devtools.ksp.gradle.KspAATask
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import slack.gradle.SlackProperties
-import slack.gradle.anvil.AnvilMode
 
 plugins {
   alias(libs.plugins.android.library)
@@ -31,6 +30,8 @@ plugins {
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.moshix)
 }
+
+kotlin { compilerOptions { optIn.add("androidx.compose.material3.ExperimentalMaterial3Api") } }
 
 slack {
   @Suppress("OPT_IN_USAGE")
@@ -104,8 +105,8 @@ if (!anvilMode.useDaggerKsp) {
     val kspDebugTask = tasks.named(name, taskType)
     val provider: Provider<File> =
       if (useKsp2) {
-        // TODO double check after KSP2 resources fix if this is right, or if we need to use the base
-        //  dir instead to make it more general
+        // TODO double check after KSP2 resources fix if this is right, or if we need to use the
+        //  base dir instead to make it more general
         (kspDebugTask as TaskProvider<KspAATask>).flatMap { it.kspConfig.kotlinOutputDir }
       } else {
         (kspDebugTask as TaskProvider<KspTaskJvm>).flatMap { it.destination }
