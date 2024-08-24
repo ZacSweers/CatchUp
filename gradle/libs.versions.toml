@@ -244,7 +244,7 @@ misc-okio-fakeFileSystem = { module = "com.squareup.okio:okio-fakefilesystem", v
 misc-tapTargetView = "com.getkeepsafe.taptargetview:taptargetview:1.14.0"
 misc-timber = "com.jakewharton.timber:timber:5.0.1"
 misc-unbescape = "org.unbescape:unbescape:1.1.6.RELEASE"
-misc-unfurl = "me.saket.unfurl:unfurl:2.1.0"
+misc-unfurl = "me.saket.unfurl:unfurl:2.2.0"
 
 moshi-core = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-shimo = "com.jakewharton.moshi:shimo:0.1.1"
