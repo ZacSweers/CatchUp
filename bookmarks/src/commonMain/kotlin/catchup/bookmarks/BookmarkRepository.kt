@@ -85,7 +85,8 @@ internal class BookmarkRepositoryImpl(
 }
 
 fun <T : Any, R : Any> Query<T>.map(mapper: (T) -> R): Query<R> {
-  @Suppress("UNCHECKED_CAST") return MappedQuery(this, mapper as (Any) -> Any) as Query<R>
+  @Suppress("UNCHECKED_CAST")
+  return MappedQuery(this, mapper as (Any) -> Any) as Query<R>
 }
 
 private class MappedQuery(private val original: Query<Any>, private val newMapper: (Any) -> Any) :
