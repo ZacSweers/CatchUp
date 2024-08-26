@@ -120,7 +120,8 @@ class ParameterizedOkioAtomicFileTests(
       if (!expectedType.isInstance(t)) {
         sneakyThrow<RuntimeException>(t)
       }
-      @Suppress("UNCHECKED_CAST") return t as T
+      @Suppress("UNCHECKED_CAST")
+      return t as T
     }
     throw AssertionError(String.format("Expected %s wasn't thrown", expectedType.simpleName))
   }
