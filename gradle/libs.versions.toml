@@ -133,7 +133,7 @@ androidx-compose-material-material3-windowSizeClass = { module = "androidx.compo
 androidx-window = { module = "androidx.window:window", version = "1.4.0-alpha02" }
 androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-alpha02"
 
-androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-beta01"
+androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-rc01"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.2.1"
 androidx-test-monitor = "androidx.test:monitor:1.7.2"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
