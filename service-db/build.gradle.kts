@@ -16,7 +16,7 @@
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.sqldelight)
 }
 
@@ -40,7 +40,7 @@ kotlin {
 
 android { namespace = "catchup.service.db" }
 
-slack {
+foundry {
   features {
     dagger()
   }

@@ -16,7 +16,7 @@
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.noarg)
@@ -30,7 +30,7 @@ android {
   }
 }
 
-slack {
+foundry {
   features {
     dagger()
   }

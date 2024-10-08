@@ -1,7 +1,7 @@
 import com.android.build.api.variant.BuildConfigField
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.parcelize)
@@ -9,7 +9,7 @@ plugins {
   alias(libs.plugins.sqldelight)
 }
 
-slack {
+foundry {
   features {
     compose()
     dagger()

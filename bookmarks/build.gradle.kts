@@ -16,7 +16,7 @@
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.anvil)
 }
 
@@ -54,7 +54,7 @@ kotlin {
 
 android { namespace = "catchup.bookmarks" }
 
-slack {
+foundry {
   features {
     dagger()
   }
