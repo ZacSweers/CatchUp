@@ -31,7 +31,7 @@ pluginManagement {
 
   repositories {
     // Snapshots
-    if (hasProperty("catchup.config.enableSnapshots")) {
+    if (hasProperty("foundry.gradle.config.enableSnapshots")) {
       maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
         name = "snapshots-maven-central"
         mavenContent { snapshotsOnly() }
@@ -144,7 +144,7 @@ dependencyResolutionManagement {
     // snapshot artifacts
 
     // Snapshots
-    if (hasProperty("catchup.config.enableSnapshots")) {
+    if (hasProperty("foundry.gradle.config.enableSnapshots")) {
       maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
         name = "snapshots-maven-central"
         mavenContent { snapshotsOnly() }
@@ -250,24 +250,29 @@ develocity {
 rootProject.name = "CatchUp"
 
 inline fun configureIncludedBuild(key: String, body: (path: String) -> Unit) {
-  System.getProperty("slack.include-build.$key")?.let(body)
+  System.getProperty("catchup.include-build.$key")?.let(body)
 }
 
-// See comments on systemProp.slack.include-build.sgp property in gradle.properties
-configureIncludedBuild("sgp") { path ->
+// See comments on systemProp.catchup.include-build.foundry property in gradle.properties
+configureIncludedBuild("foundry") { path ->
+  println("including build $path")
   includeBuild(path) {
     dependencySubstitution {
-      substitute(module("com.slack.gradle:sgp")).using(project(":slack-plugin"))
-      substitute(module("com.slack.gradle:sgp-agp-handler-api"))
-        .using(project(":agp-handlers:agp-handler-api"))
-      substitute(module("com.slack.gradle:sgp-common")).using(project(":sgp-common"))
-      substitute(module("com.slack.gradle:skippy")).using(project(":skippy"))
-      substitute(module("com.slack.gradle:sgp-tracing")).using(project(":tracing"))
+      substitute(module("com.slack.foundry:gradle-plugin"))
+        .using(project(":platforms:gradle:foundry-gradle-plugin"))
+      substitute(module("com.slack.foundry:agp-handler-api"))
+        .using(project(":platforms:gradle:agp-handlers:agp-handler-api"))
+      substitute(module("com.slack.foundry:foundry-common"))
+        .using(project(":tools:foundry-common"))
+      substitute(module("com.slack.foundry:skippy"))
+        .using(project(":tools:skippy"))
+      substitute(module("com.slack.foundry:tracing"))
+        .using(project(":tools:tracing"))
     }
   }
 }
 
-// See comments on systemProp.slack.include-build.dagp property in gradle.properties
+// See comments on systemProp.catchup.include-build.dagp property in gradle.properties
 configureIncludedBuild("dagp") { path ->
   includeBuild(path) {
     dependencySubstitution {
@@ -276,7 +281,7 @@ configureIncludedBuild("dagp") { path ->
   }
 }
 
-// See comments on systemProp.slack.include-build.anvil property in gradle.properties
+// See comments on systemProp.catchup.include-build.anvil property in gradle.properties
 configureIncludedBuild("anvil") { path ->
   includeBuild(path) {
     dependencySubstitution {

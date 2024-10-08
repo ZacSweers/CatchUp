@@ -29,7 +29,7 @@ import okio.source
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.licensee)
   alias(libs.plugins.bugsnag)
   alias(libs.plugins.baselineprofile)

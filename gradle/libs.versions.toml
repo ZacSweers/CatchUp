@@ -38,7 +38,7 @@ preferences = "1.2.1"
 retrofit = "2.11.0"
 slack-lint = "0.8.1"
 sortDependencies = "0.8"
-sgp = "0.19.1"
+foundry = "0.20.0-alpha03"
 spotless = "7.0.0.BETA2"
 sqldelight = "2.0.2"
 telephoto = "0.13.0"
@@ -72,8 +72,8 @@ moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.11.0" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.10.0" }
 retry = { id = "org.gradle.test-retry", version = "1.6.0" }
-sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
-sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
+foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
+foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
 sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sortDependencies" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

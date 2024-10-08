@@ -1,7 +1,7 @@
-import slack.gradle.Platforms
+import foundry.gradle.Platforms
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   `java-platform`
 }
 

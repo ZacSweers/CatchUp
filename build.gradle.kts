@@ -22,8 +22,8 @@ plugins {
   alias(libs.plugins.android.application) apply false
   alias(libs.plugins.android.library) apply false
   alias(libs.plugins.android.test) apply false
-  alias(libs.plugins.sgp.root)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.root)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.doctor) apply false
   alias(libs.plugins.ksp) apply false

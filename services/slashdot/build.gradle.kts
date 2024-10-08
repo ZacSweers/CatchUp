@@ -15,7 +15,7 @@
  */
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.serialization)
@@ -23,7 +23,7 @@ plugins {
 
 android { namespace = "catchup.service.slashdot" }
 
-slack {
+foundry {
   features { dagger() }
   android { features { resources("catchup_service_sd_") } }
 }

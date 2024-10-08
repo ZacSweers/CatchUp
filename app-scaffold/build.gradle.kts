@@ -16,14 +16,14 @@
 import com.google.devtools.ksp.gradle.KspAATask
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import slack.gradle.SlackProperties
+import foundry.gradle.FoundryProperties
 
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.kapt) apply false
   alias(libs.plugins.kotlin.parcelize)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.apollo)
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
@@ -33,7 +33,7 @@ plugins {
 
 kotlin { compilerOptions { optIn.add("androidx.compose.material3.ExperimentalMaterial3Api") } }
 
-slack {
+foundry {
   @Suppress("OPT_IN_USAGE")
   features {
     compose {
@@ -93,7 +93,7 @@ apollo {
   }
 }
 
-val anvilMode = SlackProperties(project).anvilMode
+val anvilMode = FoundryProperties(project).anvilMode
 
 if (!anvilMode.useDaggerKsp) {
   apply(plugin = libs.plugins.kotlin.kapt.get().pluginId)
