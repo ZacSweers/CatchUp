@@ -87,7 +87,7 @@ androidx-appCompat-resources = { module = "androidx.appcompat:appcompat-resource
 
 androidx-benchmark-macro-junit = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
 
-androidx-collection = "androidx.collection:collection:1.5.0-alpha03"
+androidx-collection = "androidx.collection:collection:1.5.0-alpha04"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
