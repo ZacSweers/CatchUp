@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 8.4.0-alpha06" type="baseline" client="gradle" dependencies="false" name="AGP (8.4.0-alpha06)" variant="all" version="8.4.0-alpha06">
+<issues format="6" by="lint 8.7.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.7.0)" variant="all" version="8.7.0">
 
     <issue
         id="ComposeModifierComposed"
@@ -10,50 +10,6 @@
             file="src/main/kotlin/catchup/compose/RecomposeHighligher.kt"
             line="46"
             column="3"/>
-    </issue>
-
-    <issue
-        id="ComposeCompositionLocalUsage"
-        message="`CompositionLocal`s are implicit dependencies and creating new ones should be avoided. See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information."
-        errorLine1="val LocalEnabled = compositionLocalOf { true }"
-        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/catchup/compose/DisableableContent.kt"
-            line="8"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="ComposeCompositionLocalUsage"
-        message="`CompositionLocal`s are implicit dependencies and creating new ones should be avoided. See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information."
-        errorLine1="val LocalDisplayFeatures = staticCompositionLocalOf&lt;List&lt;DisplayFeature>> { emptyList() }"
-        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/catchup/compose/DisplayFeatures.kt"
-            line="6"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="ComposeCompositionLocalUsage"
-        message="`CompositionLocal`s are implicit dependencies and creating new ones should be avoided. See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information."
-        errorLine1="val LocalDynamicTheme = compositionLocalOf { false }"
-        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/catchup/compose/DynamicTheme.kt"
-            line="9"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="ComposeCompositionLocalUsage"
-        message="`CompositionLocal`s are implicit dependencies and creating new ones should be avoided. See https://slackhq.github.io/compose-lints/rules/#compositionlocals for more information."
-        errorLine1="/**"
-        errorLine2="^">
-        <location
-            file="src/main/kotlin/catchup/compose/ScrollToTop.kt"
-            line="32"
-            column="1"/>
     </issue>
 
 </issues>

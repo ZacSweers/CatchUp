@@ -3,6 +3,7 @@ package catchup.gemoji.generator
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import catchup.gemoji.db.mutable.GemojiDatabase
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.file

@@ -18,7 +18,7 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.redacted)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
 }
 
 android {
@@ -32,7 +32,7 @@ redacted {
   redactedAnnotation.set("catchup.util.network.Redacted")
 }
 
-slack {
+foundry {
   android {
     features {
       resources("catchup_util_")

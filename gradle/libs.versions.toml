@@ -2,33 +2,34 @@
 accompanist = "0.36.0"
 agp = "8.8.0-alpha07"
 androidx-activity = "1.10.0-alpha02"
-androidx-core = "1.15.0-alpha02"
-androidx-sqlite = "2.5.0-alpha08"
+androidx-core = "1.15.0-rc01"
+androidx-sqlite = "2.5.0-alpha09"
 appcompat = "1.7.0"
-benchmark = "1.3.0"
+benchmark = "1.4.0-alpha02"
 compose-material3 = "1.3.0"
 emoji = "1.2.0-alpha03"
-anvil = "0.3.1"
+anvil = "0.3.3"
 apollo = "4.0.0-beta.7"
 circuit = "0.24.0"
 coil = "2.7.0"
-compose = "1.7.2"
-compose-jb = "1.6.11"
+compose = "1.7.3"
+compose-jb = "1.7.0"
 corbind = "1.11.0"
 coroutines = "1.9.0"
 dagger = "2.52"
 datastore = "1.1.1"
 detekt = "1.23.7"
 eithernet = "1.9.0"
-flipper = "0.267.1"
+flipper = "0.270.0"
+foundry = "0.20.2"
 jdk = "22"
 jvmTarget = "17"
-kotlin = "2.0.20"
-kotlinx-serialization = "1.7.2"
-ksp = "2.0.20-1.0.25"
+kotlin = "2.0.21"
+kotlinx-serialization = "1.7.3"
+ksp = "2.0.21-1.0.25"
 ktfmt = "0.52"
 leakcanary = "3.0-alpha-8"
-lifecycle = "2.9.0-alpha02"
+lifecycle = "2.9.0-alpha04"
 markdown = "0.26.0"
 moshi = "1.15.1"
 moshix = "0.28.0"
@@ -36,14 +37,13 @@ okhttp = "5.0.0-alpha.14"
 okio = "3.9.1"
 preferences = "1.2.1"
 retrofit = "2.11.0"
-slack-lint = "0.7.4"
+slack-lint = "0.8.2"
 sortDependencies = "0.8"
-sgp = "0.19.1"
-spotless = "7.0.0.BETA2"
+spotless = "7.0.0.BETA3"
 sqldelight = "2.0.2"
 telephoto = "0.13.0"
 tikxml = "0.8.15"
-xerial = "3.46.1.0"
+xerial = "3.46.1.3"
 collapsingToolbar = "2.3.5"
 
 [plugins]
@@ -72,14 +72,14 @@ moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.11.0" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.10.0" }
 retry = { id = "org.gradle.test-retry", version = "1.6.0" }
-sgp-base = { id = "com.slack.gradle.base", version.ref = "sgp" }
-sgp-root = { id = "com.slack.gradle.root", version.ref = "sgp" }
+foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
+foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
 sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sortDependencies" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
 [libraries]
-androidx-annotations = "androidx.annotation:annotation:1.9.0-beta01"
+androidx-annotations = "androidx.annotation:annotation:1.9.0-rc01"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -87,7 +87,7 @@ androidx-appCompat-resources = { module = "androidx.appcompat:appcompat-resource
 
 androidx-benchmark-macro-junit = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
 
-androidx-collection = "androidx.collection:collection:1.5.0-alpha01"
+androidx-collection = "androidx.collection:collection:1.5.0-alpha03"
 
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
@@ -97,7 +97,7 @@ androidx-design = "com.google.android.material:material:1.13.0-alpha06"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
-androidx-fragment = "androidx.fragment:fragment:1.8.3"
+androidx-fragment = "androidx.fragment:fragment:1.8.4"
 
 androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
@@ -130,10 +130,10 @@ androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0-be
 androidx-paging-compose = "androidx.paging:paging-compose:3.3.2"
 androidx-compose-material-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-material-material3-windowSizeClass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose-material3" }
-androidx-window = { module = "androidx.window:window", version = "1.4.0-alpha02" }
+androidx-window = { module = "androidx.window:window", version = "1.4.0-alpha04" }
 androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-alpha02"
 
-androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.0-rc01"
+androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.2.1"
 androidx-test-monitor = "androidx.test:monitor:1.7.2"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
@@ -179,7 +179,7 @@ circuitx-android = { module = "com.slack.circuit:circuitx-android", version.ref 
 circuitx-gestureNav = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
 circuitx-overlays = { module = "com.slack.circuit:circuitx-overlays", version.ref = "circuit" }
 
-clikt = "com.github.ajalt.clikt:clikt:4.4.0"
+clikt = "com.github.ajalt.clikt:clikt:5.0.1"
 
 coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
 coil-default = { module = "io.coil-kt:coil", version.ref = "coil" }
@@ -198,7 +198,7 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 
-errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.32.0"
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.33.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
@@ -214,20 +214,20 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 
-lints-compose = "com.slack.lint.compose:compose-lint-checks:1.3.1"
+lints-compose = "com.slack.lint.compose:compose-lint-checks:1.4.1"
 
 markdown = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "markdown" }
 
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 misc-leakCanary-shark = { module = "com.squareup.leakcanary:shark", version.ref = "leakcanary" }
 misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
-misc-bugsnag = "com.bugsnag:bugsnag-android:6.7.0"
+misc-bugsnag = "com.bugsnag:bugsnag-android:6.8.0"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.12.1"
-misc-debug-guava = "com.google.guava:guava:33.3.0-jre"
+misc-debug-guava = "com.google.guava:guava:33.3.1-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:3.0.0"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.3.0"
 
@@ -286,7 +286,7 @@ test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.4.4"
 
 xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.90.1"
-xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.90.1"
+xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.90.2"
 
 [bundles]
 common-lint = ["slack-lint-checks", "lints-compose"]

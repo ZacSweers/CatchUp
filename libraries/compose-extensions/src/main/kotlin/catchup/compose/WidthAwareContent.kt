@@ -20,6 +20,7 @@ fun columnCount(minColumns: Int, minColumnWidth: Dp = 250.dp): Int {
   return (availableWidth / minWidthPx).toInt().coerceAtLeast(minColumns)
 }
 
+@Suppress("ComposeContentEmitterReturningValues")
 @Composable
 fun rememberAvailableWidth(): Float {
   var availableWidth by remember { mutableFloatStateOf(0f) }

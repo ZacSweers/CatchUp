@@ -16,7 +16,7 @@
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.anvil)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   // TODO why doesn't SGP handle this
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
@@ -50,6 +50,6 @@ kotlin {
   }
 }
 
-slack { features { dagger() } }
+foundry { features { dagger() } }
 
 sqldelight { databases { create("UnfurlerDatabase") { packageName.set("catchup.unfurler") } } }
