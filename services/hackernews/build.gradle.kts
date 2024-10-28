@@ -26,7 +26,6 @@ android {
   namespace = "catchup.service.hackernews"
   buildFeatures {
     resValues = true
-    viewBinding = true
   }
 }
 

@@ -46,7 +46,7 @@ apollo {
 foundry {
   features {
     dagger()
-    moshi(codegen = true)
+    moshi(codegen = false)
   }
   android {
     features {

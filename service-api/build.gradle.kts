@@ -56,7 +56,6 @@ android { namespace = "catchup.service.api" }
 
 foundry {
   features {
-    compose()
     dagger()
   }
 }

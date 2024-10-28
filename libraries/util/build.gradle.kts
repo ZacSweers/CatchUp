@@ -23,9 +23,6 @@ plugins {
 
 android {
   namespace = "catchup.util"
-  buildFeatures {
-    viewBinding = true
-  }
 }
 
 redacted {

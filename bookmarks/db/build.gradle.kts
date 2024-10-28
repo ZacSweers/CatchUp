@@ -41,12 +41,6 @@ kotlin {
 
 android { namespace = "catchup.bookmarks.db" }
 
-foundry {
-  features {
-    dagger()
-  }
-}
-
 sqldelight {
   databases {
     create("CatchUpDatabase") {
