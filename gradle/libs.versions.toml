@@ -6,13 +6,13 @@ androidx-core = "1.15.0-rc01"
 androidx-sqlite = "2.5.0-alpha10"
 appcompat = "1.7.0"
 benchmark = "1.4.0-alpha04"
-compose-material3 = "1.3.0"
+compose-material3 = "1.3.1"
 emoji = "1.2.0-alpha03"
 anvil = "0.3.3"
 apollo = "4.0.0-beta.7"
 circuit = "0.25.0"
 coil = "2.7.0"
-compose = "1.7.4"
+compose = "1.7.5"
 compose-jb = "1.7.0"
 corbind = "1.11.0"
 coroutines = "1.9.0"
@@ -79,7 +79,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
 [libraries]
-androidx-annotations = "androidx.annotation:annotation:1.9.0"
+androidx-annotations = "androidx.annotation:annotation:1.9.1"
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
