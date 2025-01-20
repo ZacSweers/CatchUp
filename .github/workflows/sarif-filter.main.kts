@@ -1,5 +1,5 @@
 #!/usr/bin/env kotlin
-@file:DependsOn("com.github.ajalt.clikt:clikt-jvm:5.0.1")
+@file:DependsOn("com.github.ajalt.clikt:clikt-jvm:5.0.2")
 @file:DependsOn("com.squareup.moshi:moshi:1.15.1")
 @file:DependsOn("com.squareup.moshi:moshi-kotlin:1.15.1")
 
