@@ -203,6 +203,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
+eithernet-retrofit = { module = "com.slack.eithernet:eithernet-integration-retrofit", version.ref = "eithernet" }
 
 errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.36.0"
 
