@@ -16,8 +16,8 @@ import androidx.compose.ui.graphics.Color
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 
 @Composable
 fun HazeScaffold(
@@ -39,11 +39,29 @@ fun HazeScaffold(
   NestedScaffold(
     modifier = modifier,
     topBar = {
-      Box(modifier = Modifier.thenIf(blurTopBar) { hazeChild(hazeState) }, content = { topBar() })
+      Box(modifier = Modifier.thenIf(blurTopBar) {
+        hazeEffect(
+          hazeState, style =
+            HazeStyle(
+              tint = HazeDefaults.tint(containerColor),
+              blurRadius = HazeDefaults.blurRadius,
+              noiseFactor = HazeDefaults.noiseFactor,
+            )
+        )
+      }, content = { topBar() })
     },
     bottomBar = {
       Box(
-        modifier = Modifier.thenIf(blurBottomBar) { hazeChild(hazeState) },
+        modifier = Modifier.thenIf(blurBottomBar) {
+          hazeEffect(
+            hazeState, style =
+              HazeStyle(
+                tint = HazeDefaults.tint(containerColor),
+                blurRadius = HazeDefaults.blurRadius,
+                noiseFactor = HazeDefaults.noiseFactor,
+              )
+          )
+        },
         content = { bottomBar() },
       )
     },
@@ -56,14 +74,8 @@ fun HazeScaffold(
   ) { contentPadding ->
     Box(
       modifier =
-        Modifier.haze(
+        Modifier.hazeSource(
           state = hazeState,
-          style =
-            HazeStyle(
-              HazeDefaults.tint(containerColor),
-              HazeDefaults.blurRadius,
-              HazeDefaults.noiseFactor,
-            ),
         ),
       content = { content(contentPadding) },
     )
