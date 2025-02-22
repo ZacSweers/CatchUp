@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.36.0"
-agp = "8.8.0"
+agp = "8.8.1"
 androidx-activity = "1.10.0"
 androidx-core = "1.16.0-alpha01"
 androidx-sqlite = "2.5.0-alpha13"
@@ -21,12 +21,12 @@ datastore = "1.1.1"
 detekt = "1.23.7"
 eithernet = "1.9.0"
 flipper = "0.273.0"
-foundry = "0.21.0"
-jdk = "22"
+foundry = "0.24.10"
+jdk = "23"
 jvmTarget = "17"
 kotlin = "2.1.10"
 kotlinx-serialization = "1.8.0"
-ksp = "2.1.10-1.0.29"
+ksp = "2.1.10-1.0.30"
 ktfmt = "0.54"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.9.0-alpha09"
@@ -70,7 +70,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.12.0" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.12.1" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.12.0" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.12.1" }
 retry = { id = "org.gradle.test-retry", version = "1.6.1" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
 foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
