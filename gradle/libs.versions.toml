@@ -1,5 +1,5 @@
 [versions]
-accompanist = "0.36.0"
+accompanist = "0.37.2"
 agp = "8.8.1"
 androidx-activity = "1.10.0"
 androidx-core = "1.16.0-alpha02"
