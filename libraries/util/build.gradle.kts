@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright (c) 2018 Zac Sweers
  *
@@ -26,7 +28,7 @@ android {
 }
 
 redacted {
-  redactedAnnotation.set("catchup.util.network.Redacted")
+  redactedAnnotations.add("catchup/util/network/Redacted")
 }
 
 foundry {
