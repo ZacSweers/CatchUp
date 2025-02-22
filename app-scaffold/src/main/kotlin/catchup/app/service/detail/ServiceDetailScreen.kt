@@ -186,32 +186,32 @@ constructor(
     val overlayHost = LocalOverlayHost.current
     val (detail, unfurl) = compositeDetail ?: return initialState
     val filteredDetail by
-    rememberRetained(detail, collapsedItems) {
-      derivedStateOf {
-        when (detail) {
-          is Detail.Shallow -> detail
-          is Detail.Full -> {
-            detail.copy(
-              comments =
-                persistentListOf<Comment>().mutate {
-                  var collapsedDepth = -1
-                  for (comment in detail.comments) {
-                    if (collapsedDepth != -1 && comment.depth >= collapsedDepth) {
-                      continue
-                    } else if (comment.id in collapsedItems) {
-                      collapsedDepth = comment.depth + 1
-                      it.add(comment)
-                    } else {
-                      collapsedDepth = -1
-                      it.add(comment)
+      rememberRetained(detail, collapsedItems) {
+        derivedStateOf {
+          when (detail) {
+            is Detail.Shallow -> detail
+            is Detail.Full -> {
+              detail.copy(
+                comments =
+                  persistentListOf<Comment>().mutate {
+                    var collapsedDepth = -1
+                    for (comment in detail.comments) {
+                      if (collapsedDepth != -1 && comment.depth >= collapsedDepth) {
+                        continue
+                      } else if (comment.id in collapsedItems) {
+                        collapsedDepth = comment.depth + 1
+                        it.add(comment)
+                      } else {
+                        collapsedDepth = -1
+                        it.add(comment)
+                      }
                     }
                   }
-                }
-            )
+              )
+            }
           }
         }
       }
-    }
     return ServiceDetailScreen.State(
       detail = filteredDetail,
       unfurl = unfurl.takeUnless { !filteredDetail.allowUnfurl },
@@ -275,10 +275,8 @@ fun DetailUi(state: ServiceDetailScreen.State, modifier: Modifier = Modifier) {
               "${state.detail.commentsCount?.toLong()?.format() ?: "No"} comments"
             }
           // TODO animation is clipped
-          AnimatedContent(
-            scrollBehavior.state.overlappedFraction != 0f,
-            label = "AppBar Title"
-          ) { scrolled ->
+          AnimatedContent(scrollBehavior.state.overlappedFraction != 0f, label = "AppBar Title") {
+            scrolled ->
             if (scrolled) {
               Text(text = formattedScore)
             }
@@ -306,9 +304,7 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
     when (numComments) {
       -1 -> {
         item(key = "loading", contentType = "loading") {
-          Box(Modifier
-            .fillParentMaxSize()
-            .animateItem(), contentAlignment = Alignment.Center) {
+          Box(Modifier.fillParentMaxSize().animateItem(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = state.themeColor)
           }
         }
@@ -317,10 +313,7 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
       0 -> {
         item(key = "empty", contentType = "empty") {
           Box(
-            modifier = Modifier
-              .animateItem()
-              .padding(16.dp)
-              .fillMaxWidth(),
+            modifier = Modifier.animateItem().padding(16.dp).fillMaxWidth(),
             contentAlignment = Alignment.Center,
           ) {
             Text("No comments 📭")
@@ -360,9 +353,7 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
         AsyncImage(
           model = it,
           contentDescription = "Image",
-          modifier = Modifier
-            .fillMaxWidth()
-            .clickable { state.eventSink(OpenImage) },
+          modifier = Modifier.fillMaxWidth().clickable { state.eventSink(OpenImage) },
           contentScale = ContentScale.FillWidth,
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -422,8 +413,7 @@ private fun CommentItem(
         val startPadding = 8.dp * comment.depth
         Column(
           modifier =
-            Modifier
-              .padding(start = startPadding + 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp)
+            Modifier.padding(start = startPadding + 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp)
               .animateContentSize()
         ) {
           Row {
@@ -457,11 +447,11 @@ private fun CommentItem(
               val formattedTimestamp =
                 remember(comment.timestamp) {
                   DateUtils.getRelativeTimeSpanString(
-                    comment.timestamp.toEpochMilliseconds(),
-                    System.currentTimeMillis(),
-                    0L,
-                    DateUtils.FORMAT_ABBREV_ALL,
-                  )
+                      comment.timestamp.toEpochMilliseconds(),
+                      System.currentTimeMillis(),
+                      0L,
+                      DateUtils.FORMAT_ABBREV_ALL,
+                    )
                     .toString()
                 }
               Text(
@@ -493,9 +483,7 @@ private fun CommentItem(
           }
         }
         HorizontalDivider(
-          modifier = Modifier
-            .padding(start = startPadding)
-            .align(Alignment.BottomCenter),
+          modifier = Modifier.padding(start = startPadding).align(Alignment.BottomCenter),
           thickness = Dp.Hairline,
         )
       }
@@ -519,9 +507,7 @@ private fun UnfurlItem(
         (unfurl.favicon)?.let {
           AsyncImage(
             model = it,
-            modifier = Modifier
-              .size(48.dp)
-              .align(Alignment.CenterVertically),
+            modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
             contentDescription = "Preview",
           )
           Spacer(Modifier.width(8.dp))
@@ -613,9 +599,11 @@ fun catchupMarkdownTypography(
   ordered: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
   bullet: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
   list: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
-  link: TextStyle = MaterialTheme.typography.bodyLarge.copy(
-    fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline
-  ),
+  link: TextStyle =
+    MaterialTheme.typography.bodyLarge.copy(
+      fontWeight = FontWeight.Bold,
+      textDecoration = TextDecoration.Underline,
+    ),
   textLink: TextLinkStyles = TextLinkStyles(style = link.toSpanStyle()),
 ): MarkdownTypography =
   DefaultMarkdownTypography(
