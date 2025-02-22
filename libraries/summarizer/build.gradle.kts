@@ -40,8 +40,6 @@ androidComponents {
 }
 
 dependencies {
-  ksp(libs.circuit.codegen)
-
   api(libs.androidx.compose.runtime)
   api(libs.androidx.compose.ui)
   api(libs.circuit.codegenAnnotations)
@@ -67,4 +65,6 @@ dependencies {
   implementation(libs.retrofit.moshi)
   implementation(projects.libraries.baseUi)
   implementation(projects.libraries.retrofitconverters)
+
+  ksp(libs.circuit.codegen)
 }
