@@ -110,6 +110,7 @@ baselineProfile {
   // Don't save the profiles in source, generate adhoc
   saveInSrc = !automaticBaselineProfileGeneration
 
+  @Suppress("DEPRECATION")
   from(projects.benchmark.dependencyProject)
 
   if (automaticBaselineProfileGeneration) {
@@ -294,7 +295,7 @@ constructor(providers: ProviderFactory, private val execOps: ExecOperations) : D
     val latestVersionString = "$major.$minor.$patch"
     println("Updating version to $latestVersionString")
     ByteArrayOutputStream().use { os ->
-      project.rootProject.exec {
+      execOps.exec {
         commandLine(
           "git",
           "tag",
@@ -323,7 +324,7 @@ constructor(providers: ProviderFactory, private val execOps: ExecOperations) : D
   }
 }
 
-tasks.create("updateVersion", UpdateVersion::class.java) {
+tasks.register("updateVersion", UpdateVersion::class.java) {
   group = "build"
   description =
     "Updates the current version. Supports CLI option --updateType={type} where type is (major|minor|patch)"
