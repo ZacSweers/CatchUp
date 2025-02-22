@@ -39,29 +39,36 @@ fun HazeScaffold(
   NestedScaffold(
     modifier = modifier,
     topBar = {
-      Box(modifier = Modifier.thenIf(blurTopBar) {
-        hazeEffect(
-          hazeState, style =
-            HazeStyle(
-              tint = HazeDefaults.tint(containerColor),
-              blurRadius = HazeDefaults.blurRadius,
-              noiseFactor = HazeDefaults.noiseFactor,
+      Box(
+        modifier =
+          Modifier.thenIf(blurTopBar) {
+            hazeEffect(
+              hazeState,
+              style =
+                HazeStyle(
+                  tint = HazeDefaults.tint(containerColor),
+                  blurRadius = HazeDefaults.blurRadius,
+                  noiseFactor = HazeDefaults.noiseFactor,
+                ),
             )
-        )
-      }, content = { topBar() })
+          },
+        content = { topBar() },
+      )
     },
     bottomBar = {
       Box(
-        modifier = Modifier.thenIf(blurBottomBar) {
-          hazeEffect(
-            hazeState, style =
-              HazeStyle(
-                tint = HazeDefaults.tint(containerColor),
-                blurRadius = HazeDefaults.blurRadius,
-                noiseFactor = HazeDefaults.noiseFactor,
-              )
-          )
-        },
+        modifier =
+          Modifier.thenIf(blurBottomBar) {
+            hazeEffect(
+              hazeState,
+              style =
+                HazeStyle(
+                  tint = HazeDefaults.tint(containerColor),
+                  blurRadius = HazeDefaults.blurRadius,
+                  noiseFactor = HazeDefaults.noiseFactor,
+                ),
+            )
+          },
         content = { bottomBar() },
       )
     },
@@ -72,12 +79,6 @@ fun HazeScaffold(
     contentColor = contentColor,
     contentWindowInsets = contentWindowInsets,
   ) { contentPadding ->
-    Box(
-      modifier =
-        Modifier.hazeSource(
-          state = hazeState,
-        ),
-      content = { content(contentPadding) },
-    )
+    Box(modifier = Modifier.hazeSource(state = hazeState), content = { content(contentPadding) })
   }
 }
