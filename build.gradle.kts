@@ -44,6 +44,9 @@ buildscript {
   dependencies {
     // Necessary for sqldelight's DB migration verification task
     classpath(libs.sqlite.xerial)
+    classpath(libs.bouncycastle.pkix)
+    classpath(libs.bouncycastle.prov)
+    classpath(libs.bouncycastle.util)
   }
 }
 
