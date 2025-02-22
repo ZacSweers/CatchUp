@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '22'
+          java-version: '23'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
