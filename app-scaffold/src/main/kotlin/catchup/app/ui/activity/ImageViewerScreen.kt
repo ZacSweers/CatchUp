@@ -46,10 +46,7 @@ import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import coil.request.ImageRequest.Builder
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.slack.circuit.backstack.NavDecoration
 import com.slack.circuit.codegen.annotations.CircuitInject
-import com.slack.circuit.foundation.NavigatorDefaults
-import com.slack.circuit.foundation.RecordContentProvider
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuit.runtime.CircuitUiEvent
@@ -62,7 +59,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.app.scaffold.R
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -243,25 +239,3 @@ private fun launchShareSheet(scope: CoroutineScope, overlayHost: OverlayHost, st
       )
     state.eventSink(result)
   }
-
-// TODO
-//  generalize this when there's a factory pattern for it in Circuit
-//  shared element transitions?
-class ImageViewerAwareNavDecoration : NavDecoration {
-  @Composable
-  override fun <T> DecoratedContent(
-    args: ImmutableList<T>,
-    backStackDepth: Int,
-    modifier: Modifier,
-    content: @Composable (T) -> Unit,
-  ) {
-    val arg = args.first()
-    val decoration =
-      if (arg is RecordContentProvider<*> && arg.record.screen is ImageViewerScreen) {
-        NavigatorDefaults.EmptyDecoration
-      } else {
-        NavigatorDefaults.DefaultDecoration
-      }
-    decoration.DecoratedContent(args, backStackDepth, modifier, content)
-  }
-}
