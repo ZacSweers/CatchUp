@@ -6,6 +6,7 @@ androidx-core = "1.16.0-alpha02"
 androidx-sqlite = "2.5.0-beta01"
 appcompat = "1.7.0"
 benchmark = "1.4.0-alpha08"
+bouncycastle = "1.80"
 compose-material3 = "1.3.1"
 emoji = "1.2.0-alpha03"
 anvil = "0.4.1"
@@ -137,6 +138,11 @@ androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.2.1"
 androidx-test-monitor = "androidx.test:monitor:1.8.0-alpha01"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
+
+# Hopefully BC someday publishes a BOM: https://github.com/bcgit/bc-java/issues/899
+bouncycastle-pkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+bouncycastle-prov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+bouncycastle-util = { module = "org.bouncycastle:bcutil-jdk18on", version.ref = "bouncycastle" }
 
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-jb" }
 compose-runtime-saveable = { module = "org.jetbrains.compose.runtime:runtime-saveable", version.ref = "compose-jb" }
