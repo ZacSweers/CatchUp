@@ -64,3 +64,10 @@ anvilKsp_appScaffold_K2_KSP_KAPT_ksp2_k2 {
   warm-ups = 3
   iterations = 5
 }
+
+app_compileSources_abi {
+  warm-ups = 3
+  iterations = 5
+  tasks = [":app:compileDebugSources"]
+  apply-abi-change-to = "libraries/di/src/commonMain/kotlin/catchup/di/DataMode.kt"
+}
