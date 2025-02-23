@@ -1,5 +1,7 @@
 package catchup.app.ui.activity
 
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -17,6 +19,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,9 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowInsetsControllerCompat
 import catchup.app.data.LinkManager
 import catchup.app.service.openUrl
 import catchup.app.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
@@ -45,7 +48,6 @@ import catchup.compose.CatchUpTheme
 import catchup.compose.rememberStableCoroutineScope
 import catchup.di.AppScope
 import coil.request.ImageRequest.Builder
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.overlay.OverlayHost
@@ -131,6 +133,7 @@ constructor(
         is OpenInBrowser -> {
           scope.launch { linkManager.openUrl(event.url, accentColor) }
         }
+
         SaveImage -> {}
         ShareImage -> {}
         NoOp -> {}
@@ -143,20 +146,23 @@ constructor(
 @Composable
 fun ImageViewer(state: State, modifier: Modifier = Modifier) {
   var showChrome by remember { mutableStateOf(true) }
-  // There's no alternative for this yet
-  @Suppress("DEPRECATION") val systemUiController = rememberSystemUiController()
-  systemUiController.isSystemBarsVisible = showChrome
-  DisposableEffect(systemUiController) {
-    val originalSystemBarsBehavior = systemUiController.systemBarsBehavior
-    // Set BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE so the UI doesn't jump when it hides
-    systemUiController.systemBarsBehavior =
-      WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-    onDispose {
-      // TODO this is too late for some reason
-      systemUiController.isSystemBarsVisible = true
-      systemUiController.systemBarsBehavior = originalSystemBarsBehavior
+
+  val view = LocalView.current
+  val insetsController = remember { view.windowInsetsController }
+
+  // Control visibility of system bars
+  SideEffect {
+    insetsController?.let {
+      if (showChrome) {
+        it.show(WindowInsets.Type.systemBars())
+      } else {
+        it.hide(WindowInsets.Type.systemBars())
+        it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+      }
     }
   }
+
+  DisposableEffect(Unit) { onDispose { insetsController?.show(WindowInsets.Type.systemBars()) } }
 
   CatchUpTheme(useDarkTheme = true) {
     val backgroundAlpha: Float by
