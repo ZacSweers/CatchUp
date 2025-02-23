@@ -69,5 +69,13 @@ app_compileSources_abi {
   warm-ups = 3
   iterations = 5
   tasks = [":app:compileDebugSources"]
-  apply-abi-change-to = "libraries/di/src/commonMain/kotlin/catchup/di/DataMode.kt"
+  apply-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/DataMode.kt", "app-scaffold/src/main/kotlin/catchup/app/CatchUpAppConfig.kt"]
+}
+
+app_compileSources_abi_noic {
+  warm-ups = 3
+  iterations = 5
+  tasks = [":app:compileDebugSources"]
+  gradle-args = ["-Pkotlin.incremental=false"]
+  apply-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/DataMode.kt", "app-scaffold/src/main/kotlin/catchup/app/CatchUpAppConfig.kt"]
 }
