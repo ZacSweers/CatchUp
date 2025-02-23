@@ -128,7 +128,13 @@ if (!anvilMode.useDaggerKsp) {
 }
 
 dependencies {
-  ksp(libs.circuit.codegen)
+ if (anvilMode.useDaggerKsp) {
+    "kspDebug"(projects.libraries.tooling.spiMultibindsValidator)
+    "kspDebug"(projects.libraries.tooling.spiVisualizer)
+  } else {
+    "kaptDebug"(projects.libraries.tooling.spiMultibindsValidator)
+    "kaptDebug"(projects.libraries.tooling.spiVisualizer)
+  }
 
   implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
@@ -242,35 +248,29 @@ dependencies {
   implementation(projects.services.unsplash)
   implementation(projects.services.uplabs)
 
-  releaseImplementation(libs.misc.bugsnag)
-  releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
+ releaseImplementation(libs.misc.bugsnag)
+ releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
 
-  debugImplementation(libs.androidx.compose.uiTooling)
-  debugImplementation(libs.corbind)
-  debugImplementation(libs.misc.debug.flipper)
-  debugImplementation(libs.misc.debug.flipperNetwork)
-  debugImplementation(libs.misc.debug.guava)
-  debugImplementation(libs.misc.debug.soLoader)
-  debugImplementation(libs.misc.debug.telescope)
-  debugImplementation(libs.misc.leakCanary)
-  debugImplementation(libs.misc.leakCanary.shark)
-  debugImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
-  debugImplementation(libs.okhttp.debug.loggingInterceptor)
-  debugImplementation(libs.retrofit.moshi)
-  debugImplementation(projects.libraries.retrofitconverters)
+ debugImplementation(libs.androidx.compose.uiTooling)
+ debugImplementation(libs.corbind)
+ debugImplementation(libs.misc.debug.flipper)
+ debugImplementation(libs.misc.debug.flipperNetwork)
+ debugImplementation(libs.misc.debug.guava)
+ debugImplementation(libs.misc.debug.soLoader)
+ debugImplementation(libs.misc.debug.telescope)
+ debugImplementation(libs.misc.leakCanary)
+ debugImplementation(libs.misc.leakCanary.shark)
+ debugImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
+ debugImplementation(libs.okhttp.debug.loggingInterceptor)
+ debugImplementation(libs.retrofit.moshi)
+ debugImplementation(projects.libraries.retrofitconverters)
 
-  if (anvilMode.useDaggerKsp) {
-    "kspDebug"(projects.libraries.tooling.spiMultibindsValidator)
-    "kspDebug"(projects.libraries.tooling.spiVisualizer)
-  } else {
-    "kaptDebug"(projects.libraries.tooling.spiMultibindsValidator)
-    "kaptDebug"(projects.libraries.tooling.spiVisualizer)
-  }
+ testImplementation(libs.kotlin.coroutines.test)
+ testImplementation(libs.misc.debug.flipper)
+ testImplementation(libs.misc.debug.flipperNetwork)
+ testImplementation(libs.misc.okio.fakeFileSystem)
+ testImplementation(libs.test.junit)
+ testImplementation(libs.test.truth)
 
-  testImplementation(libs.kotlin.coroutines.test)
-  testImplementation(libs.misc.debug.flipper)
-  testImplementation(libs.misc.debug.flipperNetwork)
-  testImplementation(libs.misc.okio.fakeFileSystem)
-  testImplementation(libs.test.junit)
-  testImplementation(libs.test.truth)
+ ksp(libs.circuit.codegen)
 }

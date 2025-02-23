@@ -401,6 +401,7 @@ tasks.named { it.startsWith("licensee") && !it.endsWith("AndroidRelease") }
 licensee {
   allow("Apache-2.0")
   allow("MIT")
+  allow("BSD-3-Clause")
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")

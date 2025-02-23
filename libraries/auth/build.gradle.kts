@@ -36,12 +36,13 @@ kotlin {
 
         implementation(libs.androidx.datastore.preferences.core)
         implementation(libs.eithernet)
+        implementation(libs.eithernet.retrofit)
         implementation(libs.kotlin.coroutines)
         implementation(libs.kotlin.datetime)
         implementation(libs.okhttp.core)
         implementation(libs.retrofit.core)
         implementation(libs.retrofit.moshi)
-}
+      }
     }
   }
 }

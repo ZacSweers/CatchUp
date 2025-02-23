@@ -45,11 +45,13 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -231,9 +233,11 @@ constructor(
             )
           }
         }
+
         OpenUrl -> {
           scope.launch { linkManager.openUrl(detail.linkUrl!!) }
         }
+
         is ToggleCollapse -> {
           val commentId = event.commentId
           if (commentId in collapsedItems) {
@@ -242,6 +246,7 @@ constructor(
             collapsedItems[commentId] = Unit
           }
         }
+
         Share -> {
           linkManager.shareUrl(detail.shareUrl!!, detail.title)
         }
@@ -304,6 +309,7 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
           }
         }
       }
+
       0 -> {
         item(key = "empty", contentType = "empty") {
           Box(
@@ -314,6 +320,7 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
           }
         }
       }
+
       else -> {
         items(
           count = numComments,
@@ -578,6 +585,7 @@ fun catchupMarkdownTypography(
   h5: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 1f),
   h6: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 0.85f),
   text: TextStyle = MaterialTheme.typography.bodySmall,
+  inlineCode: TextStyle = text.copy(fontFamily = FontFamily.Monospace),
   code: TextStyle =
     MaterialTheme.typography.bodySmall.copy(
       fontFamily = FontFamily.Monospace,
@@ -591,6 +599,12 @@ fun catchupMarkdownTypography(
   ordered: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
   bullet: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
   list: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
+  link: TextStyle =
+    MaterialTheme.typography.bodyLarge.copy(
+      fontWeight = FontWeight.Bold,
+      textDecoration = TextDecoration.Underline,
+    ),
+  textLink: TextLinkStyles = TextLinkStyles(style = link.toSpanStyle()),
 ): MarkdownTypography =
   DefaultMarkdownTypography(
     h1 = h1,
@@ -606,4 +620,7 @@ fun catchupMarkdownTypography(
     ordered = ordered,
     bullet = bullet,
     list = list,
+    inlineCode = inlineCode,
+    link = link,
+    textLink = textLink,
   )
