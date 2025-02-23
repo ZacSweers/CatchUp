@@ -137,7 +137,6 @@ dependencies {
   implementation(libs.androidx.appCompat.resources)
   implementation(libs.androidx.collection)
   implementation(libs.androidx.compose.accompanist.adaptive)
-  implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.compose.animation.graphics)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material.material3)

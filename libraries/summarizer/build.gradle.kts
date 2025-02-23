@@ -57,7 +57,6 @@ dependencies {
   api(projects.libraries.util)
 
   implementation(libs.androidx.annotations)
-  implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.compose.animation)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material.material3)
