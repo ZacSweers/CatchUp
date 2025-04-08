@@ -18,7 +18,7 @@ package catchup.libraries.retrofitconverters
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
-fun Retrofit.Builder.delegatingCallFactory(delegate: dagger.Lazy<OkHttpClient>): Retrofit.Builder =
+fun Retrofit.Builder.delegatingCallFactory(delegate: Lazy<OkHttpClient>): Retrofit.Builder =
   callFactory {
-    delegate.get().newCall(it)
+    delegate.value.newCall(it)
   }

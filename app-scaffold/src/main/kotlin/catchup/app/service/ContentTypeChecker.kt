@@ -1,13 +1,14 @@
 package catchup.app.service
 
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.service.api.ContentType
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 @SingleIn(AppScope::class)
-class ContentTypeChecker @Inject constructor() {
+@Inject
+class ContentTypeChecker {
   fun contentType(url: String): ContentType {
     // Fast-path basic media checks
     if (url.hasMediaExtension) {

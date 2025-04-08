@@ -27,13 +27,14 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import catchup.app.CatchUpPreferences.Keys
 import catchup.app.util.BackgroundAppCoroutineScope
-import catchup.di.AppScope
 import catchup.di.DataMode
-import catchup.di.SingleIn
 import catchup.util.injection.qualifiers.ApplicationContext
-import com.squareup.anvil.annotations.ContributesBinding
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.binding
 import java.io.File
-import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -111,11 +112,12 @@ interface CatchUpPreferences {
 
 @Keep
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, boundType = CatchUpPreferences::class)
-class CatchUpPreferencesImpl
+@ContributesBinding(AppScope::class, binding = binding<CatchUpPreferences>())
 @Inject
-constructor(@ApplicationContext context: Context, override val scope: BackgroundAppCoroutineScope) :
-  CatchUpPreferences, BasePreferences {
+class CatchUpPreferencesImpl(
+  @ApplicationContext context: Context,
+  override val scope: BackgroundAppCoroutineScope,
+) : CatchUpPreferences, BasePreferences {
 
   // TODO hide this, only exposed for settings
   override val datastore =

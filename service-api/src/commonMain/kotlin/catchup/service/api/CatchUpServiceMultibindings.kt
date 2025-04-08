@@ -15,15 +15,14 @@
  */
 package catchup.service.api
 
-import catchup.di.AppScope
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.multibindings.Multibinds
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Multibinds
+import dev.zacsweers.metro.Provider
 
 @ContributesTo(AppScope::class)
-@Module
 interface CatchUpServiceMultibindings {
-  @Multibinds fun services(): @JvmSuppressWildcards Map<String, Service>
+  @Multibinds val services: Map<String, Service>
 
-  @Multibinds fun serviceMetas(): @JvmSuppressWildcards Map<String, ServiceMeta>
+  @Multibinds fun serviceMetas(): Map<String, ServiceMeta>
 }

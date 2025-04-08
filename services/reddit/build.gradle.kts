@@ -18,6 +18,7 @@ plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.metro)
 }
 
 android {
@@ -26,7 +27,6 @@ android {
 
 foundry {
   features {
-    dagger()
     moshi(codegen = true)
   }
   android {
@@ -38,7 +38,6 @@ foundry {
 
 dependencies {
   api(libs.androidx.annotations)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.moshi.core)
   api(libs.okhttp.core)

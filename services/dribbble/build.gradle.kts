@@ -18,6 +18,7 @@ plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.metro)
 }
 
 android {
@@ -25,9 +26,6 @@ android {
 }
 
 foundry {
-  features {
-    dagger()
-  }
   android {
     features {
       resources("catchup_service_dribbble_")
@@ -36,7 +34,6 @@ foundry {
 }
 
 dependencies {
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.okhttp.core)
   api(libs.retrofit.core)

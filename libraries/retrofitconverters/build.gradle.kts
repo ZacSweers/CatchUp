@@ -28,7 +28,6 @@ kotlin {
   sourceSets {
     with(getByName("jvmMain")) {
       dependencies {
-        api(libs.dagger.runtime)
         api(libs.okhttp.core)
         api(libs.retrofit.core)
 

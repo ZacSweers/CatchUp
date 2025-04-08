@@ -7,12 +7,12 @@ plugins {
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
+  alias(libs.plugins.metro)
 }
 
 foundry {
   features {
     compose()
-    dagger()
     moshi(codegen = true)
   }
 }
@@ -37,6 +37,10 @@ androidComponents {
       BuildConfigField("String", "\"${properties["catchup_openAiKey"]}\"", "")
     )
   }
+}
+
+ksp {
+  arg("circuit.codegen.mode", "METRO")
 }
 
 dependencies {

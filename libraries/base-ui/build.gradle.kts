@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.metro)
 }
 
 android {
@@ -27,7 +27,6 @@ android {
 foundry {
   features {
     compose()
-    dagger()
   }
   android {
     features {

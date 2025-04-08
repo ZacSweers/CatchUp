@@ -17,7 +17,7 @@ plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.library)
   alias(libs.plugins.foundry.base)
-  alias(libs.plugins.anvil)
+  alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -39,23 +39,7 @@ kotlin {
         implementation(projects.serviceApi)
       }
     }
-    jvmMain {
-      dependencies {
-        implementation(libs.anvil.annotations)
-      }
-    }
-    androidMain {
-      dependencies {
-        implementation(libs.anvil.annotations)
-      }
-    }
   }
 }
 
 android { namespace = "catchup.bookmarks" }
-
-foundry {
-  features {
-    dagger()
-  }
-}

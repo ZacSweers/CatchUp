@@ -19,6 +19,7 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.apollo)
+  alias(libs.plugins.metro)
 }
 
 android {
@@ -42,9 +43,6 @@ apollo {
 }
 
 foundry {
-  features {
-    dagger()
-  }
   android {
     features {
       resources("catchup_service_github_")
@@ -55,7 +53,6 @@ foundry {
 dependencies {
   api(libs.apollo.api)
   api(libs.apollo.runtime)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.okhttp.core)
   api(libs.retrofit.core)
@@ -73,6 +70,4 @@ dependencies {
   implementation(libs.okhttp.core)
   implementation(projects.libraries.retrofitconverters)
   implementation(projects.libraries.util)
-
-  compileOnly(libs.misc.javaxInject)
 }

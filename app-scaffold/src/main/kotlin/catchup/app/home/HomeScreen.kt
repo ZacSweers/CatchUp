@@ -78,7 +78,6 @@ import catchup.compose.MutableScrollToTop
 import catchup.compose.Wigglable
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
-import catchup.di.AppScope
 import catchup.service.api.ServiceMeta
 import catchup.util.toDayContext
 import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
@@ -100,12 +99,14 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuitx.overlays.BottomSheetOverlay
-import com.squareup.anvil.annotations.ContributesMultibinding
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.StringKey
+import dev.zacsweers.metro.binding
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlinx.collections.immutable.ImmutableList
@@ -123,7 +124,7 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 // TODO generalize metas to allow dynamic ones, like settings/bookmarks
-@ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+@ContributesIntoMap(AppScope::class, binding = binding<DeepLinkable>())
 @StringKey("home")
 @Parcelize
 object HomeScreen : Screen, DeepLinkable {
@@ -150,9 +151,8 @@ object HomeScreen : Screen, DeepLinkable {
   }
 }
 
-class HomePresenter
-@AssistedInject
-constructor(
+@Inject
+class HomePresenter(
   @Assisted private val navigator: Navigator,
   private val serviceMetaMap: Map<String, ServiceMeta>,
   private val catchUpPreferences: CatchUpPreferences,

@@ -4,8 +4,6 @@ plugins {
   alias(libs.plugins.foundry.base)
 }
 
-foundry {
-  features {
-    daggerRuntimeOnly()
-  }
+dependencies {
+  api(libs.metro.runtime)
 }
