@@ -66,7 +66,6 @@ import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Multibinds
-import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.binding
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.runBlocking

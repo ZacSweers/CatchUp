@@ -18,7 +18,6 @@ package catchup.service.api
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Multibinds
-import dev.zacsweers.metro.Provider
 
 @ContributesTo(AppScope::class)
 interface CatchUpServiceMultibindings {
