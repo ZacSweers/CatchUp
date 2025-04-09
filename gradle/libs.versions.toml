@@ -233,7 +233,7 @@ misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.12.1"
-misc-debug-guava = "com.google.guava:guava:33.4.0-jre"
+misc-debug-guava = "com.google.guava:guava:33.4.7-android"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:3.0.0"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.4.0"
 
