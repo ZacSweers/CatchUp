@@ -7,12 +7,12 @@ plugins {
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
-  alias(libs.plugins.metro)
 }
 
 foundry {
   features {
     compose()
+    metro()
     moshi(codegen = true)
   }
 }

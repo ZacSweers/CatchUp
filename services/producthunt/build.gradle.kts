@@ -19,7 +19,6 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.apollo)
-  alias(libs.plugins.metro)
 }
 
 android {
@@ -46,6 +45,7 @@ apollo {
 
 foundry {
   features {
+    metro()
     moshi(codegen = false)
   }
   android {

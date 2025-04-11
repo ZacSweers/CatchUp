@@ -17,7 +17,6 @@ plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.sqldelight)
-  alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -47,3 +46,9 @@ kotlin {
 }
 
 sqldelight { databases { create("UnfurlerDatabase") { packageName.set("catchup.unfurler") } } }
+
+foundry {
+  features {
+    metro()
+  }
+}

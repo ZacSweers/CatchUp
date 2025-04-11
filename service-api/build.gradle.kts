@@ -17,7 +17,6 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.foundry.base)
-  alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -52,3 +51,9 @@ kotlin {
 }
 
 android { namespace = "catchup.service.api" }
+
+foundry {
+  features {
+    metro()
+  }
+}

@@ -20,7 +20,6 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.noarg)
-  alias(libs.plugins.metro)
 }
 
 android {
@@ -31,6 +30,9 @@ android {
 }
 
 foundry {
+  features {
+    metro()
+  }
   android {
     features {
       resources("catchup_service_hn_")

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import foundry.gradle.DelicateFoundryGradlePluginApi
 
 plugins {
   alias(libs.plugins.android.library)
@@ -23,20 +24,20 @@ plugins {
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.moshix)
-  alias(libs.plugins.metro)
 }
 
 kotlin { compilerOptions { optIn.add("androidx.compose.material3.ExperimentalMaterial3Api") } }
 
 foundry {
-  @Suppress("OPT_IN_USAGE")
   features {
     compose {
       if (project.hasProperty("catchup.enableComposeCompilerReports")) {
         val metricsDir = project.layout.buildDirectory.dir("compose_metrics").get().asFile
+        @OptIn(DelicateFoundryGradlePluginApi::class)
         enableCompilerMetricsForDebugging(metricsDir)
       }
     }
+    metro()
     moshi(codegen = true)
   }
   // TODO

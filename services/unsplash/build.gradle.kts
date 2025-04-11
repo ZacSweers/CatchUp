@@ -18,7 +18,6 @@ plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.metro)
 }
 
 android {
@@ -34,6 +33,7 @@ android {
 
 foundry {
   features {
+    metro()
     moshi(codegen = true)
   }
   android { features { resources("catchup_service_unsplash_") } }

@@ -19,13 +19,16 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.serialization)
-  alias(libs.plugins.metro)
 }
 
 android { namespace = "catchup.service.slashdot" }
 
 foundry {
-  android { features { resources("catchup_service_sd_") } }
+  features {
+    metro()
+  }
+  android { features {
+    resources("catchup_service_sd_") } }
 }
 
 dependencies {

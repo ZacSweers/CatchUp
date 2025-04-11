@@ -19,7 +19,6 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.apollo)
-  alias(libs.plugins.metro)
 }
 
 android {
@@ -43,6 +42,9 @@ apollo {
 }
 
 foundry {
+  features {
+    metro()
+  }
   android {
     features {
       resources("catchup_service_github_")
