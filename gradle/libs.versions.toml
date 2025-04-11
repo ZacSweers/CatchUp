@@ -2,7 +2,7 @@
 accompanist = "0.37.2"
 agp = "8.9.1"
 androidx-activity = "1.10.0"
-androidx-core = "1.16.0-rc01"
+androidx-core = "1.16.0"
 androidx-sqlite = "2.5.0-rc03"
 appcompat = "1.7.0"
 benchmark = "1.4.0-alpha10"
