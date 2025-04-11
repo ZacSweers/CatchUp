@@ -25,6 +25,7 @@ import androidx.annotation.IntDef
 import androidx.annotation.IntRange
 import androidx.annotation.Size
 import androidx.core.graphics.ColorUtils.colorToHSL
+import androidx.core.graphics.get
 import androidx.palette.graphics.Palette
 import catchup.base.ui.ColorUtils.Lightness
 import kotlin.annotation.AnnotationRetention.SOURCE
@@ -93,7 +94,7 @@ object ColorUtils {
       palette.isDark() == IS_DARK
     } else {
       // if palette failed, then check the color of the specified pixel
-      isDark(bitmap.getPixel(backupPixelX, backupPixelY))
+      isDark(bitmap[backupPixelX, backupPixelY])
     }
   }
 
