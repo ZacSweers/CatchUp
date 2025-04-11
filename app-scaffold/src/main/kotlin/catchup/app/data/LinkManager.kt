@@ -38,13 +38,13 @@ import catchup.app.ui.activity.MainActivity
 import catchup.app.util.customtabs.CustomTabActivityHelper
 import catchup.appconfig.AppConfig
 import catchup.appconfig.isSdkAtLeast
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.flowbinding.intentReceivers
 import catchup.util.isInNightMode
 import catchup.util.kotlin.mergeWith
-import com.squareup.anvil.annotations.ContributesBinding
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -55,9 +55,8 @@ import timber.log.Timber
 
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
-class LinkManager
 @Inject
-constructor(
+class LinkManager(
   private val customTab: CustomTabActivityHelper,
   private val catchUpPreferences: CatchUpPreferences,
   private val appConfig: AppConfig,

@@ -27,10 +27,10 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsIntent.SHARE_STATE_ON
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.util.maybeStartActivity
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
 /**
  * This is a helper class to manage the connection to the Custom Tabs Service and
@@ -38,7 +38,8 @@ import javax.inject.Inject
  * Adapted from github.com/GoogleChrome/custom-tabs-client
  */
 @SingleIn(AppScope::class)
-class CustomTabActivityHelper @Inject constructor() {
+@Inject
+class CustomTabActivityHelper {
   private var customTabsSession: CustomTabsSession? = null
   private var client: CustomTabsClient? = null
   private var connection: CustomTabsServiceConnection? = null

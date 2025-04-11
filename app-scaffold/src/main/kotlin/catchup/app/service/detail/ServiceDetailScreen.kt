@@ -72,7 +72,6 @@ import catchup.base.ui.BackPressNavButton
 import catchup.base.ui.rememberSystemBarColorController
 import catchup.compose.ContentAlphas
 import catchup.compose.minus
-import catchup.di.AppScope
 import catchup.service.api.Comment
 import catchup.service.api.Detail
 import catchup.service.api.Service
@@ -95,10 +94,11 @@ import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuitx.overlays.showFullScreenOverlay
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import javax.inject.Provider
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -139,12 +139,11 @@ data class ServiceDetailScreen(
   }
 }
 
-class ServiceDetailPresenter
-@AssistedInject
-constructor(
+@Inject
+class ServiceDetailPresenter(
   @Assisted val screen: ServiceDetailScreen,
   @ApplicationContext private val context: Context,
-  services: @JvmSuppressWildcards Map<String, Provider<Service>>,
+  services: Map<String, Provider<Service>>,
   private val linkManager: LinkManager,
   private val detailRepoFactory: DetailRepository.Factory,
 ) : Presenter<ServiceDetailScreen.State> {
@@ -155,7 +154,7 @@ constructor(
     fun create(screen: ServiceDetailScreen): ServiceDetailPresenter
   }
 
-  private val service = services.getValue(screen.serviceId).get()
+  private val service = services.getValue(screen.serviceId).invoke()
   private val themeColor = Color(context.getColor(service.meta().themeColor))
   private val initialState =
     ServiceDetailScreen.State(

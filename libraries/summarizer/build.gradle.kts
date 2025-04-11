@@ -12,7 +12,7 @@ plugins {
 foundry {
   features {
     compose()
-    dagger()
+    metro()
     moshi(codegen = true)
   }
 }
@@ -37,6 +37,10 @@ androidComponents {
       BuildConfigField("String", "\"${properties["catchup_openAiKey"]}\"", "")
     )
   }
+}
+
+ksp {
+  arg("circuit.codegen.mode", "METRO")
 }
 
 dependencies {

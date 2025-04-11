@@ -9,27 +9,26 @@ import catchup.service.api.toCatchUpItem
 import catchup.service.db.CatchUpDatabase
 import catchup.unfurler.UnfurlResult
 import catchup.unfurler.UnfurlerRepository
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import javax.inject.Provider
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
-class DetailRepository
-@AssistedInject
-constructor(
+@Inject
+class DetailRepository(
   @Assisted private val itemId: Long,
   @Assisted private val serviceId: String,
   private val dbFactory: ContextualFactory<DataMode, out CatchUpDatabase>,
-  services: @JvmSuppressWildcards Map<String, Provider<Service>>,
+  services: Map<String, Provider<Service>>,
   private val unfurlerRepository: UnfurlerRepository,
 ) {
 
-  private val service = services.getValue(serviceId).get()
+  private val service = services.getValue(serviceId).invoke()
 
   // TODO DB caching
 

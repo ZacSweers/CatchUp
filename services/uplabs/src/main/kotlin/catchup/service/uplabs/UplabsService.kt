@@ -16,7 +16,6 @@
 package catchup.service.uplabs
 
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
 import catchup.service.api.Comment
@@ -32,16 +31,16 @@ import catchup.service.api.ServiceMetaKey
 import catchup.service.api.VisualService
 import catchup.service.uplabs.model.UplabsComment
 import catchup.util.data.adapters.ISO8601InstantAdapter
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
-import javax.inject.Inject
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.binding
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
@@ -53,10 +52,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 private const val SERVICE_KEY = "uplabs"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(AppScope::class, boundType = Service::class)
-class UplabsService
+@ContributesIntoMap(AppScope::class, binding = binding<Service>())
 @Inject
-constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: UplabsApi) :
+class UplabsService(@InternalApi private val serviceMeta: ServiceMeta, private val api: UplabsApi) :
   VisualService {
 
   override fun meta() = serviceMeta
@@ -129,13 +127,12 @@ private fun UplabsComment.toComment(depth: Int): Comment {
 }
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class UplabsMetaModule {
+interface UplabsMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun uplabsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+  fun uplabsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
   companion object {
 
@@ -155,8 +152,7 @@ abstract class UplabsMetaModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module(includes = [UplabsMetaModule::class])
-object UplabsModule {
+interface UplabsModule {
   @Provides
   @InternalApi
   fun provideUplabsMoshi(moshi: Moshi): Moshi {

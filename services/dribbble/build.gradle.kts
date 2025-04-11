@@ -26,7 +26,7 @@ android {
 
 foundry {
   features {
-    dagger()
+      metro()
   }
   android {
     features {
@@ -36,7 +36,6 @@ foundry {
 }
 
 dependencies {
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.okhttp.core)
   api(libs.retrofit.core)

@@ -46,7 +46,6 @@ import catchup.base.ui.NavButton
 import catchup.base.ui.NavButtonType.CLOSE
 import catchup.compose.CatchUpTheme
 import catchup.compose.rememberStableCoroutineScope
-import catchup.di.AppScope
 import coil.request.ImageRequest.Builder
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
@@ -57,10 +56,11 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuitx.overlays.BottomSheetOverlay
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.app.scaffold.R
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -101,9 +101,8 @@ data class ImageViewerScreen(
   }
 }
 
-class ImageViewerPresenter
-@AssistedInject
-constructor(
+@Inject
+class ImageViewerPresenter(
   @Assisted private val screen: ImageViewerScreen,
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,

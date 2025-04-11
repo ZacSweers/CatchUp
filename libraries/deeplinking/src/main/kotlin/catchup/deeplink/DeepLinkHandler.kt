@@ -2,11 +2,11 @@ package catchup.deeplink
 
 import android.content.Intent
 import android.net.Uri
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import com.slack.circuit.runtime.screen.Screen
-import com.squareup.anvil.annotations.ContributesBinding
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
@@ -65,9 +65,9 @@ private fun Uri.toHttpUrl(): HttpUrl? {
 
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
-class DeepLinkHandlerImpl
 @Inject
-constructor(private val routes: @JvmSuppressWildcards Map<String, DeepLinkable>) : DeepLinkHandler {
+class DeepLinkHandlerImpl(private val routes: @JvmSuppressWildcards Map<String, DeepLinkable>) :
+  DeepLinkHandler {
   override fun parse(url: HttpUrl): ImmutableList<Screen> {
     val queryParams =
       url.queryParameterNames.associateWith { url.queryParameterValues(it) }.toImmutableMap()

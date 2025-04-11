@@ -24,12 +24,12 @@ import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
-import catchup.app.injection.DaggerSet
 import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.appconfig.AppConfig
 import catchup.util.d
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.createGraphFactory
 import java.util.concurrent.Executors
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
@@ -44,17 +44,17 @@ class CatchUpApplication : Application() {
 
   @Inject lateinit var appConfig: AppConfig
 
-  lateinit var appComponent: ApplicationComponent
+  lateinit var appComponent: AppGraph
 
   @Inject
-  fun plantTimberTrees(trees: DaggerSet<Tree>) {
+  fun plantTimberTrees(trees: Set<Tree>) {
     Timber.plant(*trees.toTypedArray())
   }
 
   @Inject
   fun asyncInits(
     scope: BackgroundAppCoroutineScope,
-    @AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>,
+    @AsyncInitializers asyncInitializers: Set<InitializerFunction>,
   ) {
     scope.launch {
       // TODO - run these in parallel?
@@ -83,14 +83,14 @@ class CatchUpApplication : Application() {
   }
 
   @Inject
-  fun inits(@Initializers initializers: DaggerSet<InitializerFunction>) {
+  fun inits(@Initializers initializers: Set<InitializerFunction>) {
     initializers.forEach { it() }
   }
 
   override fun onCreate() {
     super.onCreate()
     appComponent =
-      DaggerApplicationComponent.factory().create(this).apply { inject(this@CatchUpApplication) }
+      createGraphFactory<AppGraph.Factory>().create(this).apply { inject(this@CatchUpApplication) }
 
     StrictMode.setVmPolicy(
       StrictMode.VmPolicy.Builder()

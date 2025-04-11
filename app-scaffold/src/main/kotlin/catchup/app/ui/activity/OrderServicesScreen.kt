@@ -81,7 +81,6 @@ import catchup.compose.DraggableItem
 import catchup.compose.dragContainer
 import catchup.compose.rememberDragDropState
 import catchup.compose.rememberStableCoroutineScope
-import catchup.di.AppScope
 import catchup.service.api.ServiceMeta
 import catchup.util.kotlin.mapToStateFlow
 import catchup.util.toDayContext
@@ -92,10 +91,11 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -123,9 +123,8 @@ object OrderServicesScreen : Screen {
 }
 
 // TODO Syllabus handling - requires integrating tap target on the location
-class OrderServicesPresenter
-@AssistedInject
-constructor(
+@Inject
+class OrderServicesPresenter(
   @Assisted private val navigator: Navigator,
   private val serviceMetas: Map<String, ServiceMeta>,
   private val catchUpPreferences: CatchUpPreferences,

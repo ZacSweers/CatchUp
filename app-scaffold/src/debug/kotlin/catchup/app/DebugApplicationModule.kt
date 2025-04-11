@@ -28,22 +28,20 @@ import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.LumberYard
 import catchup.app.data.tree
-import catchup.app.injection.DaggerSet
 import catchup.appconfig.AppConfig
 import catchup.base.ui.CatchUpObjectWatcher
-import catchup.di.AppScope
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperPlugin
 import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
 import com.facebook.soloader.SoLoader
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoSet
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.IntoSet
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.BINARY
 import leakcanary.AppWatcher
 import leakcanary.LeakCanary
@@ -51,8 +49,7 @@ import shark.AndroidReferenceMatchers
 import timber.log.Timber
 
 @ContributesTo(AppScope::class)
-@Module
-object DebugApplicationModule {
+interface DebugApplicationModule {
 
   @Qualifier @Retention(BINARY) private annotation class LeakCanaryEnabled
 
@@ -131,12 +128,12 @@ object DebugApplicationModule {
   @IntoSet
   @Provides
   fun strictModeInit(
-    @StrictModeExecutor penaltyListenerExecutor: dagger.Lazy<ExecutorService>
+    @StrictModeExecutor penaltyListenerExecutor: Lazy<ExecutorService>
   ): () -> Unit = {
     StrictMode.setThreadPolicy(
       StrictMode.ThreadPolicy.Builder()
         .detectAll()
-        .penaltyListener(penaltyListenerExecutor.get()) { Timber.w(it) }
+        .penaltyListener(penaltyListenerExecutor.value) { Timber.w(it) }
         .build()
     )
     StrictMode.setVmPolicy(
@@ -144,7 +141,7 @@ object DebugApplicationModule {
         .detectAll()
         .penaltyLog()
         .penaltyListener(
-          penaltyListenerExecutor.get(),
+          penaltyListenerExecutor.value,
           StrictMode.OnVmViolationListener {
             when (it) {
               is UntaggedSocketViolation -> {
@@ -186,7 +183,7 @@ object DebugApplicationModule {
   fun flipperInit(
     @FlipperEnabled enabled: Boolean,
     application: Application,
-    flipperPlugins: DaggerSet<FlipperPlugin>,
+    flipperPlugins: Set<FlipperPlugin>,
   ): () -> Unit = {
     if (enabled) {
       SoLoader.init(application, SoLoader.SOLOADER_ALLOW_ASYNC_INIT)

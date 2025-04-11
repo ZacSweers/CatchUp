@@ -28,10 +28,8 @@ import catchup.appconfig.AppConfig
 import catchup.appconfig.AppConfigMetadataContributor
 import catchup.base.ui.VersionInfo
 import catchup.base.ui.versionInfo
-import catchup.di.AppScope
 import catchup.di.DataMode
 import catchup.di.FakeMode
-import catchup.di.SingleIn
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.kotlin.mapToStateFlow
 import coil.Coil
@@ -45,13 +43,14 @@ import coil.request.DefaultRequestOptions
 import coil.request.Disposable
 import coil.request.ImageRequest
 import coil.request.ImageResult
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoSet
-import dagger.multibindings.Multibinds
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.IntoSet
+import dev.zacsweers.metro.Multibinds
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.SingleIn
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -60,8 +59,7 @@ import okhttp3.OkHttpClient
 import timber.log.Timber
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class ApplicationModule {
+interface ApplicationModule {
 
   @Qualifier @Retention(BINARY) annotation class Initializers
 
@@ -70,22 +68,22 @@ abstract class ApplicationModule {
   @Qualifier @Retention(BINARY) annotation class LazyDelegate
 
   /** Provides AppConfig metadata contributors. */
-  @Multibinds abstract fun metadataContributors(): Set<AppConfigMetadataContributor>
+  @Multibinds fun metadataContributors(): Set<AppConfigMetadataContributor>
 
   /** Provides initializers for app startup. */
-  @Initializers @Multibinds abstract fun initializers(): Set<() -> Unit>
+  @Initializers @Multibinds fun initializers(): Set<() -> Unit>
 
   /** Provides initializers for app startup that can be initialized async. */
-  @AsyncInitializers @Multibinds abstract fun asyncInitializers(): Set<() -> Unit>
+  @AsyncInitializers @Multibinds fun asyncInitializers(): Set<() -> Unit>
 
-  @Multibinds abstract fun timberTrees(): Set<Timber.Tree>
+  @Multibinds fun timberTrees(): Set<Timber.Tree>
 
   @Binds
   @ApplicationContext
   @SingleIn(AppScope::class)
-  abstract fun provideApplicationContext(real: Application): Context
+  fun provideApplicationContext(real: Application): Context
 
-  @Binds @SingleIn(AppScope::class) abstract fun bindAppConfig(real: CatchUpAppConfig): AppConfig
+  @Binds @SingleIn(AppScope::class) fun bindAppConfig(real: CatchUpAppConfig): AppConfig
 
   companion object {
 
@@ -124,41 +122,41 @@ abstract class ApplicationModule {
     @SingleIn(AppScope::class)
     fun isLowRam(@ApplicationContext context: Context): Boolean {
       // Prefer higher quality images unless we're on a low RAM device
-      return context.getSystemService<ActivityManager>()?.isLowRamDevice ?: true
+      return context.getSystemService<ActivityManager>()?.isLowRamDevice != false
     }
 
     @ExperimentalCoilApi
     @Provides
     @LazyDelegate
     @SingleIn(AppScope::class)
-    fun lazyImageLoader(imageLoader: dagger.Lazy<ImageLoader>): ImageLoader {
+    fun lazyImageLoader(imageLoader: Lazy<ImageLoader>): ImageLoader {
       return object : ImageLoader {
         override val components: ComponentRegistry
-          get() = imageLoader.get().components
+          get() = imageLoader.value.components
 
         override val defaults: DefaultRequestOptions
-          get() = imageLoader.get().defaults
+          get() = imageLoader.value.defaults
 
         override val diskCache: DiskCache?
-          get() = imageLoader.get().diskCache
+          get() = imageLoader.value.diskCache
 
         override val memoryCache: MemoryCache?
-          get() = imageLoader.get().memoryCache
+          get() = imageLoader.value.memoryCache
 
         override fun enqueue(request: ImageRequest): Disposable {
-          return imageLoader.get().enqueue(request)
+          return imageLoader.value.enqueue(request)
         }
 
         override suspend fun execute(request: ImageRequest): ImageResult {
-          return imageLoader.get().execute(request)
+          return imageLoader.value.execute(request)
         }
 
         override fun newBuilder(): ImageLoader.Builder {
-          return imageLoader.get().newBuilder()
+          return imageLoader.value.newBuilder()
         }
 
         override fun shutdown() {
-          imageLoader.get().shutdown()
+          imageLoader.value.shutdown()
         }
       }
     }
@@ -168,14 +166,14 @@ abstract class ApplicationModule {
     fun imageLoader(
       @ApplicationContext context: Context,
       @IsLowRamDevice isLowRamDevice: Boolean,
-      okHttpClient: dagger.Lazy<OkHttpClient>,
+      okHttpClient: Lazy<OkHttpClient>,
     ): ImageLoader {
       // TODO make this like an actual builder. But for now run works...
       return ImageLoader.Builder(context).run {
         // Coil will do lazy delegation on its own under the hood, but we
         // don't need that here because we've already made it lazy. Wish this
         // wasn't the default.
-        callFactory { request -> okHttpClient.get().newCall(request) }
+        callFactory { request -> okHttpClient.value.newCall(request) }
 
         // Hardware bitmaps don't work with the saturation effect or palette extraction
         allowHardware(false)
@@ -210,19 +208,16 @@ abstract class ApplicationModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module
-object FakeModeModule {
+interface FakeModeModule {
   @Provides
   @FakeMode
-  fun provideFakeModeStateFlow(
-    dataMode: StateFlow<@JvmSuppressWildcards DataMode>
-  ): StateFlow<Boolean> {
+  fun provideFakeModeStateFlow(dataMode: StateFlow<DataMode>): StateFlow<Boolean> {
     return dataMode.mapToStateFlow { it == DataMode.FAKE }
   }
 
   @Provides
   @FakeMode
-  fun provideFakeMode(dataMode: StateFlow<@JvmSuppressWildcards DataMode>): Boolean {
+  fun provideFakeMode(dataMode: StateFlow<DataMode>): Boolean {
     return dataMode.value == DataMode.FAKE
   }
 }

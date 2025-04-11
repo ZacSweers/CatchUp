@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import catchup.base.ui.BackPressNavButton
 import catchup.base.ui.NavButtonType.CLOSE
 import catchup.base.ui.rememberSystemBarColorController
-import catchup.di.AppScope
 import catchup.summarizer.SummarizerResult.Error
 import catchup.summarizer.SummarizerResult.NotFound
 import catchup.summarizer.SummarizerResult.Success
@@ -38,9 +37,10 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -65,9 +65,8 @@ private fun SummarizerResult.toState(title: String, url: String): State {
   }
 }
 
-class SummarizerPresenter
-@AssistedInject
-constructor(
+@Inject
+class SummarizerPresenter(
   @Assisted private val screen: SummarizerScreen,
   private val repository: SummarizerRepository,
 ) : Presenter<State> {

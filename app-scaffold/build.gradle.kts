@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.google.devtools.ksp.gradle.KspAATask
-import com.google.devtools.ksp.gradle.KspTaskJvm
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import foundry.gradle.FoundryProperties
+import foundry.gradle.DelicateFoundryGradlePluginApi
 
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt) apply false
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.apollo)
-  alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.moshix)
@@ -34,15 +29,15 @@ plugins {
 kotlin { compilerOptions { optIn.add("androidx.compose.material3.ExperimentalMaterial3Api") } }
 
 foundry {
-  @Suppress("OPT_IN_USAGE")
   features {
     compose {
       if (project.hasProperty("catchup.enableComposeCompilerReports")) {
         val metricsDir = project.layout.buildDirectory.dir("compose_metrics").get().asFile
+        @OptIn(DelicateFoundryGradlePluginApi::class)
         enableCompilerMetricsForDebugging(metricsDir)
       }
     }
-    dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
+    metro()
     moshi(codegen = true)
   }
   // TODO
@@ -93,49 +88,9 @@ apollo {
   }
 }
 
-val anvilMode = FoundryProperties(project).anvilMode
-
-if (!anvilMode.useDaggerKsp) {
-  apply(plugin = libs.plugins.kotlin.kapt.get().pluginId)
-  val useKsp2 = findProperty("ksp.useKSP2")?.toString().toBoolean()
-
-  @Suppress("UNCHECKED_CAST")
-  fun kspTaskDestinationProvider(name: String): Provider<File> {
-    val taskType = if (useKsp2) KspAATask::class else KspTaskJvm::class
-    val kspDebugTask = tasks.named(name, taskType)
-    val provider: Provider<File> =
-      if (useKsp2) {
-        // TODO double check after KSP2 resources fix if this is right, or if we need to use the
-        //  base dir instead to make it more general
-        (kspDebugTask as TaskProvider<KspAATask>).flatMap { it.kspConfig.kotlinOutputDir }
-      } else {
-        (kspDebugTask as TaskProvider<KspTaskJvm>).flatMap { it.destination }
-      }
-    return provider
-  }
-
-  // Workaround for https://youtrack.jetbrains.com/issue/KT-59220
-  afterEvaluate {
-    val kspDebugTaskProvider = kspTaskDestinationProvider("kspDebugKotlin")
-    tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
-      source(kspDebugTaskProvider)
-    }
-    val kspReleaseTaskProvider = kspTaskDestinationProvider("kspReleaseKotlin")
-    tasks.named<KotlinCompile>("kaptGenerateStubsReleaseKotlin").configure {
-      source(kspReleaseTaskProvider)
-    }
-  }
-}
+ksp { arg("circuit.codegen.mode", "METRO") }
 
 dependencies {
- if (anvilMode.useDaggerKsp) {
-    "kspDebug"(projects.libraries.tooling.spiMultibindsValidator)
-    "kspDebug"(projects.libraries.tooling.spiVisualizer)
-  } else {
-    "kaptDebug"(projects.libraries.tooling.spiMultibindsValidator)
-    "kaptDebug"(projects.libraries.tooling.spiVisualizer)
-  }
-
   implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.annotations)
@@ -248,29 +203,29 @@ dependencies {
   implementation(projects.services.unsplash)
   implementation(projects.services.uplabs)
 
- releaseImplementation(libs.misc.bugsnag)
- releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
+  releaseImplementation(libs.misc.bugsnag)
+  releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
 
- debugImplementation(libs.androidx.compose.uiTooling)
- debugImplementation(libs.corbind)
- debugImplementation(libs.misc.debug.flipper)
- debugImplementation(libs.misc.debug.flipperNetwork)
- debugImplementation(libs.misc.debug.guava)
- debugImplementation(libs.misc.debug.soLoader)
- debugImplementation(libs.misc.debug.telescope)
- debugImplementation(libs.misc.leakCanary)
- debugImplementation(libs.misc.leakCanary.shark)
- debugImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
- debugImplementation(libs.okhttp.debug.loggingInterceptor)
- debugImplementation(libs.retrofit.moshi)
- debugImplementation(projects.libraries.retrofitconverters)
+  debugImplementation(libs.androidx.compose.uiTooling)
+  debugImplementation(libs.corbind)
+  debugImplementation(libs.misc.debug.flipper)
+  debugImplementation(libs.misc.debug.flipperNetwork)
+  debugImplementation(libs.misc.debug.guava)
+  debugImplementation(libs.misc.debug.soLoader)
+  debugImplementation(libs.misc.debug.telescope)
+  debugImplementation(libs.misc.leakCanary)
+  debugImplementation(libs.misc.leakCanary.shark)
+  debugImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
+  debugImplementation(libs.okhttp.debug.loggingInterceptor)
+  debugImplementation(libs.retrofit.moshi)
+  debugImplementation(projects.libraries.retrofitconverters)
 
- testImplementation(libs.kotlin.coroutines.test)
- testImplementation(libs.misc.debug.flipper)
- testImplementation(libs.misc.debug.flipperNetwork)
- testImplementation(libs.misc.okio.fakeFileSystem)
- testImplementation(libs.test.junit)
- testImplementation(libs.test.truth)
+  testImplementation(libs.kotlin.coroutines.test)
+  testImplementation(libs.misc.debug.flipper)
+  testImplementation(libs.misc.debug.flipperNetwork)
+  testImplementation(libs.misc.okio.fakeFileSystem)
+  testImplementation(libs.test.junit)
+  testImplementation(libs.test.truth)
 
- ksp(libs.circuit.codegen)
+  ksp(libs.circuit.codegen)
 }

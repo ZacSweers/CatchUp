@@ -31,9 +31,7 @@ kotlin {
     commonMain {
       dependencies {
         api(libs.androidx.annotations)
-        api(libs.anvil.annotations)
         api(libs.compose.runtime)
-        api(libs.dagger.runtime)
         api(libs.kotlin.datetime)
         api(libs.kotlinx.immutable)
         api(projects.libraries.di)
@@ -56,6 +54,6 @@ android { namespace = "catchup.service.api" }
 
 foundry {
   features {
-    dagger()
+    metro()
   }
 }

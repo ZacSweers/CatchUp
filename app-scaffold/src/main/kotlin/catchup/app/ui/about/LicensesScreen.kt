@@ -40,7 +40,6 @@ import catchup.app.service.openUrl
 import catchup.app.ui.about.LicensesScreen.Event.Click
 import catchup.app.ui.about.LicensesScreen.State
 import catchup.compose.rememberStableCoroutineScope
-import catchup.di.AppScope
 import catchup.gemoji.EmojiMarkdownConverter
 import catchup.gemoji.replaceMarkdownEmojisIn
 import catchup.service.api.CatchUpItem
@@ -60,16 +59,16 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import com.squareup.anvil.annotations.ContributesBinding
-import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import dagger.Module
-import dagger.Provides
 import dev.zacsweers.catchup.app.scaffold.R
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provides
 import java.util.Objects
-import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -101,8 +100,7 @@ object LicensesScreen : Screen {
 }
 
 @ContributesTo(AppScope::class)
-@Module
-object LicensesModule {
+interface LicensesModule {
   @Provides fun provideAssets(@ApplicationContext context: Context): AssetManager = context.assets
 }
 
@@ -228,9 +226,8 @@ interface LicensesRepository {
 }
 
 @ContributesBinding(AppScope::class)
-class LicensesRepositoryImpl
 @Inject
-constructor(
+class LicensesRepositoryImpl(
   private val apolloClient: ApolloClient,
   private val markdownConverter: EmojiMarkdownConverter,
   private val moshi: Moshi,

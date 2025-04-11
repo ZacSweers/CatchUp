@@ -35,40 +35,28 @@ fun HazeScaffold(
   content: @Composable (PaddingValues) -> Unit,
 ) {
   val hazeState = remember { HazeState() }
+  val bgColor = MaterialTheme.colorScheme.surface
+  val style =
+    remember(bgColor, blurTopBar) {
+      HazeStyle(
+        backgroundColor = bgColor,
+        tint = HazeDefaults.tint(containerColor),
+        blurRadius = HazeDefaults.blurRadius,
+        noiseFactor = HazeDefaults.noiseFactor,
+      )
+    }
 
   NestedScaffold(
     modifier = modifier,
     topBar = {
       Box(
-        modifier =
-          Modifier.thenIf(blurTopBar) {
-            hazeEffect(
-              hazeState,
-              style =
-                HazeStyle(
-                  tint = HazeDefaults.tint(containerColor),
-                  blurRadius = HazeDefaults.blurRadius,
-                  noiseFactor = HazeDefaults.noiseFactor,
-                ),
-            )
-          },
+        modifier = Modifier.thenIf(blurTopBar) { hazeEffect(hazeState, style = style) },
         content = { topBar() },
       )
     },
     bottomBar = {
       Box(
-        modifier =
-          Modifier.thenIf(blurBottomBar) {
-            hazeEffect(
-              hazeState,
-              style =
-                HazeStyle(
-                  tint = HazeDefaults.tint(containerColor),
-                  blurRadius = HazeDefaults.blurRadius,
-                  noiseFactor = HazeDefaults.noiseFactor,
-                ),
-            )
-          },
+        modifier = Modifier.thenIf(blurBottomBar) { hazeEffect(hazeState, style) },
         content = { bottomBar() },
       )
     },

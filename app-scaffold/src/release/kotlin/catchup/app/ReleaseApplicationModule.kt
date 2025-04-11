@@ -19,22 +19,20 @@ import android.app.Application
 import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.LumberYard
 import catchup.base.ui.CatchUpObjectWatcher
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Client
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoSet
 import dev.zacsweers.catchup.app.scaffold.BuildConfig
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.IntoSet
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.SingleIn
 import kotlin.annotation.AnnotationRetention.BINARY
 import timber.log.Timber
 
 @ContributesTo(AppScope::class)
-@Module
-object ReleaseApplicationModule {
+interface ReleaseApplicationModule {
 
   @Provides
   @SingleIn(AppScope::class)

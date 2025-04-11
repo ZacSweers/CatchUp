@@ -42,7 +42,7 @@ foundry {
 dependencies {
   api(libs.androidx.coreKtx)
   api(libs.apollo.api)
-  api(libs.dagger.runtime)
+  api(libs.metro.runtime)
   api(libs.kotlin.datetime)
   api(libs.kotlinx.immutable)
   api(libs.moshi.core)

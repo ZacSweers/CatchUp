@@ -24,12 +24,14 @@ plugins {
 android { namespace = "catchup.service.slashdot" }
 
 foundry {
-  features { dagger() }
-  android { features { resources("catchup_service_sd_") } }
+  features {
+    metro()
+  }
+  android { features {
+    resources("catchup_service_sd_") } }
 }
 
 dependencies {
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.kotlinx.serialization.core)
   api(libs.okhttp.core)

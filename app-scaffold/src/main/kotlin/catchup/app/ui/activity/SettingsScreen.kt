@@ -51,7 +51,6 @@ import catchup.compose.DisableableContent
 import catchup.compose.LocalEnabled
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
-import catchup.di.AppScope
 import catchup.util.clearCache
 import catchup.util.clearFiles
 import catchup.util.injection.qualifiers.ApplicationContext
@@ -64,13 +63,13 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
-import com.squareup.anvil.annotations.ContributesMultibinding
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.StringKey
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.drop
@@ -82,7 +81,7 @@ import okhttp3.Cache
 @Parcelize
 data class SettingsScreen(val showTopAppBar: Boolean = true) : Screen {
 
-  @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+  @ContributesIntoMap(AppScope::class)
   @StringKey("settings")
   object Deeplinker : DeepLinkable {
     override fun createScreen(queryParams: ImmutableMap<String, List<String?>>): Screen =
@@ -99,13 +98,12 @@ data class SettingsScreen(val showTopAppBar: Boolean = true) : Screen {
   }
 }
 
-class SettingsPresenter
-@AssistedInject
-constructor(
+@Inject
+class SettingsPresenter(
   @Assisted private val screen: SettingsScreen,
   @Assisted private val navigator: Navigator,
   @ApplicationContext private val appContext: Context,
-  private val cache: dagger.Lazy<Cache>,
+  private val cache: Lazy<Cache>,
   private val lumberYard: LumberYard,
   private val catchUpPreferences: CatchUpPreferences,
 ) : Presenter<State> {
@@ -174,7 +172,7 @@ constructor(
       cleanedSize += appContext.clearFiles()
       cleanedSize += appContext.clearCache()
       cleanedSize +=
-        with(cache.get()) {
+        with(cache.value) {
           val initialSize = size()
           evictAll()
           return@with initialSize - size()

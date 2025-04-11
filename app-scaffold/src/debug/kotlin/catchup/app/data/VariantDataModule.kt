@@ -15,13 +15,12 @@
  */
 package catchup.app.data
 
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.util.injection.qualifiers.NetworkInterceptor
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoSet
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.IntoSet
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
@@ -35,8 +34,7 @@ private inline fun httpLoggingInterceptor(
 }
 
 @ContributesTo(AppScope::class)
-@Module
-object VariantDataModule {
+interface VariantDataModule {
 
   @SingleIn(AppScope::class)
   @Provides

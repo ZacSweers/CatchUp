@@ -1,13 +1,11 @@
 package catchup.app.di
 
 import android.app.Activity
-import catchup.di.AppScope
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.multibindings.Multibinds
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Multibinds
 
 @ContributesTo(AppScope::class)
-@Module
 interface UiMultibindings {
-  @Multibinds fun activityProviders(): Map<Class<out Activity>, @JvmSuppressWildcards Activity>
+  @Multibinds fun activityProviders(): Map<Class<out Activity>, Activity>
 }

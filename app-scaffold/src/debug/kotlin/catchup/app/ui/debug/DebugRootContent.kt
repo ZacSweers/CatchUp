@@ -17,22 +17,18 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import catchup.app.data.DebugPreferences
-import catchup.base.ui.DefaultRootContent
 import catchup.base.ui.RootContent
 import catchup.base.ui.rememberSystemBarColorController
 import catchup.compose.rememberConditionalSystemUiColors
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.onNavEvent
 import com.slack.circuit.runtime.Navigator
-import com.squareup.anvil.annotations.ContributesBinding
-import javax.inject.Inject
 
-@SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, replaces = [DefaultRootContent::class])
-class DebugRootContent @Inject constructor(private val debugPreferences: DebugPreferences) :
-  RootContent {
+// TODO https://github.com/ZacSweers/metro/issues/205
+// @SingleIn(AppScope::class)
+// @ContributesBinding(AppScope::class, replaces = [DefaultRootContent::class])
+// @Inject
+class DebugRootContent(private val debugPreferences: DebugPreferences) : RootContent {
   @Composable
   override fun Content(navigator: Navigator, content: @Composable () -> Unit) {
     val original = LocalLayoutDirection.current

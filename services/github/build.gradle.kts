@@ -43,7 +43,7 @@ apollo {
 
 foundry {
   features {
-    dagger()
+    metro()
   }
   android {
     features {
@@ -55,7 +55,6 @@ foundry {
 dependencies {
   api(libs.apollo.api)
   api(libs.apollo.runtime)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.okhttp.core)
   api(libs.retrofit.core)
@@ -73,6 +72,4 @@ dependencies {
   implementation(libs.okhttp.core)
   implementation(projects.libraries.retrofitconverters)
   implementation(projects.libraries.util)
-
-  compileOnly(libs.misc.javaxInject)
 }

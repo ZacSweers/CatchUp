@@ -20,17 +20,15 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.gemoji.db.GemojiDatabase
 import catchup.util.injection.qualifiers.ApplicationContext
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.Provides
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 
 @ContributesTo(AppScope::class)
-@Module
-object GemojiModule {
+interface GemojiModule {
 
   @Provides
   @SingleIn(AppScope::class)

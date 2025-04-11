@@ -15,6 +15,6 @@
  */
 package catchup.service.api
 
-import dagger.MapKey
+import dev.zacsweers.metro.MapKey
 
 @MapKey annotation class ServiceMetaKey(val value: String)

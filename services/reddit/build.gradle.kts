@@ -26,7 +26,7 @@ android {
 
 foundry {
   features {
-    dagger()
+    metro()
     moshi(codegen = true)
   }
   android {
@@ -38,7 +38,6 @@ foundry {
 
 dependencies {
   api(libs.androidx.annotations)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.moshi.core)
   api(libs.okhttp.core)

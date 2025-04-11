@@ -63,7 +63,6 @@ import catchup.base.ui.rememberEventSink
 import catchup.compose.dynamicAwareColor
 import catchup.compose.rememberRetainedCoroutineScope
 import catchup.compose.rememberStableCoroutineScope
-import catchup.di.AppScope
 import catchup.di.ContextualFactory
 import catchup.di.DataMode
 import catchup.di.DataMode.OFFLINE
@@ -82,11 +81,12 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuitx.overlays.showFullScreenOverlay
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.app.scaffold.R
-import javax.inject.Provider
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -128,13 +128,12 @@ data class ServiceScreen(val serviceKey: String) : Screen {
   }
 }
 
-class ServicePresenter
-@AssistedInject
-constructor(
+@Inject
+class ServicePresenter(
   @Assisted private val screen: ServiceScreen,
   @Assisted private val navigator: Navigator,
   private val linkManager: LinkManager,
-  private val services: @JvmSuppressWildcards Map<String, Provider<Service>>,
+  private val services: Map<String, Provider<Service>>,
   private val dbFactory: ContextualFactory<DataMode, out CatchUpDatabase>,
   private val serviceMediatorFactory: ServiceMediator.Factory,
   private val catchUpPreferences: CatchUpPreferences,
@@ -143,7 +142,7 @@ constructor(
   override fun present(): State {
     val service =
       remember(screen.serviceKey) {
-        services[screen.serviceKey]?.get()
+        services[screen.serviceKey]?.invoke()
           ?: throw IllegalArgumentException(
             "No service provided for ${screen.serviceKey}! Available are ${services.keys}"
           )

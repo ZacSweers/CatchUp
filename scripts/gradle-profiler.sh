@@ -39,4 +39,4 @@ echo "Killing any running daemons or java processes"
 
 # Exec it
 # Scan is logged in profile-out/profile.log
-$PROFILER_BIN --benchmark --profile buildscan --scenario-file config/gradle/benchmark.scenarios --measure-gc --measure-local-build-cache -Dorg.gradle.daemon.gc.polling.disabled=true "$@"
+$PROFILER_BIN --benchmark --scenario-file config/gradle/benchmark.scenarios --measure-gc --measure-local-build-cache -Dorg.gradle.daemon.gc.polling.disabled=true "$@"

@@ -9,6 +9,10 @@ import catchup.bookmarks.db.Bookmark
 import catchup.bookmarks.db.CatchUpDatabase
 import catchup.service.api.CatchUpItem
 import catchup.service.api.toCatchUpItem
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +41,10 @@ interface BookmarkRepository {
   fun bookmarksQuery(limit: Long, offset: Long): Query<CatchUpItem>
 }
 
-internal class BookmarkRepositoryImpl(
+@ContributesBinding(AppScope::class)
+@SingleIn(AppScope::class)
+@Inject
+class BookmarkRepositoryImpl(
   private val database: CatchUpDatabase,
   // TODO replace with background scope from DI graph
   scope: CoroutineScope = CoroutineScope(Dispatchers.IO),

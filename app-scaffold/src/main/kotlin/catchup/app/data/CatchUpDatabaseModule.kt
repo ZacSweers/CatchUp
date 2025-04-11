@@ -20,18 +20,16 @@ import app.cash.sqldelight.adapter.primitive.FloatColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import catchup.bookmarks.db.Bookmark
 import catchup.bookmarks.db.CatchUpDatabase as BookmarksDatabase
-import catchup.di.AppScope
 import catchup.di.ContextualFactory
 import catchup.di.DataMode
-import catchup.di.SingleIn
 import catchup.service.db.CatchUpDatabase
 import catchup.service.db.CatchUpDbItem
 import catchup.sqldelight.SqlDriverFactory
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import kotlinx.datetime.Instant
 
 /**
@@ -42,11 +40,10 @@ import kotlinx.datetime.Instant
  * We expose a [ContextualFactory] for the DBs so that we can switch between real and fake easily.
  */
 @ContributesTo(AppScope::class)
-@Module
-abstract class CatchUpDatabaseModule {
+interface CatchUpDatabaseModule {
 
   @Binds
-  abstract fun provideCatchUpDbFactory(
+  fun provideCatchUpDbFactory(
     real: ContextualFactory<DataMode, BookmarksDatabase>
   ): ContextualFactory<DataMode, out CatchUpDatabase>
 
@@ -61,7 +58,7 @@ abstract class CatchUpDatabaseModule {
         when (mode) {
           // Fakes are unscoped but that's fine, they're in-memory and whatever
           DataMode.FAKE -> createDb(factory, null)
-          else -> realDb.get()
+          else -> realDb.value
         }
       }
     }

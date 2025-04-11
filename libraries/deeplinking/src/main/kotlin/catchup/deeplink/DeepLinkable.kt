@@ -1,8 +1,8 @@
 package catchup.deeplink
 
 import com.slack.circuit.runtime.screen.Screen
-import com.squareup.anvil.annotations.ContributesMultibinding
-import dagger.multibindings.StringKey
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.StringKey
 import kotlinx.collections.immutable.ImmutableMap
 import okhttp3.HttpUrl
 
@@ -14,7 +14,7 @@ import okhttp3.HttpUrl
  * ## Configuration
  *
  * ```kotlin
- * @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+ * @ContributesMultibinding(AppScope::class, binding = binding<DeepLinkable>)
  * @StringKey("home") // The segment/route
  * @Parcelize
  * object HomeScreen : Screen, DeepLinkable {
@@ -39,12 +39,12 @@ import okhttp3.HttpUrl
  *
  * ## Contributing to DI
  *
- * To contribute a [DeepLinkable] to DI, use a combination of [ContributesMultibinding] and
- * [StringKey] annotations. The key should be the path segment this screen is associated with.
+ * To contribute a [DeepLinkable] to DI, use a combination of [ContributesIntoMap] and [StringKey]
+ * annotations. The key should be the path segment this screen is associated with.
  *
  * Example:
  * ```kotlin
- * @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+ * @ContributesIntoMap(AppScope::class, binding = binding<DeepLinkable>)
  * @StringKey("home")
  * @Parcelize
  * object HomeScreen : Screen, DeepLinkable

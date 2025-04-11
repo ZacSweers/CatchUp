@@ -16,7 +16,6 @@
 package catchup.service.hackernews
 
 import android.content.Context
-import catchup.di.AppScope
 import catchup.service.api.CatchUpItem
 import catchup.service.api.DataRequest
 import catchup.service.api.DataResult
@@ -37,14 +36,15 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
-import javax.inject.Inject
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.binding
 import kotlin.coroutines.resume
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -66,12 +66,11 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 private const val SERVICE_KEY = "hn"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(AppScope::class, boundType = Service::class)
-class HackerNewsService
+@ContributesIntoMap(AppScope::class, binding = binding<Service>())
 @Inject
-constructor(
+class HackerNewsService(
   @InternalApi private val serviceMeta: ServiceMeta,
-  private val database: dagger.Lazy<FirebaseDatabase>,
+  private val database: Lazy<FirebaseDatabase>,
 ) : TextService {
 
   override fun meta() = serviceMeta
@@ -93,7 +92,7 @@ constructor(
             }
           }
 
-        val ref = database.get().getReference("/v0/topstories").apply { keepSynced(true) }
+        val ref = database.value.getReference("/v0/topstories").apply { keepSynced(true) }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
       }
@@ -104,7 +103,7 @@ constructor(
       // TODO concatMapEager?
       .map { id ->
         suspendCancellableCoroutine { cont ->
-          val ref = database.get().getReference("/v0/item/$id")
+          val ref = database.value.getReference("/v0/item/$id")
           val listener =
             object : ValueEventListener {
               override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -160,13 +159,12 @@ constructor(
 }
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class HackerNewsMetaModule {
+interface HackerNewsMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun hackerNewsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+  fun hackerNewsServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
   companion object {
 
@@ -186,8 +184,7 @@ abstract class HackerNewsMetaModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module
-object HackerNewsModule {
+interface HackerNewsModule {
   @Provides
   fun provideDatabase(@ApplicationContext context: Context): FirebaseDatabase {
     val app =

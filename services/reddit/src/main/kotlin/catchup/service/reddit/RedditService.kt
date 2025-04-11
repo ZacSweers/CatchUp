@@ -16,7 +16,6 @@
 package catchup.service.reddit
 
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
 import catchup.service.api.Comment
@@ -35,16 +34,16 @@ import catchup.service.reddit.model.RedditLink
 import catchup.service.reddit.model.RedditListing
 import catchup.service.reddit.model.RedditObjectFactory
 import catchup.util.data.adapters.EpochInstantJsonAdapter
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
-import javax.inject.Inject
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.binding
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
@@ -56,10 +55,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 private const val SERVICE_KEY = "reddit"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(AppScope::class, boundType = Service::class)
-class RedditService
+@ContributesIntoMap(AppScope::class, binding = binding<Service>())
 @Inject
-constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: RedditApi) :
+class RedditService(@InternalApi private val serviceMeta: ServiceMeta, private val api: RedditApi) :
   TextService {
 
   override fun meta() = serviceMeta
@@ -147,13 +145,12 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 }
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class RedditMetaModule {
+interface RedditMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun redditServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+  fun redditServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
   companion object {
 
@@ -171,8 +168,7 @@ abstract class RedditMetaModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module(includes = [RedditMetaModule::class])
-object RedditModule {
+interface RedditModule {
 
   @InternalApi
   @Provides
