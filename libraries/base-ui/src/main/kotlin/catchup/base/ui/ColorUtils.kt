@@ -28,6 +28,7 @@ import androidx.core.graphics.ColorUtils.colorToHSL
 import androidx.palette.graphics.Palette
 import catchup.base.ui.ColorUtils.Lightness
 import kotlin.annotation.AnnotationRetention.SOURCE
+import androidx.core.graphics.get
 
 /**
  * Checks if the most populous color in the given palette is dark
@@ -93,7 +94,7 @@ object ColorUtils {
       palette.isDark() == IS_DARK
     } else {
       // if palette failed, then check the color of the specified pixel
-      isDark(bitmap.getPixel(backupPixelX, backupPixelY))
+      isDark(bitmap[backupPixelX, backupPixelY])
     }
   }
 

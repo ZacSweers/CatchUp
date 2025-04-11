@@ -72,6 +72,8 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import androidx.core.graphics.toColorInt
+import androidx.core.graphics.drawable.toDrawable
 
 @Composable
 fun VisualServiceUi(
@@ -101,7 +103,7 @@ fun VisualServiceUi(
           val clickableItemState =
             rememberClickableItemState(
               contentColor =
-                item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
+                item.imageInfo?.color?.let { Color(it.toColorInt()) }
                   ?: Color.Unspecified
             )
           ClickableItem(onClick = { eventSink(ItemClicked(item)) }, state = clickableItemState) {
@@ -188,7 +190,7 @@ fun VisualItem(
           .memoryCacheKey(imageInfo.cacheKey)
           .let {
             if (blurHash == null) {
-              it.placeholder(ColorDrawable(placeholderColor.toArgb()))
+              it.placeholder(placeholderColor.toArgb().toDrawable())
             } else {
               it
             }
