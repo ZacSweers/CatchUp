@@ -4,7 +4,6 @@ package catchup.app.service
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ColorDrawable
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.compose.animation.Crossfade
@@ -50,6 +49,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColorInt
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
@@ -101,8 +102,7 @@ fun VisualServiceUi(
           val clickableItemState =
             rememberClickableItemState(
               contentColor =
-                item.imageInfo?.color?.let { Color(android.graphics.Color.parseColor(it)) }
-                  ?: Color.Unspecified
+                item.imageInfo?.color?.let { Color(it.toColorInt()) } ?: Color.Unspecified
             )
           ClickableItem(onClick = { eventSink(ItemClicked(item)) }, state = clickableItemState) {
             VisualItem(
@@ -188,7 +188,7 @@ fun VisualItem(
           .memoryCacheKey(imageInfo.cacheKey)
           .let {
             if (blurHash == null) {
-              it.placeholder(ColorDrawable(placeholderColor.toArgb()))
+              it.placeholder(placeholderColor.toArgb().toDrawable())
             } else {
               it
             }

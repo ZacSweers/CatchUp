@@ -69,6 +69,7 @@ private fun Context.maybeStartActivity(inputIntent: Intent, chooser: Boolean): B
 }
 
 /** Queries on-device packages for a handler for the supplied [Intent]. */
+@Suppress("QueryPermissionsNeeded")
 private fun Context.hasHandler(intent: Intent) =
   packageManager.queryIntentActivities(intent, 0).isNotEmpty()
 
