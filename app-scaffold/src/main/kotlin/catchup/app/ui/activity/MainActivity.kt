@@ -61,7 +61,7 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
-import com.slack.circuitx.gesturenavigation.GestureNavigationDecoration
+import com.slack.circuitx.gesturenavigation.GestureNavigationDecorationFactory
 import com.squareup.anvil.annotations.ContributesMultibinding
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
@@ -167,9 +167,9 @@ constructor(
                 NavigableCircuitContent(
                   intentAwareNavigator,
                   backStack,
-                  decoration =
-                    GestureNavigationDecoration(
-                      circuit.defaultNavDecoration,
+                  decoratorFactory =
+                    GestureNavigationDecorationFactory(
+                      circuit.animatedNavDecoratorFactory,
                       // Pop the back stack once the user has gone 'back'
                       navigator::pop,
                     ),
