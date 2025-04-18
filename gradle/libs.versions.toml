@@ -204,7 +204,7 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 eithernet-retrofit = { module = "com.slack.eithernet:eithernet-integration-retrofit", version.ref = "eithernet" }
 
-errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.37.0"
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.38.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
