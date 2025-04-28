@@ -31,8 +31,7 @@ pluginManagement {
 
   repositories {
     // Snapshots
-    if (hasProperty("foundry.gradle.config.enableSnapshots")) {
-    }
+    if (hasProperty("foundry.gradle.config.enableSnapshots")) {}
     maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
       name = "snapshots-maven-central"
       mavenContent { snapshotsOnly() }
@@ -49,8 +48,8 @@ pluginManagement {
 
     // MavenLocal, used when consuming a locally-installed artifact
     if (hasProperty("catchup.config.enableMavenLocal")) {
-    }
       mavenLocal()
+    }
 
     // Maven central
     mavenCentral()
@@ -144,8 +143,7 @@ dependencyResolutionManagement {
     // snapshot artifacts
 
     // Snapshots
-    if (hasProperty("foundry.gradle.config.enableSnapshots")) {
-    }
+    if (hasProperty("foundry.gradle.config.enableSnapshots")) {}
     maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
       name = "snapshots-maven-central"
       mavenContent { snapshotsOnly() }
@@ -162,8 +160,8 @@ dependencyResolutionManagement {
 
     // MavenLocal, used when consuming a locally-installed artifact
     if (hasProperty("catchup.config.enableMavenLocal")) {
+      mavenLocal()
     }
-    mavenLocal()
 
     mavenCentral()
 
@@ -262,12 +260,9 @@ configureIncludedBuild("foundry") { path ->
         .using(project(":platforms:gradle:foundry-gradle-plugin"))
       substitute(module("com.slack.foundry:agp-handler-api"))
         .using(project(":platforms:gradle:agp-handlers:agp-handler-api"))
-      substitute(module("com.slack.foundry:foundry-common"))
-        .using(project(":tools:foundry-common"))
-      substitute(module("com.slack.foundry:skippy"))
-        .using(project(":tools:skippy"))
-      substitute(module("com.slack.foundry:tracing"))
-        .using(project(":tools:tracing"))
+      substitute(module("com.slack.foundry:foundry-common")).using(project(":tools:foundry-common"))
+      substitute(module("com.slack.foundry:skippy")).using(project(":tools:skippy"))
+      substitute(module("com.slack.foundry:tracing")).using(project(":tools:tracing"))
     }
   }
 }
