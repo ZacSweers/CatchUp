@@ -22,18 +22,18 @@ import catchup.app.ui.about.AboutScreen.State
 import catchup.appconfig.AppConfig
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
-import catchup.di.AppScope
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import com.squareup.anvil.annotations.ContributesMultibinding
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.StringKey
 import java.util.Locale
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
@@ -45,7 +45,7 @@ import timber.log.Timber
 data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenComponent.DEFAULT) :
   Screen {
 
-  @ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+  @ContributesIntoMap(AppScope::class)
   @StringKey("about")
   object DeepLinker : DeepLinkable {
     override fun createScreen(queryParams: ImmutableMap<String, List<String?>>) =
@@ -75,9 +75,8 @@ data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenCompon
   }
 }
 
-class AboutPresenter
-@AssistedInject
-constructor(@Assisted val screen: AboutScreen, private val appConfig: AppConfig) :
+@Inject
+class AboutPresenter(@Assisted val screen: AboutScreen, private val appConfig: AppConfig) :
   Presenter<State> {
   @Composable override fun present() = State(screen.selectedTab.ordinal, appConfig.versionName)
 

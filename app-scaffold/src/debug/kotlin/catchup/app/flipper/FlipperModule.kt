@@ -16,8 +16,6 @@
 package catchup.app.flipper
 
 import android.content.Context
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.injection.qualifiers.NetworkInterceptor
 import com.facebook.flipper.core.FlipperPlugin
@@ -27,24 +25,24 @@ import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoSet
-import dagger.multibindings.Multibinds
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.IntoSet
+import dev.zacsweers.metro.Multibinds
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import okhttp3.Interceptor
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class FlipperModule {
+interface FlipperModule {
 
-  @Multibinds abstract fun provideFlipperPlugins(): Set<FlipperPlugin>
+  @Multibinds fun provideFlipperPlugins(): Set<FlipperPlugin>
 
   @Binds
   @IntoSet
   @SingleIn(AppScope::class)
-  abstract fun provideNetworkFlipperPluginIntoSet(plugin: NetworkFlipperPlugin): FlipperPlugin
+  fun provideNetworkFlipperPluginIntoSet(plugin: NetworkFlipperPlugin): FlipperPlugin
 
   companion object {
     @IntoSet

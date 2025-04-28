@@ -1,13 +1,13 @@
 package catchup.summarizer
 
-import catchup.di.AppScope
 import catchup.di.FakeMode
-import catchup.di.SingleIn
 import catchup.summarizer.SummarizerResult.Error
 import catchup.summarizer.SummarizerResult.NotFound
 import catchup.summarizer.SummarizerResult.Success
-import com.squareup.anvil.annotations.ContributesBinding
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
@@ -29,9 +29,8 @@ sealed interface SummarizerResult {
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class SummarizerRepositoryImpl
 @Inject
-constructor(
+class SummarizerRepositoryImpl(
   private val database: SummarizationsDatabase,
   private val chatGptApi: ChatGptApi,
   @FakeMode private val isFakeMode: StateFlow<Boolean>,

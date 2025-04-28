@@ -16,7 +16,6 @@
 package catchup.service.dribbble
 
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.DecodingConverter
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
@@ -30,15 +29,15 @@ import catchup.service.api.ServiceKey
 import catchup.service.api.ServiceMeta
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.VisualService
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
-import javax.inject.Inject
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.binding
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
@@ -47,11 +46,12 @@ import retrofit2.Retrofit
 private const val SERVICE_KEY = "dribbble"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(AppScope::class, boundType = Service::class)
-class DribbbleService
+@ContributesIntoMap(AppScope::class, binding = binding<Service>())
 @Inject
-constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: DribbbleApi) :
-  VisualService {
+class DribbbleService(
+  @InternalApi private val serviceMeta: ServiceMeta,
+  private val api: DribbbleApi,
+) : VisualService {
 
   override fun meta() = serviceMeta
 
@@ -90,13 +90,12 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 }
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class DribbbleMetaModule {
+interface DribbbleMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun dribbbleServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+  fun dribbbleServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
   companion object {
 
@@ -116,8 +115,7 @@ abstract class DribbbleMetaModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module(includes = [DribbbleMetaModule::class])
-object DribbbleModule {
+interface DribbbleModule {
   @Provides
   fun provideDribbbleService(client: Lazy<OkHttpClient>, appConfig: AppConfig): DribbbleApi {
     return Retrofit.Builder()

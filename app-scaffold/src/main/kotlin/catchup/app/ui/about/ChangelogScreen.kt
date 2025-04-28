@@ -28,7 +28,6 @@ import catchup.app.ui.about.ChangelogScreen.Event.Click
 import catchup.app.ui.about.ChangelogScreen.State
 import catchup.compose.LocalDynamicTheme
 import catchup.compose.rememberStableCoroutineScope
-import catchup.di.AppScope
 import catchup.gemoji.EmojiMarkdownConverter
 import catchup.gemoji.replaceMarkdownEmojisIn
 import catchup.service.api.CatchUpItem
@@ -40,9 +39,10 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import com.squareup.anvil.annotations.ContributesBinding
 import dev.zacsweers.catchup.app.scaffold.R
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -61,9 +61,8 @@ object ChangelogScreen : Screen {
 }
 
 @CircuitInject(ChangelogScreen::class, AppScope::class)
-class ChangelogPresenter
 @Inject
-constructor(
+class ChangelogPresenter(
   private val linkManager: LinkManager,
   private val changelogRepository: ChangelogRepository,
 ) : Presenter<State> {
@@ -136,9 +135,8 @@ interface ChangelogRepository {
 }
 
 @ContributesBinding(AppScope::class)
-class ChangelogRepositoryImpl
 @Inject
-constructor(
+class ChangelogRepositoryImpl(
   private val apolloClient: ApolloClient,
   private val markdownConverter: EmojiMarkdownConverter,
 ) : ChangelogRepository {

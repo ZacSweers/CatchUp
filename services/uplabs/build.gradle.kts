@@ -26,14 +26,13 @@ android {
 
 foundry {
   features {
-    dagger()
+    metro()
     moshi(codegen = true)
   }
   android { features { resources("catchup_service_uplabs_") } }
 }
 
 dependencies {
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.okhttp.core)
   api(libs.retrofit.core)

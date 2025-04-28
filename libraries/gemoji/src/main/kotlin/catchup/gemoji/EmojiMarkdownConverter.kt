@@ -17,11 +17,11 @@ package catchup.gemoji
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOne
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.gemoji.db.GemojiDatabase
-import com.squareup.anvil.annotations.ContributesBinding
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -37,7 +37,8 @@ interface EmojiMarkdownConverter {
 
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
-class GemojiEmojiMarkdownConverter @Inject constructor(private val gemojiDatabase: GemojiDatabase) :
+@Inject
+class GemojiEmojiMarkdownConverter(private val gemojiDatabase: GemojiDatabase) :
   EmojiMarkdownConverter {
   override suspend fun convert(alias: String): String? {
     println("Converting $alias")

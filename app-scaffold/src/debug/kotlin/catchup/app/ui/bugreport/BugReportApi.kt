@@ -16,17 +16,15 @@
 package catchup.app.ui.bugreport
 
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import com.serjltt.moshi.adapters.Wrapped
-import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
 import dev.zacsweers.catchup.app.scaffold.BuildConfig
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -61,12 +59,11 @@ interface GitHubIssueApi {
 @JsonClass(generateAdapter = true) data class GitHubIssue(val title: String, val body: String)
 
 @ContributesTo(AppScope::class)
-@Module
-object BugReportModule {
+interface BugReportModule {
 
   @SingleIn(AppScope::class)
   @Provides
-  internal fun provideImgurService(
+  fun provideImgurService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
     appConfig: AppConfig,
@@ -84,7 +81,7 @@ object BugReportModule {
 
   @SingleIn(AppScope::class)
   @Provides
-  internal fun provideGithubIssueService(
+  fun provideGithubIssueService(
     client: Lazy<OkHttpClient>,
     moshi: Moshi,
     appConfig: AppConfig,

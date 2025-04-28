@@ -37,10 +37,10 @@ import catchup.app.ui.bugreport.BugReportView.Report
 import catchup.app.util.buildMarkdown
 import catchup.appconfig.AppConfig
 import com.mattprecious.telescope.Lens
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.app.scaffold.R
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -52,9 +52,8 @@ import okhttp3.RequestBody.Companion.asRequestBody
  * Pops a dialog asking for more information about the bug report and then creates an upload with a
  * markdown-formatted body.
  */
-class BugReportLens
-@AssistedInject
-constructor(
+@Inject
+class BugReportLens(
   @Assisted private val activity: ComponentActivity,
   private val lumberYard: LumberYard,
   private val imgurUploadApi: ImgurUploadApi,

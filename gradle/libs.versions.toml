@@ -22,7 +22,7 @@ datastore = "1.2.0-alpha01"
 detekt = "1.23.8"
 eithernet = "2.0.0"
 flipper = "0.273.0"
-foundry = "0.26.0"
+foundry = "0.27.0"
 jdk = "23"
 jvmTarget = "17"
 kotlin = "2.1.20"
@@ -32,6 +32,7 @@ ktfmt = "0.54"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.9.0-rc01"
 markdown = "0.31.0"
+metro = "0.2.0"
 moshi = "1.15.2"
 moshix = "0.30.0"
 okhttp = "5.0.0-alpha.14"
@@ -62,13 +63,13 @@ doctor = { id = "com.osacky.doctor", version = "0.10.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.13.0" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.12.1" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.13.0" }
@@ -223,6 +224,8 @@ kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 lints-compose = "com.slack.lint.compose:compose-lint-checks:1.4.2"
 
 markdown = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "markdown" }
+
+metro-runtime = { module = "dev.zacsweers.metro:runtime", version.ref = "metro" }
 
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 misc-leakCanary-shark = { module = "com.squareup.leakcanary:shark", version.ref = "leakcanary" }

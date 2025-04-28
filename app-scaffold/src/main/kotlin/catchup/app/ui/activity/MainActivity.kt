@@ -47,7 +47,6 @@ import catchup.compose.CatchUpTheme
 import catchup.compose.LocalDisplayFeatures
 import catchup.deeplink.DeepLinkHandler
 import catchup.deeplink.parse
-import catchup.di.AppScope
 import catchup.di.android.ActivityKey
 import catchup.service.api.Service
 import catchup.service.api.ServiceMeta
@@ -62,20 +61,20 @@ import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
 import com.slack.circuitx.gesturenavigation.GestureNavigationDecorationFactory
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.multibindings.Multibinds
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Multibinds
+import dev.zacsweers.metro.binding
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 @ActivityKey(MainActivity::class)
-@ContributesMultibinding(AppScope::class, boundType = Activity::class)
-class MainActivity
+@ContributesIntoMap(AppScope::class, binding = binding<Activity>())
 @Inject
-constructor(
+class MainActivity(
   private val customTab: CustomTabActivityHelper,
   private val linkManager: LinkManager,
   private val circuit: Circuit,
@@ -199,10 +198,9 @@ constructor(
   }
 
   @ContributesTo(AppScope::class)
-  @Module
-  abstract class ServiceIntegrationModule {
-    @Multibinds abstract fun services(): @JvmSuppressWildcards Map<String, Service>
+  interface ServiceIntegrationModule {
+    @Multibinds val services: Map<String, Service>
 
-    @Multibinds abstract fun serviceMetas(): @JvmSuppressWildcards Map<String, ServiceMeta>
+    @Multibinds fun serviceMetas(): Map<String, ServiceMeta>
   }
 }

@@ -4,19 +4,16 @@ import catchup.app.ui.about.LicensesRepository
 import catchup.app.ui.about.LicensesRepositoryImpl
 import catchup.app.ui.about.OssBaseItem
 import catchup.app.ui.about.OssItem
-import catchup.di.AppScope
 import catchup.di.FakeMode
-import com.squareup.anvil.annotations.ContributesBinding
-import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-@ContributesBinding(AppScope::class, replaces = [LicensesRepositoryImpl::class])
-class StubLicensesRepository
-@Inject
-constructor(
+// TODO https://github.com/ZacSweers/metro/issues/205
+// @ContributesBinding(AppScope::class, replaces = [LicensesRepositoryImpl::class])
+// @Inject
+class StubLicensesRepository(
   @FakeMode private val isFakeMode: Boolean,
-  private val realImpl: dagger.Lazy<LicensesRepositoryImpl>,
+  private val realImpl: Lazy<LicensesRepositoryImpl>,
 ) : LicensesRepository {
   override suspend fun requestItems(): ImmutableList<OssBaseItem> {
     return if (isFakeMode) {
@@ -37,7 +34,7 @@ constructor(
         }
         .toImmutableList()
     } else {
-      realImpl.get().requestItems()
+      realImpl.value.requestItems()
     }
   }
 }

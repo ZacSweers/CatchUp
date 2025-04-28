@@ -17,7 +17,6 @@ package catchup.service.github
 
 import android.graphics.Color
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
 import catchup.gemoji.EmojiMarkdownConverter
 import catchup.gemoji.replaceMarkdownEmojisIn
 import catchup.libraries.retrofitconverters.DecodingConverter
@@ -44,15 +43,15 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.http.HttpFetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.http.httpFetchPolicy
 import com.apollographql.apollo3.exception.DefaultApolloException
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
-import javax.inject.Inject
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.binding
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
@@ -61,10 +60,9 @@ import retrofit2.Retrofit
 private const val SERVICE_KEY = "github"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(AppScope::class, boundType = Service::class)
-class GitHubService
+@ContributesIntoMap(AppScope::class, binding = binding<Service>())
 @Inject
-constructor(
+class GitHubService(
   @InternalApi private val serviceMeta: ServiceMeta,
   private val apolloClient: Lazy<ApolloClient>,
   private val emojiMarkdownConverter: Lazy<EmojiMarkdownConverter>,
@@ -88,8 +86,7 @@ constructor(
   }
 
   private suspend fun fetchByScraping(request: DataRequest): DataResult {
-    return gitHubApi
-      .get()
+    return gitHubApi.value
       .getTrending(language = All, since = DAILY)
       .mapIndexed { index, it ->
         with(it) {
@@ -118,8 +115,7 @@ constructor(
       SearchQuery(createdSince = TrendingTimespan.WEEK.createdSince(), minStars = 50).toString()
 
     val searchQuery =
-      apolloClient
-        .get()
+      apolloClient.value
         .newBuilder()
         .httpFetchPolicy(NetworkOnly)
         .build()
@@ -144,7 +140,7 @@ constructor(
           with(it) {
             val description =
               description
-                ?.let { " — ${emojiMarkdownConverter.get().replaceMarkdownEmojisIn(it)}" }
+                ?.let { " — ${emojiMarkdownConverter.value.replaceMarkdownEmojisIn(it)}" }
                 .orEmpty()
 
             CatchUpItem(
@@ -175,13 +171,12 @@ constructor(
 }
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class GitHubMetaModule {
+interface GitHubMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun githubServiceMeta(@InternalApi real: ServiceMeta): ServiceMeta
+  fun githubServiceMeta(@InternalApi real: ServiceMeta): ServiceMeta
 
   companion object {
 
@@ -200,8 +195,7 @@ abstract class GitHubMetaModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module(includes = [GitHubMetaModule::class])
-object GitHubModule {
+interface GitHubModule {
 
   @Provides
   fun provideGitHubService(client: Lazy<OkHttpClient>, appConfig: AppConfig): GitHubApi {

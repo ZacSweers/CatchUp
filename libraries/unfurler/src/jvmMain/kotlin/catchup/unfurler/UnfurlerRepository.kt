@@ -1,12 +1,11 @@
 package catchup.unfurler
 
 import androidx.compose.runtime.Immutable
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.sqldelight.SqlDriverFactory
 import catchup.util.kotlin.NullableLruCache
-import dagger.Lazy
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.saket.unfurl.Unfurler
@@ -15,16 +14,18 @@ import okhttp3.OkHttpClient
 
 /** A simple unfurler client that maintains a small in-memory and DB cache. */
 @SingleIn(AppScope::class)
-class UnfurlerRepository
 @Inject
-constructor(private val okHttpClient: Lazy<OkHttpClient>, sqlDriverFactory: SqlDriverFactory) {
+class UnfurlerRepository(
+  private val okHttpClient: Lazy<OkHttpClient>,
+  sqlDriverFactory: SqlDriverFactory,
+) {
   private val db = UnfurlerDatabase(sqlDriverFactory.create(UnfurlerDatabase.Schema, "unfurler.db"))
 
   // Note: Unfurler maintains its own internal 100-item in-memory cache but no API to expose check
   // it, so we disable it by setting cacheSize to 0.
   private val unfurler by lazy {
     // Initialized lazily so that it's off the main thread
-    Unfurler(httpClient = okHttpClient.get(), cacheSize = 0)
+    Unfurler(httpClient = okHttpClient.value, cacheSize = 0)
   }
 
   private val cache = NullableLruCache<String, UnfurlResult>(maxSize = 100)
