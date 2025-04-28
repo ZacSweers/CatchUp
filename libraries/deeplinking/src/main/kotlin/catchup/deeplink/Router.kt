@@ -20,7 +20,7 @@ import timber.log.Timber
  *
  * @see parse for primary documentation.
  */
-interface DeepLinkHandler {
+interface Router {
   /**
    * Parses an [HttpUrl] into a list of [Screen]s that can be used as a backstack.
    *
@@ -43,7 +43,7 @@ interface DeepLinkHandler {
  *
  * Only used if the [Intent.getAction] is [Intent.ACTION_VIEW].
  */
-fun DeepLinkHandler.parse(intent: Intent): ImmutableList<Screen>? {
+fun Router.parse(intent: Intent): ImmutableList<Screen>? {
   /*
     Example intent:
     adb shell am start \
@@ -65,9 +65,9 @@ private fun Uri.toHttpUrl(): HttpUrl? {
 
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
-class DeepLinkHandlerImpl
+class RouterImpl
 @Inject
-constructor(private val routes: @JvmSuppressWildcards Map<String, DeepLinkable>) : DeepLinkHandler {
+constructor(private val routes: @JvmSuppressWildcards Map<String, DeepLinkable>) : Router {
   override fun parse(url: HttpUrl): ImmutableList<Screen> {
     val queryParams =
       url.queryParameterNames.associateWith { url.queryParameterValues(it) }.toImmutableMap()
