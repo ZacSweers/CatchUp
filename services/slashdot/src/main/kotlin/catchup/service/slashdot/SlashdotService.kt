@@ -106,36 +106,38 @@ interface SlashdotMetaModule {
 @ContributesTo(AppScope::class)
 interface SlashdotModule {
 
-  @Provides fun provideXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
+  companion object {
+    @Provides fun provideXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
 
-  @Provides
-  @InternalApi
-  fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
-    return okHttpClient
-      .newBuilder()
-      .addNetworkInterceptor { chain ->
-        val originalResponse = chain.proceed(chain.request())
-        // read from cache for 30 minutes, per slashdot's preferred limit
-        val maxAge = 60 * 30
-        originalResponse.newBuilder().header("Cache-Control", "public, max-age=$maxAge").build()
-      }
-      .build()
-  }
-
-  @Provides
-  fun provideSlashdotApi(
-    @InternalApi client: Lazy<OkHttpClient>,
-    xml: XML,
-    appConfig: AppConfig,
-  ): SlashdotApi {
-    val contentType = "application/xml".toMediaType()
-    val retrofit =
-      Retrofit.Builder()
-        .baseUrl(SlashdotApi.ENDPOINT)
-        .delegatingCallFactory(client)
-        .addConverterFactory(xml.asConverterFactory(contentType))
-        .validateEagerly(appConfig.isDebug)
+    @Provides
+    @InternalApi
+    fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
+      return okHttpClient
+        .newBuilder()
+        .addNetworkInterceptor { chain ->
+          val originalResponse = chain.proceed(chain.request())
+          // read from cache for 30 minutes, per slashdot's preferred limit
+          val maxAge = 60 * 30
+          originalResponse.newBuilder().header("Cache-Control", "public, max-age=$maxAge").build()
+        }
         .build()
-    return retrofit.create(SlashdotApi::class.java)
+    }
+
+    @Provides
+    fun provideSlashdotApi(
+      @InternalApi client: Lazy<OkHttpClient>,
+      xml: XML,
+      appConfig: AppConfig,
+    ): SlashdotApi {
+      val contentType = "application/xml".toMediaType()
+      val retrofit =
+        Retrofit.Builder()
+          .baseUrl(SlashdotApi.ENDPOINT)
+          .delegatingCallFactory(client)
+          .addConverterFactory(xml.asConverterFactory(contentType))
+          .validateEagerly(appConfig.isDebug)
+          .build()
+      return retrofit.create(SlashdotApi::class.java)
+    }
   }
 }
