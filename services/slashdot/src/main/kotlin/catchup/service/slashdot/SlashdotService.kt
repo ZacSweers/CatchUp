@@ -16,7 +16,6 @@
 package catchup.service.slashdot
 
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
@@ -29,15 +28,15 @@ import catchup.service.api.ServiceMeta
 import catchup.service.api.ServiceMetaKey
 import catchup.service.api.TextService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
-import javax.inject.Inject
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.binding
 import nl.adaptivity.xmlutil.serialization.XML
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -48,11 +47,12 @@ import retrofit2.Retrofit
 private const val SERVICE_KEY = "sd"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(AppScope::class, boundType = Service::class)
-class SlashdotService
+@ContributesIntoMap(AppScope::class, binding = binding<Service>())
 @Inject
-constructor(@InternalApi private val serviceMeta: ServiceMeta, private val service: SlashdotApi) :
-  TextService {
+class SlashdotService(
+  @InternalApi private val serviceMeta: ServiceMeta,
+  private val service: SlashdotApi,
+) : TextService {
 
   override fun meta() = serviceMeta
 
@@ -81,13 +81,12 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val servi
 }
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class SlashdotMetaModule {
+interface SlashdotMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun slashdotServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+  fun slashdotServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
   companion object {
 
@@ -105,39 +104,40 @@ abstract class SlashdotMetaModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module(includes = [SlashdotMetaModule::class])
-object SlashdotModule {
+interface SlashdotModule {
 
-  @Provides fun provideXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
+  companion object {
+    @Provides fun provideXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
 
-  @Provides
-  @InternalApi
-  fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
-    return okHttpClient
-      .newBuilder()
-      .addNetworkInterceptor { chain ->
-        val originalResponse = chain.proceed(chain.request())
-        // read from cache for 30 minutes, per slashdot's preferred limit
-        val maxAge = 60 * 30
-        originalResponse.newBuilder().header("Cache-Control", "public, max-age=$maxAge").build()
-      }
-      .build()
-  }
-
-  @Provides
-  fun provideSlashdotApi(
-    @InternalApi client: Lazy<OkHttpClient>,
-    xml: XML,
-    appConfig: AppConfig,
-  ): SlashdotApi {
-    val contentType = "application/xml".toMediaType()
-    val retrofit =
-      Retrofit.Builder()
-        .baseUrl(SlashdotApi.ENDPOINT)
-        .delegatingCallFactory(client)
-        .addConverterFactory(xml.asConverterFactory(contentType))
-        .validateEagerly(appConfig.isDebug)
+    @Provides
+    @InternalApi
+    fun provideSlashdotOkHttpClient(okHttpClient: OkHttpClient): OkHttpClient {
+      return okHttpClient
+        .newBuilder()
+        .addNetworkInterceptor { chain ->
+          val originalResponse = chain.proceed(chain.request())
+          // read from cache for 30 minutes, per slashdot's preferred limit
+          val maxAge = 60 * 30
+          originalResponse.newBuilder().header("Cache-Control", "public, max-age=$maxAge").build()
+        }
         .build()
-    return retrofit.create(SlashdotApi::class.java)
+    }
+
+    @Provides
+    fun provideSlashdotApi(
+      @InternalApi client: Lazy<OkHttpClient>,
+      xml: XML,
+      appConfig: AppConfig,
+    ): SlashdotApi {
+      val contentType = "application/xml".toMediaType()
+      val retrofit =
+        Retrofit.Builder()
+          .baseUrl(SlashdotApi.ENDPOINT)
+          .delegatingCallFactory(client)
+          .addConverterFactory(xml.asConverterFactory(contentType))
+          .validateEagerly(appConfig.isDebug)
+          .build()
+      return retrofit.create(SlashdotApi::class.java)
+    }
   }
 }

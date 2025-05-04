@@ -26,12 +26,11 @@ android {
 
 foundry {
   features {
-    dagger()
+    metro()
   }
 }
 
 dependencies {
-  api(libs.dagger.runtime)
   api(projects.libraries.di)
   api(projects.libraries.gemoji.db)
 
@@ -44,8 +43,6 @@ dependencies {
   implementation(libs.sqldelight.driver.android)
   implementation(libs.sqldelight.runtime)
   implementation(projects.libraries.util)
-
-  compileOnly(libs.misc.jsr250)
 
   testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.test.junit)

@@ -6,7 +6,7 @@ plugins {
 
 foundry {
   features {
-    dagger()
+    metro()
   }
 }
 

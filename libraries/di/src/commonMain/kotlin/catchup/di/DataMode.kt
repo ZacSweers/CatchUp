@@ -1,6 +1,6 @@
 package catchup.di
 
-import javax.inject.Qualifier
+import dev.zacsweers.metro.Qualifier
 
 // TODO split offline out into a separate mode
 enum class DataMode {

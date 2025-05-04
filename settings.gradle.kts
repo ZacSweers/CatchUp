@@ -31,20 +31,19 @@ pluginManagement {
 
   repositories {
     // Snapshots
-    if (hasProperty("foundry.gradle.config.enableSnapshots")) {
-      maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
-        name = "snapshots-maven-central"
-        mavenContent { snapshotsOnly() }
-      }
-      maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
-        name = "snapshots-maven-central-s01"
-        mavenContent { snapshotsOnly() }
-      }
-      maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
-        name = "snapshots-androidx"
-        mavenContent { snapshotsOnly() }
-        content { includeGroupByRegex("androidx.*") }
-      }
+    if (hasProperty("foundry.gradle.config.enableSnapshots")) {}
+    maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
+      name = "snapshots-maven-central"
+      mavenContent { snapshotsOnly() }
+    }
+    maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
+      name = "snapshots-maven-central-s01"
+      mavenContent { snapshotsOnly() }
+    }
+    maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
+      name = "snapshots-androidx"
+      mavenContent { snapshotsOnly() }
+      content { includeGroupByRegex("androidx.*") }
     }
 
     // MavenLocal, used when consuming a locally-installed artifact
@@ -144,20 +143,19 @@ dependencyResolutionManagement {
     // snapshot artifacts
 
     // Snapshots
-    if (hasProperty("foundry.gradle.config.enableSnapshots")) {
-      maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
-        name = "snapshots-maven-central"
-        mavenContent { snapshotsOnly() }
-      }
-      maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
-        name = "snapshots-maven-central-s01"
-        mavenContent { snapshotsOnly() }
-      }
-      maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
-        name = "snapshots-androidx"
-        mavenContent { snapshotsOnly() }
-        content { includeGroupByRegex("androidx.*") }
-      }
+    if (hasProperty("foundry.gradle.config.enableSnapshots")) {}
+    maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
+      name = "snapshots-maven-central"
+      mavenContent { snapshotsOnly() }
+    }
+    maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
+      name = "snapshots-maven-central-s01"
+      mavenContent { snapshotsOnly() }
+    }
+    maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
+      name = "snapshots-androidx"
+      mavenContent { snapshotsOnly() }
+      content { includeGroupByRegex("androidx.*") }
     }
 
     // MavenLocal, used when consuming a locally-installed artifact
@@ -215,7 +213,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version "4.0"
+  id("com.gradle.develocity") version "4.0.1"
   id("com.dropbox.focus") version "0.7.0" apply false
 }
 
@@ -262,12 +260,9 @@ configureIncludedBuild("foundry") { path ->
         .using(project(":platforms:gradle:foundry-gradle-plugin"))
       substitute(module("com.slack.foundry:agp-handler-api"))
         .using(project(":platforms:gradle:agp-handlers:agp-handler-api"))
-      substitute(module("com.slack.foundry:foundry-common"))
-        .using(project(":tools:foundry-common"))
-      substitute(module("com.slack.foundry:skippy"))
-        .using(project(":tools:skippy"))
-      substitute(module("com.slack.foundry:tracing"))
-        .using(project(":tools:tracing"))
+      substitute(module("com.slack.foundry:foundry-common")).using(project(":tools:foundry-common"))
+      substitute(module("com.slack.foundry:skippy")).using(project(":tools:skippy"))
+      substitute(module("com.slack.foundry:tracing")).using(project(":tools:tracing"))
     }
   }
 }

@@ -30,7 +30,6 @@ kotlin {
     commonMain {
       dependencies {
         api(libs.androidx.annotations)
-        api(libs.dagger.runtime)
         api(libs.misc.okio)
         api(libs.okhttp.core)
 

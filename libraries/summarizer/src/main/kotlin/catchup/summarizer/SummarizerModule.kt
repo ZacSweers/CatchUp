@@ -1,17 +1,15 @@
 package catchup.summarizer
 
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.sqldelight.SqlDriverFactory
 import catchup.util.network.AuthInterceptor
-import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.SingleIn
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -20,8 +18,7 @@ import retrofit2.create
 @Qualifier private annotation class InternalApi
 
 @ContributesTo(AppScope::class)
-@Module
-object SummarizerModule {
+interface SummarizerModule {
 
   @Provides
   @SingleIn(AppScope::class)

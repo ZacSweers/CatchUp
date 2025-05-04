@@ -18,8 +18,6 @@ package catchup.app.data
 import android.content.Context
 import catchup.app.data.github.type.DateTime
 import catchup.app.data.github.type.URI
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.util.apollo.HttpUrlApolloAdapter
 import catchup.util.apollo.ISO8601InstantApolloAdapter
 import catchup.util.injection.qualifiers.ApplicationContext
@@ -42,20 +40,21 @@ import com.apollographql.apollo3.network.NetworkTransport
 import com.apollographql.apollo3.network.http.DefaultHttpEngine
 import com.apollographql.apollo3.network.http.HttpEngine
 import com.apollographql.apollo3.network.http.HttpNetworkTransport
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
 import dev.zacsweers.catchup.app.scaffold.BuildConfig
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.SingleIn
 import okhttp3.OkHttpClient
 import okio.FileSystem
 
 @ContributesTo(AppScope::class)
-@Module
-object GithubApolloModule {
+interface GithubApolloModule {
 
-  private const val SERVER_URL = "https://api.github.com/graphql"
+  companion object {
+    private const val SERVER_URL = "https://api.github.com/graphql"
+  }
 
   @Qualifier private annotation class InternalApi
 
@@ -115,19 +114,19 @@ object GithubApolloModule {
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
-    return DefaultHttpEngine(client::get)
+  fun provideGitHubHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
+    return DefaultHttpEngine(client::value)
   }
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideHttpRequestComposer(): HttpRequestComposer {
+  fun provideGitHubHttpRequestComposer(): HttpRequestComposer {
     return DefaultHttpRequestComposer(SERVER_URL)
   }
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideNetworkTransport(
+  fun provideGitHubNetworkTransport(
     httpEngine: HttpEngine,
     httpRequestComposer: HttpRequestComposer,
   ): NetworkTransport {
@@ -139,7 +138,7 @@ object GithubApolloModule {
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideApolloClient(
+  fun provideGitHubApolloClient(
     networkTransport: NetworkTransport,
     cacheFactory: NormalizedCacheFactory,
     cacheKeyResolver: CacheKeyResolver,

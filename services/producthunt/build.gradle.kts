@@ -45,7 +45,7 @@ apollo {
 
 foundry {
   features {
-    dagger()
+    metro()
     moshi(codegen = false)
   }
   android {
@@ -58,7 +58,6 @@ foundry {
 dependencies {
   api(libs.apollo.api)
   api(libs.apollo.runtime)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.moshi.core)
   api(libs.okhttp.core)

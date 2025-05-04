@@ -1,7 +1,7 @@
 [versions]
-accompanist = "0.37.2"
+accompanist = "0.37.3"
 agp = "8.9.2"
-androidx-activity = "1.10.0"
+androidx-activity = "1.11.0-rc01"
 androidx-core = "1.16.0"
 androidx-sqlite = "2.5.0"
 appcompat = "1.7.0"
@@ -22,16 +22,17 @@ datastore = "1.2.0-alpha01"
 detekt = "1.23.8"
 eithernet = "2.0.0"
 flipper = "0.273.0"
-foundry = "0.26.0"
+foundry = "0.27.1"
 jdk = "23"
 jvmTarget = "17"
 kotlin = "2.1.20"
 kotlinx-serialization = "1.8.1"
-ksp = "2.1.20-2.0.0"
+ksp = "2.1.20-2.0.1"
 ktfmt = "0.54"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.9.0-rc01"
 markdown = "0.31.0"
+metro = "0.2.0"
 moshi = "1.15.2"
 moshix = "0.30.0"
 okhttp = "5.0.0-alpha.14"
@@ -62,13 +63,13 @@ doctor = { id = "com.osacky.doctor", version = "0.10.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.13.0" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.12.1" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.13.0" }
@@ -135,7 +136,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-beta02"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.2.1"
-androidx-test-monitor = "androidx.test:monitor:1.8.0-alpha02"
+androidx-test-monitor = "androidx.test:monitor:1.8.0-alpha03"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
 # Hopefully BC someday publishes a BOM: https://github.com/bcgit/bc-java/issues/899
@@ -224,6 +225,8 @@ lints-compose = "com.slack.lint.compose:compose-lint-checks:1.4.2"
 
 markdown = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "markdown" }
 
+metro-runtime = { module = "dev.zacsweers.metro:runtime", version.ref = "metro" }
+
 misc-leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 misc-leakCanary-shark = { module = "com.squareup.leakcanary:shark", version.ref = "leakcanary" }
 misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakcanary-object-watcher-android", version.ref = "leakcanary" }
@@ -241,7 +244,7 @@ misc-composeSettings = "com.github.alorma:compose-settings-ui-m3:1.0.3"
 misc-composeSettings-base = "com.github.alorma:compose-settings-storage-base:2.0.0"
 misc-composeSettings-datastore = "com.github.alorma:compose-settings-storage-datastore:0.27.0"
 misc-javaxInject = "org.glassfish:javax.annotation:10.0-b28"
-misc-jsoup = "org.jsoup:jsoup:1.19.1"
+misc-jsoup = "org.jsoup:jsoup:1.20.1"
 misc-jsr250 = "javax.annotation:jsr250-api:1.0"
 misc-jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 misc-moshiLazyAdapters = "com.serjltt.moshi:moshi-lazy-adapters:2.2"

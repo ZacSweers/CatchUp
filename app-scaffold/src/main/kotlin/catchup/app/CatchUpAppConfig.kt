@@ -17,22 +17,20 @@ package catchup.app
 
 import android.content.Context
 import android.os.Build
-import catchup.app.injection.DaggerSet
 import catchup.appconfig.AppConfig
 import catchup.appconfig.AppConfigMetadataContributor
 import catchup.base.ui.versionInfo
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.util.injection.qualifiers.ApplicationContext
 import dev.zacsweers.catchup.app.scaffold.BuildConfig
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
 @SingleIn(AppScope::class)
-class CatchUpAppConfig
 @Inject
-constructor(
+class CatchUpAppConfig(
   @ApplicationContext private val appContext: Context,
-  metadataContributors: DaggerSet<AppConfigMetadataContributor>,
+  metadataContributors: Set<AppConfigMetadataContributor>,
 ) : AppConfig {
   private val versionInfo = appContext.versionInfo
   override val isDebug: Boolean = BuildConfig.DEBUG

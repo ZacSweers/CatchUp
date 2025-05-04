@@ -31,7 +31,7 @@ android {
 
 foundry {
   features {
-    dagger()
+    metro()
   }
   android {
     features {
@@ -70,7 +70,6 @@ noArg {
 
 dependencies {
   api(libs.androidx.annotations)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(projects.libraries.di)
   api(projects.serviceApi)
