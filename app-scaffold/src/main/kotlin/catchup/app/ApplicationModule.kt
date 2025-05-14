@@ -68,7 +68,7 @@ interface ApplicationModule {
   @Qualifier @Retention(BINARY) annotation class LazyDelegate
 
   /** Provides AppConfig metadata contributors. */
-  @Multibinds fun metadataContributors(): Set<AppConfigMetadataContributor>
+  @Multibinds(allowEmpty = true) fun metadataContributors(): Set<AppConfigMetadataContributor>
 
   /** Provides initializers for app startup. */
   @Initializers @Multibinds fun initializers(): Set<() -> Unit>
@@ -193,9 +193,7 @@ interface ApplicationModule {
     @Provides @SingleIn(AppScope::class) fun provideClock(): Clock = Clock.System
 
     @Provides
-    fun provideDataMode(
-      catchUpPreferences: CatchUpPreferences
-    ): StateFlow<@JvmSuppressWildcards DataMode> {
+    fun provideDataMode(catchUpPreferences: CatchUpPreferences): StateFlow<DataMode> {
       return catchUpPreferences.dataMode
     }
 

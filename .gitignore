@@ -118,5 +118,5 @@ signing/play-account.p12
 
 .cache
 
-profile-out-*/
+profile-out*/
 gradle-user-home/
