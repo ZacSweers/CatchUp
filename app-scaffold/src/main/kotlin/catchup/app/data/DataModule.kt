@@ -40,9 +40,12 @@ import okhttp3.OkHttpClient
 @ContributesTo(AppScope::class)
 interface DataModule {
 
-  @NetworkInterceptor @Multibinds fun provideNetworkInterceptors(): Set<Interceptor>
+  // May be empty in release builds
+  @NetworkInterceptor
+  @Multibinds(allowEmpty = true)
+  fun provideNetworkInterceptors(): Set<Interceptor>
 
-  @Multibinds fun provideInterceptors(): Set<Interceptor>
+  @Multibinds(allowEmpty = true) fun provideInterceptors(): Set<Interceptor>
 
   companion object {
 

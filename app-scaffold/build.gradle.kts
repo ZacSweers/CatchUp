@@ -24,9 +24,14 @@ plugins {
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.moshix)
+  alias(libs.plugins.metro)
 }
 
 kotlin { compilerOptions { optIn.add("androidx.compose.material3.ExperimentalMaterial3Api") } }
+
+metro {
+  reportsDestination.set(layout.buildDirectory.dir("metro"))
+}
 
 foundry {
   features {
