@@ -13,7 +13,7 @@ anvil = "0.4.1"
 apollo = "4.0.0-beta.7"
 circuit = "0.28.0"
 coil = "2.7.0"
-compose = "1.7.8"
+compose = "1.8.1"
 compose-jb = "1.8.0"
 corbind = "1.11.2"
 coroutines = "1.10.2"
@@ -124,7 +124,7 @@ androidx-compose-foundation = { module = "androidx.compose.foundation:foundation
 androidx-compose-googleFonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "compose" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 androidx-compose-material-ripple = { module = "androidx.compose.material:material-ripple", version.ref = "compose" }
-androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
+androidx-compose-materialIcons = { module = "androidx.compose.material:material-icons-core", version = "1.7.8" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
 androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.1"
