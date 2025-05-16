@@ -17,6 +17,7 @@ plugins {
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.sqldelight)
+  alias(libs.plugins.metro) // TODO why is foundry's handling not enough?
 }
 
 kotlin {
