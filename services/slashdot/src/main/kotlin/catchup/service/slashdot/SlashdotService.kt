@@ -15,6 +15,7 @@
  */
 package catchup.service.slashdot
 
+import androidx.annotation.VisibleForTesting
 import catchup.appconfig.AppConfig
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
@@ -107,7 +108,9 @@ interface SlashdotMetaModule {
 interface SlashdotModule {
 
   companion object {
-    @Provides fun provideXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
+    @Provides fun provideXml(): XML = createXml()
+
+    @VisibleForTesting fun createXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
 
     @Provides
     @InternalApi
