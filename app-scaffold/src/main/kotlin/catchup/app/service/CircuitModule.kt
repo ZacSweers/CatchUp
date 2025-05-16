@@ -23,8 +23,8 @@ interface CircuitModule {
   companion object {
     @Provides
     fun provideCircuit(
-      presenterFactories: @JvmSuppressWildcards Set<Presenter.Factory>,
-      uiFactories: @JvmSuppressWildcards Set<Ui.Factory>,
+      presenterFactories: Set<Presenter.Factory>,
+      uiFactories: Set<Ui.Factory>,
     ): Circuit {
       return Circuit.Builder()
         .addPresenterFactories(presenterFactories)

@@ -31,19 +31,20 @@ pluginManagement {
 
   repositories {
     // Snapshots
-    if (hasProperty("foundry.gradle.config.enableSnapshots")) {}
-    maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
-      name = "snapshots-maven-central"
-      mavenContent { snapshotsOnly() }
-    }
-    maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
-      name = "snapshots-maven-central-s01"
-      mavenContent { snapshotsOnly() }
-    }
-    maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
-      name = "snapshots-androidx"
-      mavenContent { snapshotsOnly() }
-      content { includeGroupByRegex("androidx.*") }
+    if (hasProperty("foundry.gradle.config.enableSnapshots")) {
+      maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
+        name = "snapshots-maven-central"
+        mavenContent { snapshotsOnly() }
+      }
+      maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
+        name = "snapshots-maven-central-s01"
+        mavenContent { snapshotsOnly() }
+      }
+      maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
+        name = "snapshots-androidx"
+        mavenContent { snapshotsOnly() }
+        content { includeGroupByRegex("androidx.*") }
+      }
     }
 
     // MavenLocal, used when consuming a locally-installed artifact
@@ -143,19 +144,20 @@ dependencyResolutionManagement {
     // snapshot artifacts
 
     // Snapshots
-    if (hasProperty("foundry.gradle.config.enableSnapshots")) {}
-    maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
-      name = "snapshots-maven-central"
-      mavenContent { snapshotsOnly() }
-    }
-    maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
-      name = "snapshots-maven-central-s01"
-      mavenContent { snapshotsOnly() }
-    }
-    maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
-      name = "snapshots-androidx"
-      mavenContent { snapshotsOnly() }
-      content { includeGroupByRegex("androidx.*") }
+    if (hasProperty("foundry.gradle.config.enableSnapshots")) {
+      maven(findProperty("catchup.mavenUrls.snapshots.sonatype")!!) {
+        name = "snapshots-maven-central"
+        mavenContent { snapshotsOnly() }
+      }
+      maven(findProperty("catchup.mavenUrls.snapshots.sonatypes01")!!) {
+        name = "snapshots-maven-central-s01"
+        mavenContent { snapshotsOnly() }
+      }
+      maven(findProperty("catchup.mavenUrls.snapshots.androidx")!!) {
+        name = "snapshots-androidx"
+        mavenContent { snapshotsOnly() }
+        content { includeGroupByRegex("androidx.*") }
+      }
     }
 
     // MavenLocal, used when consuming a locally-installed artifact

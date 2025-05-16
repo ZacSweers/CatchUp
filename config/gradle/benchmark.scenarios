@@ -94,3 +94,19 @@ app_compileSources_noabi_noic {
   gradle-args = ["-Pkotlin.incremental=false"]
   apply-non-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/DataMode.kt", "app-scaffold/src/main/kotlin/catchup/app/CatchUpAppConfig.kt"]
 }
+
+catchup_assembleDebug {
+    tasks = [":app:assembleDebug"]
+    warm-ups = 5
+    clear-build-cache-before = SCENARIO
+    clear-transform-cache-before = SCENARIO
+    apply-abi-change-to = "libraries/di/src/commonMain/kotlin/catchup/di/ContextualFactory.kt"
+    apply-non-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/ContextualFactory.kt"]
+    gradle-args = ["--no-build-cache", "-Pkotlin.build.report.output=JSON,FILE", "-Pkotlin.build.report.json.directory=/Users/zacsweers/dev/kotlin/clones/k2-performance-metrics/reports/2.0.0-RC3/catchup_debug", "-Pkotlin.build.report.file.output_dir=/Users/zacsweers/dev/kotlin/clones/k2-performance-metrics/reports/2.0.0-RC3/catchup_debug", "-Pkotlin_version=2.0.0-RC3", ]
+}
+
+appScaffold_compileDebugKotlin {
+    tasks = [":app-scaffold:compileDebugKotlin", "--rerun"]
+    warm-ups = 1
+    iterations = 3
+}

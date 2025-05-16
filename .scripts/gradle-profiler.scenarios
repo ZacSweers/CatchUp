@@ -1,9 +1,0 @@
-catchup_debug {
-tasks = [":app:assembleDebug"]
-warm-ups = 5
-clear-build-cache-before = SCENARIO
-clear-transform-cache-before = SCENARIO
-apply-abi-change-to = "libraries/di/src/commonMain/kotlin/catchup/di/ContextualFactory.kt"
-apply-non-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/ContextualFactory.kt"]
-gradle-args = ["--no-build-cache", "-Pkotlin.build.report.output=JSON,FILE", "-Pkotlin.build.report.json.directory=/Users/zacsweers/dev/kotlin/clones/k2-performance-metrics/reports/2.0.0-RC3/catchup_debug", "-Pkotlin.build.report.file.output_dir=/Users/zacsweers/dev/kotlin/clones/k2-performance-metrics/reports/2.0.0-RC3/catchup_debug", "-Pkotlin_version=2.0.0-RC3", ]
-}

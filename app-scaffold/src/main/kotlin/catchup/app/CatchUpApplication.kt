@@ -38,7 +38,7 @@ import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
 import timber.log.Timber.Tree
 
-private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
+private typealias InitializerFunction = () -> Unit
 
 class CatchUpApplication : Application() {
 
