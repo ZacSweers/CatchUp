@@ -110,7 +110,7 @@ baselineProfile {
   // Don't save the profiles in source, generate adhoc
   saveInSrc = !automaticBaselineProfileGeneration
 
-  from(project(projects.benchmark.dependencyProject.path))
+  from(project(projects.benchmark.path))
 
   if (automaticBaselineProfileGeneration) {
     variants {
