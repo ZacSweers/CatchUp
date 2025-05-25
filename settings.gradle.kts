@@ -218,6 +218,8 @@ plugins {
   id("com.fueledbycaffeine.spotlight") version "0.7"
 }
 
+spotlight { isTypeSafeAccessorsEnabled = true }
+
 develocity {
   buildScan {
     publishing {
