@@ -29,17 +29,18 @@ plugins {
 
 kotlin { compilerOptions { optIn.add("androidx.compose.material3.ExperimentalMaterial3Api") } }
 
-metro {
-  reportsDestination.set(layout.buildDirectory.dir("metro"))
+val enableCompilerReports = project.hasProperty("catchup.enableCompilerReports")
+
+if (enableCompilerReports) {
+  metro { reportsDestination.set(layout.buildDirectory.dir("metro")) }
 }
 
 foundry {
   features {
     compose {
-      if (project.hasProperty("catchup.enableComposeCompilerReports")) {
+      if (enableCompilerReports) {
         val metricsDir = project.layout.buildDirectory.dir("compose_metrics").get().asFile
-        @OptIn(DelicateFoundryGradlePluginApi::class)
-        enableCompilerMetricsForDebugging(metricsDir)
+        @OptIn(DelicateFoundryGradlePluginApi::class) enableCompilerMetricsForDebugging(metricsDir)
       }
     }
     metro()
