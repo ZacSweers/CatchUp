@@ -32,7 +32,7 @@ sqldelight {
 
 androidComponents {
   onVariants {
-    it.buildConfigFields.put(
+    it.buildConfigFields?.put(
       "OPEN_AI_KEY",
       BuildConfigField("String", "\"${properties["catchup_openAiKey"]}\"", "")
     )
