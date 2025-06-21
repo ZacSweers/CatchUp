@@ -30,6 +30,7 @@ data class ServiceMeta(
   val firstPageKey: Int?,
   val pagesAreNumeric: Boolean = false,
   val enabled: Boolean = true,
+  val supportsRichTextItems: Boolean = false,
 ) {
   val enabledPreferenceKey = "service_config_${id}_enabled"
 }
