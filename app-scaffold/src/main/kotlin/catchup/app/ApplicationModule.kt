@@ -52,9 +52,9 @@ import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.Qualifier
 import dev.zacsweers.metro.SingleIn
 import kotlin.annotation.AnnotationRetention.BINARY
+import kotlin.time.Clock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.datetime.Clock
 import okhttp3.OkHttpClient
 import timber.log.Timber
 

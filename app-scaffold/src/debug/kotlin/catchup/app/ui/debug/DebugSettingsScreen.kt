@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -154,7 +155,7 @@ class DebugSettingsPresenter(
       produceState<Cache?>(null) { value = withContext(IO) { client.value.cache!! } }
 
     val scope = rememberStableCoroutineScope()
-    val displayMetrics = LocalContext.current.resources.displayMetrics
+    val displayMetrics = LocalResources.current.displayMetrics
     val items =
       remember(displayMetrics, clientCache) {
         clientCache?.let { items(displayMetrics, it) } ?: persistentListOf()

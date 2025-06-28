@@ -20,7 +20,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import java.io.IOException
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 class ISO8601InstantAdapter : JsonAdapter<Instant>() {
 

@@ -12,10 +12,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import catchup.app.data.DebugPreferences
 import catchup.base.ui.RootContent
 import catchup.base.ui.rememberSystemBarColorController
@@ -74,7 +74,8 @@ class DebugRootContent(private val debugPreferences: DebugPreferences) : RootCon
         drawerContent = {
           CompositionLocalProvider(LocalLayoutDirection provides original) {
             // Max width of 80% of screen width
-            val maxWidth = LocalConfiguration.current.screenWidthDp.dp * 0.85f
+            val widthPx = LocalWindowInfo.current.containerSize.width * 0.85f
+            val maxWidth = LocalDensity.current.run { widthPx.toDp() }
             ModalDrawerSheet(
               modifier = Modifier.widthIn(max = maxWidth),
               windowInsets = WindowInsets(0, 0, 0, 0),

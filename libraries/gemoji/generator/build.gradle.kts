@@ -2,8 +2,8 @@ plugins {
   alias(libs.plugins.kotlin.jvm)
   alias(libs.plugins.foundry.base)
   application
-  alias(libs.plugins.moshix)
   alias(libs.plugins.sqldelight)
+  alias(libs.plugins.moshix)
 }
 
 application {

@@ -37,7 +37,7 @@ android {
 apollo {
   // https://api.producthunt.com/v2/api/graphql
   service("producthunt") {
-    mapScalar("DateTime", "kotlinx.datetime.Instant")
+    mapScalar("DateTime", "kotlin.time.Instant")
     packageName.set("catchup.service.producthunt")
     schemaFiles.from(file("src/main/graphql/catchup/service/producthunt/schema.graphqls"))
   }

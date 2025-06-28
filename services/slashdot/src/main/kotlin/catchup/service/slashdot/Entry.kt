@@ -17,8 +17,7 @@ package catchup.service.slashdot
 
 import catchup.util.parsePossiblyOffsetInstant
 import com.tickaroo.tikxml.converter.htmlescape.StringEscapeUtils
-import kotlinx.datetime.Instant
-import kotlinx.datetime.serializers.InstantIso8601Serializer
+import kotlin.time.Instant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -63,7 +62,7 @@ data class Entry(
   val department: String,
 )
 
-/** Nearly identical to [InstantIso8601Serializer] but handles possibly offset instants. */
+/** Nearly identical to Kotlin's `InstantIso8601Serializer` but handles possibly offset instants. */
 internal object InstantSerializer : KSerializer<Instant> {
   override val descriptor: SerialDescriptor =
     PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)

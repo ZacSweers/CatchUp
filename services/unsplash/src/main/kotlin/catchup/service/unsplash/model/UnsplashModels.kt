@@ -17,7 +17,7 @@ package catchup.service.unsplash.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @JsonClass(generateAdapter = true)
 data class UnsplashPhoto(

@@ -18,7 +18,7 @@ package catchup.service.dribbble
 import catchup.service.dribbble.DribbbleApi.Companion.ENDPOINT
 import catchup.service.dribbble.model.Shot
 import catchup.service.dribbble.model.User
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.ResponseBody

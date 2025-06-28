@@ -18,8 +18,8 @@
 package catchup.util
 
 import java.time.OffsetDateTime
-import kotlinx.datetime.Instant
-import kotlinx.datetime.toKotlinInstant
+import kotlin.time.Instant
+import kotlin.time.toKotlinInstant
 
 /*
  * Utilities for dealing with [Instant]
