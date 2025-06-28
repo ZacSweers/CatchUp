@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
  * Copyright (c) 2018 Zac Sweers
  *
@@ -21,41 +19,34 @@ plugins {
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.redacted)
   alias(libs.plugins.foundry.base)
+  alias(libs.plugins.kotlin.serialization)
 }
 
-android {
-  namespace = "catchup.util"
-}
+android { namespace = "catchup.util" }
 
-redacted {
-  redactedAnnotations.add("catchup/util/network/Redacted")
-}
+redacted { redactedAnnotations.add("catchup/util/network/Redacted") }
 
-foundry {
-  android {
-    features {
-      resources("catchup_util_")
-    }
-  }
-}
+foundry { android { features { resources("catchup_util_") } } }
 
 dependencies {
- api(libs.androidx.coreKtx)
- api(libs.apollo.api)
- api(libs.kotlin.datetime)
- api(libs.kotlinx.immutable)
- api(libs.metro.runtime)
- api(libs.moshi.core)
- api(libs.okhttp.core)
+  api(libs.androidx.coreKtx)
+  api(libs.apollo.api)
+  api(libs.kotlin.datetime)
+  api(libs.kotlinx.immutable)
+  api(libs.metro.runtime)
+  api(libs.moshi.core)
+  api(libs.okhttp.core)
 
- implementation(libs.androidx.core)
- implementation(libs.kotlin.datetime)
- implementation(libs.misc.timber)
- implementation(libs.misc.unbescape)
- implementation(projects.libraries.appconfig)
+  implementation(libs.androidx.core)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.misc.timber)
+  implementation(libs.misc.unbescape)
+  implementation(projects.libraries.appconfig)
+  implementation(libs.kotlinx.serialization.core)
+  implementation(libs.kotlinx.serialization.json)
 
- testImplementation(libs.kotlin.test)
- testImplementation(libs.misc.okio.fakeFileSystem)
- testImplementation(libs.test.junit)
- testImplementation(libs.test.truth)
+  testImplementation(libs.kotlin.test)
+  testImplementation(libs.misc.okio.fakeFileSystem)
+  testImplementation(libs.test.junit)
+  testImplementation(libs.test.truth)
 }

@@ -15,21 +15,19 @@
  */
 package catchup.util.network
 
-import java.io.IOException
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlin.annotation.AnnotationTarget.PROPERTY
+import kotlinx.serialization.Serializable
 import okhttp3.Interceptor
 import okhttp3.Response
 
 @Retention(BINARY) @Target(AnnotationTarget.CLASS, PROPERTY) annotation class Redacted
 
 /** A [Interceptor] that adds an auth token to requests. */
-// TODO testing K2 plugin IDE support
-// @Redacted
+@Serializable
 data class AuthInterceptor(private val method: String, @Redacted private val accessToken: String) :
   Interceptor {
 
-  @Throws(IOException::class)
   override fun intercept(chain: Interceptor.Chain): Response {
     val request =
       chain.request().newBuilder().addHeader("Authorization", "$method $accessToken").build()

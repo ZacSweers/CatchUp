@@ -17,14 +17,21 @@ package catchup.util
 
 import catchup.util.network.AuthInterceptor
 import com.google.common.truth.Truth.assertThat
-import org.junit.Ignore
+import kotlinx.serialization.json.Json
 import org.junit.Test
 
 class AuthInterceptorTest {
-  @Ignore("Disabled for now for IR https://github.com/ZacSweers/redacted-compiler-plugin/issues/22")
   @Test
   fun verifyRedacted() {
     val authInterceptor = AuthInterceptor("get", "token")
     assertThat(authInterceptor.toString()).isEqualTo("AuthInterceptor(method=get, accessToken=██)")
+  }
+
+  @Test
+  fun verifySerializable() {
+    val authInterceptor = AuthInterceptor("get", "token")
+    val json = Json {  }
+    val serialized = json.encodeToString(AuthInterceptor.serializer(), authInterceptor)
+    assertThat(serialized).isEqualTo("{\"method\":\"get\",\"accessToken\":\"token\"}")
   }
 }
