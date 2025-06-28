@@ -14,7 +14,7 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}-${{ github.head_ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
