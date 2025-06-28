@@ -215,10 +215,8 @@ dependencyResolutionManagement {
 
 plugins {
   id("com.gradle.develocity") version "4.0.2"
-  id("com.fueledbycaffeine.spotlight") version "0.7"
+  id("com.fueledbycaffeine.spotlight") version "1.2.0"
 }
-
-spotlight { isTypeSafeAccessorsEnabled = true }
 
 develocity {
   buildScan {
