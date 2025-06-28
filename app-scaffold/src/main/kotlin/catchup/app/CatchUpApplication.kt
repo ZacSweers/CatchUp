@@ -18,7 +18,6 @@ package catchup.app
 import android.app.Application
 import android.os.StrictMode
 import android.os.strictmode.DiskReadViolation
-import android.os.strictmode.UntaggedSocketViolation
 import android.util.Log
 import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
@@ -30,9 +29,9 @@ import catchup.util.d
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.createGraphFactory
 import java.util.concurrent.Executors
+import kotlin.time.Clock
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
@@ -96,9 +95,7 @@ class CatchUpApplication : Application() {
       StrictMode.VmPolicy.Builder()
         .detectAll()
         .penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
-          if (violation is UntaggedSocketViolation) {
-            // This is a known issue with Flipper
-          } else if (
+          if (
             violation is DiskReadViolation &&
               violation.stackTraceToString().contains("CustomTabsConnection")
           ) {

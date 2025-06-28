@@ -44,8 +44,8 @@ import dev.zacsweers.metro.IntoMap
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.Qualifier
 import dev.zacsweers.metro.binding
+import kotlin.time.Instant
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.datetime.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory

@@ -62,9 +62,9 @@ import catchup.util.kotlin.format
 import catchup.util.primaryLocale
 import com.slack.circuit.retained.rememberRetained
 import dev.zacsweers.catchup.app.scaffold.R
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Composable
 fun TextServiceUi(

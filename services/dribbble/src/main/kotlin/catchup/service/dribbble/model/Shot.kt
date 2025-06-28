@@ -15,7 +15,7 @@
  */
 package catchup.service.dribbble.model
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 /** Models a dibbble shot */
 data class Shot(

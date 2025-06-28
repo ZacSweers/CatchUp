@@ -5,12 +5,13 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.parcelize)
-  alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
+  alias(libs.plugins.ksp)
 }
 
 foundry {
   features {
+    circuit(codegen = true)
     compose()
     metro()
     moshi(codegen = true)
@@ -68,6 +69,4 @@ dependencies {
   implementation(libs.retrofit.moshi)
   implementation(projects.libraries.baseUi)
   implementation(projects.libraries.retrofitconverters)
-
-  ksp(libs.circuit.codegen)
 }

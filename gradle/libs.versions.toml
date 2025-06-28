@@ -13,7 +13,7 @@ anvil = "0.4.1"
 apollo = "4.0.0-beta.7"
 circuit = "0.28.1"
 coil = "2.7.0"
-compose = "1.8.3"
+compose = "1.9.0-beta01"
 compose-jb = "1.8.2"
 corbind = "1.11.2"
 coroutines = "1.10.2"
@@ -21,22 +21,21 @@ dagger = "2.56.2"
 datastore = "1.2.0-alpha02"
 detekt = "1.23.8"
 eithernet = "2.0.0"
-flipper = "0.273.0"
-foundry = "0.27.4"
+foundry = "0.28.1"
 jdk = "23"
 jvmTarget = "17"
-kotlin = "2.1.21"
-kotlinx-serialization = "1.8.1"
+kotlin = "2.2.0"
+kotlinx-serialization = "1.9.0"
 ksp = "2.2.0-2.0.2"
-ktfmt = "0.55"
+ktfmt = "0.56"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.9.1"
-markdown = "0.31.0"
-metro = "0.3.8"
+markdown = "0.35.0"
+metro = "0.4.0"
 moshi = "1.15.2"
-moshix = "0.30.0"
+moshix = "0.31.0-alpha01"
 okhttp = "5.0.0-alpha.16"
-okio = "3.13.0"
+okio = "3.14.0"
 preferences = "1.2.1"
 retrofit = "3.0.0"
 slack-lint = "0.9.0"
@@ -57,7 +56,7 @@ apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.2.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "1.33.0" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "2.19.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.11.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -72,7 +71,7 @@ licensee = { id = "app.cash.licensee", version = "1.13.0" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.12.1" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.13.0" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.14.0" }
 retry = { id = "org.gradle.test-retry", version = "1.6.2" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
 foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
@@ -181,6 +180,7 @@ circuit-runtime-screen = { module = "com.slack.circuit:circuit-runtime-screen", 
 circuit-runtime-ui = { module = "com.slack.circuit:circuit-runtime-ui", version.ref = "circuit" }
 circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 circuit-codegenAnnotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
+circuit-test = { module = "com.slack.circuit:circuit-test", version.ref = "circuit" }
 circuitx-android = { module = "com.slack.circuit:circuitx-android", version.ref = "circuit" }
 circuitx-gestureNav = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
 circuitx-overlays = { module = "com.slack.circuit:circuitx-overlays", version.ref = "circuit" }
@@ -209,14 +209,14 @@ errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.39.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:1.6.4"
+haze = "dev.chrisbanes.haze:haze:1.6.6"
 
 javaxInject = "javax.inject:javax.inject:1"
 
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
-kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.6.2"
+kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.0"
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
@@ -233,8 +233,6 @@ misc-leakCanaryObjectWatcherAndroid = { module = "com.squareup.leakcanary:leakca
 misc-bugsnag = "com.bugsnag:bugsnag-android:6.14.0"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
-misc-debug-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
-misc-debug-flipperNetwork = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper" }
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.12.1"
 misc-debug-guava = "com.google.guava:guava:33.4.8-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:3.0.0"

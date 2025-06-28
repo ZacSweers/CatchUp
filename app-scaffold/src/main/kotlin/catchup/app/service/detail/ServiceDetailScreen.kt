@@ -99,10 +99,10 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Provider
+import kotlin.time.Instant
 import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -568,6 +568,7 @@ private fun UnfurlText(
 
 @Composable
 fun catchupMarkdownColors(linkColor: Color): MarkdownColors {
+  @Suppress("DEPRECATION")
   return markdownColor(linkText = linkColor)
 }
 
@@ -622,4 +623,5 @@ fun catchupMarkdownTypography(
     inlineCode = inlineCode,
     link = link,
     textLink = textLink,
+    table = text,
   )

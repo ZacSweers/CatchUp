@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -134,7 +135,7 @@ fun VisualItem(
   //  saturation transformation
   //  etc
   Box(modifier) {
-    val displayMetrics = LocalContext.current.resources.displayMetrics
+    val displayMetrics = LocalResources.current.displayMetrics
     val imageInfo = item.imageInfo!!
 
     // Compute in-grid image size

@@ -20,13 +20,13 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.Inject
 import java.io.IOException
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import retrofit2.HttpException
 import timber.log.Timber
 

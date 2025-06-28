@@ -30,7 +30,7 @@ import dev.zacsweers.metro.Binds
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 /**
  * This setup is a little weird but apparently how SqlDelight works.

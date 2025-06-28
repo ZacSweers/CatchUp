@@ -19,7 +19,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import java.util.concurrent.TimeUnit
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 /**
  * Formats dates in UTC seconds or milliseconds time to [Instant] instances.

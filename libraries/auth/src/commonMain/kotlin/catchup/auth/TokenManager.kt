@@ -7,11 +7,11 @@ import com.slack.eithernet.ApiResult
 import com.slack.eithernet.integration.retrofit.ApiResultCallAdapterFactory
 import com.slack.eithernet.integration.retrofit.ApiResultConverterFactory
 import com.squareup.moshi.Moshi
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import okhttp3.Call
 import okhttp3.Request
 import retrofit2.Retrofit

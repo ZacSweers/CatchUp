@@ -18,7 +18,7 @@ package catchup.service.reddit.model
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Keep @JsonClass(generateAdapter = false) sealed interface RedditObject
 

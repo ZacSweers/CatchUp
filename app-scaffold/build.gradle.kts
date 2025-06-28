@@ -63,10 +63,10 @@ android {
     )
     resValue("string", "changelog_text", "haha")
   }
+  androidResources.enable = true
   buildFeatures {
     buildConfig = true
     compose = true
-    androidResources = true
     resValues = true
     viewBinding = true
   }
@@ -87,7 +87,7 @@ android {
 
 apollo {
   service("github") {
-    mapScalar("DateTime", "kotlinx.datetime.Instant")
+    mapScalar("DateTime", "kotlin.time.Instant")
     mapScalar("URI", "okhttp3.HttpUrl")
     packageName.set("catchup.app.data.github")
     schemaFiles.from(file("src/main/graphql/catchup/app/data/github/schema.json"))
@@ -214,8 +214,6 @@ dependencies {
 
   debugImplementation(libs.androidx.compose.uiTooling)
   debugImplementation(libs.corbind)
-  debugImplementation(libs.misc.debug.flipper)
-  debugImplementation(libs.misc.debug.flipperNetwork)
   debugImplementation(libs.misc.debug.guava)
   debugImplementation(libs.misc.debug.soLoader)
   debugImplementation(libs.misc.debug.telescope)
@@ -227,8 +225,6 @@ dependencies {
   debugImplementation(projects.libraries.retrofitconverters)
 
   testImplementation(libs.kotlin.coroutines.test)
-  testImplementation(libs.misc.debug.flipper)
-  testImplementation(libs.misc.debug.flipperNetwork)
   testImplementation(libs.misc.okio.fakeFileSystem)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)

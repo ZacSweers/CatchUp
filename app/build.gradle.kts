@@ -409,9 +409,6 @@ licensee {
   // MIT
   allowUrl("https://raw.githubusercontent.com/apollographql/apollo-kotlin/main/LICENSE")
   // MIT
-  allowUrl("https://github.com/facebook/flipper/blob/main/LICENSE")
-  allowUrl("https://github.com/facebook/soloader/blob/main/LICENSE")
-  allowUrl("https://github.com/facebookincubator/fbjni/blob/main/LICENSE")
   allowUrl("https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE")
   allowUrl("https://www.openssl.org/source/license-openssl-ssleay.txt")
   // MIT

@@ -24,17 +24,11 @@ import android.os.StrictMode.VmPolicy
 import android.os.strictmode.DiskReadViolation
 import android.os.strictmode.UntaggedSocketViolation
 import android.util.Log
-import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.LumberYard
 import catchup.app.data.tree
 import catchup.appconfig.AppConfig
 import catchup.base.ui.CatchUpObjectWatcher
-import com.facebook.flipper.android.AndroidFlipperClient
-import com.facebook.flipper.android.utils.FlipperUtils
-import com.facebook.flipper.core.FlipperPlugin
-import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
-import com.facebook.soloader.SoLoader
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoSet
@@ -164,36 +158,6 @@ interface DebugApplicationModule {
     )
   }
 
-  @Qualifier @Retention(BINARY) private annotation class FlipperEnabled
-
-  @FlipperEnabled
-  @Provides
-  fun provideFlipperEnabled(application: Application, appConfig: AppConfig): Boolean {
-    return if (appConfig.sdkInt == 28) {
-      // Flipper native crashes on this
-      false
-    } else {
-      FlipperUtils.shouldEnableFlipper(application)
-    }
-  }
-
-  @AsyncInitializers
-  @IntoSet
-  @Provides
-  fun flipperInit(
-    @FlipperEnabled enabled: Boolean,
-    application: Application,
-    flipperPlugins: Set<FlipperPlugin>,
-  ): () -> Unit = {
-    if (enabled) {
-      SoLoader.init(application, SoLoader.SOLOADER_ALLOW_ASYNC_INIT)
-      AndroidFlipperClient.getInstance(application).apply {
-        flipperPlugins.forEach(::addPlugin)
-        start()
-      }
-    }
-  }
-
   @IntoSet @Provides fun provideDebugTree(): Timber.Tree = Timber.DebugTree()
 
   @IntoSet
@@ -202,13 +166,11 @@ interface DebugApplicationModule {
 
   @IntoSet
   @Provides
-  fun provideCrashOnErrorTree(flipperCrashReporter: CrashReporterPlugin): Timber.Tree {
+  fun provideCrashOnErrorTree(): Timber.Tree {
     return object : Timber.Tree() {
       override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority == Log.ERROR) {
-          val exception = RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
-          // Show this in the Flipper heads up notification
-          flipperCrashReporter.sendExceptionMessage(Thread.currentThread(), exception)
+          throw RuntimeException("Timber e! Please fix:\nTag=$tag\nMessage=$message", t)
         }
       }
     }

@@ -21,7 +21,7 @@ import com.apollographql.apollo3.api.CustomScalarAdapters
 import com.apollographql.apollo3.api.json.JsonReader
 import com.apollographql.apollo3.api.json.JsonReader.Token.STRING
 import com.apollographql.apollo3.api.json.JsonWriter
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 /** A CustomTypeAdapter for apollo that can convert ISO style date strings to Instant. */
 object ISO8601InstantApolloAdapter : Adapter<Instant> {

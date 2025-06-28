@@ -22,8 +22,8 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.CLASS
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Retention(SOURCE) @Target(CLASS) annotation class NoArg
 

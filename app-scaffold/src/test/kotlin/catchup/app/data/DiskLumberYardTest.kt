@@ -2,10 +2,10 @@ package catchup.app.data
 
 import catchup.app.data.LumberYard.Entry
 import com.google.common.truth.Truth.assertThat
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Instant
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import okio.Path.Companion.toPath
