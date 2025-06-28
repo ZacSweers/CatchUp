@@ -19,7 +19,6 @@ plugins {
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.redacted)
   alias(libs.plugins.foundry.base)
-  alias(libs.plugins.kotlin.serialization)
 }
 
 android { namespace = "catchup.util" }
@@ -42,8 +41,6 @@ dependencies {
   implementation(libs.misc.timber)
   implementation(libs.misc.unbescape)
   implementation(projects.libraries.appconfig)
-  implementation(libs.kotlinx.serialization.core)
-  implementation(libs.kotlinx.serialization.json)
 
   testImplementation(libs.kotlin.test)
   testImplementation(libs.misc.okio.fakeFileSystem)

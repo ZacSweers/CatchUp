@@ -17,14 +17,12 @@ package catchup.util.network
 
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlin.annotation.AnnotationTarget.PROPERTY
-import kotlinx.serialization.Serializable
 import okhttp3.Interceptor
 import okhttp3.Response
 
 @Retention(BINARY) @Target(AnnotationTarget.CLASS, PROPERTY) annotation class Redacted
 
 /** A [Interceptor] that adds an auth token to requests. */
-@Serializable
 data class AuthInterceptor(private val method: String, @Redacted private val accessToken: String) :
   Interceptor {
 

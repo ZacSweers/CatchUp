@@ -17,7 +17,6 @@ package catchup.util
 
 import catchup.util.network.AuthInterceptor
 import com.google.common.truth.Truth.assertThat
-import kotlinx.serialization.json.Json
 import org.junit.Test
 
 class AuthInterceptorTest {
@@ -25,13 +24,5 @@ class AuthInterceptorTest {
   fun verifyRedacted() {
     val authInterceptor = AuthInterceptor("get", "token")
     assertThat(authInterceptor.toString()).isEqualTo("AuthInterceptor(method=get, accessToken=██)")
-  }
-
-  @Test
-  fun verifySerializable() {
-    val authInterceptor = AuthInterceptor("get", "token")
-    val json = Json {  }
-    val serialized = json.encodeToString(AuthInterceptor.serializer(), authInterceptor)
-    assertThat(serialized).isEqualTo("{\"method\":\"get\",\"accessToken\":\"token\"}")
   }
 }
