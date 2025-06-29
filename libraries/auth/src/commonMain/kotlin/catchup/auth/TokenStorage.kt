@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlin.time.Instant
 import kotlinx.coroutines.flow.first
-import kotlinx.datetime.Instant
 import okio.Path
 
 /**

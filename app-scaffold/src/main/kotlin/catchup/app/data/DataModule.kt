@@ -18,36 +18,34 @@ package catchup.app.data
 import android.content.Context
 import android.os.Looper
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import catchup.app.injection.DaggerSet
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
 import catchup.di.FakeMode
-import catchup.di.SingleIn
 import catchup.sqldelight.SqlDriverFactory
 import catchup.util.data.adapters.UnescapeJsonAdapter
 import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.injection.qualifiers.NetworkInterceptor
 import com.jakewharton.shimo.ObjectOrderRandomizer
 import com.serjltt.moshi.adapters.Wrapped
-import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.Multibinds
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Multibinds
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class DataModule {
+interface DataModule {
 
+  // May be empty in release builds
   @NetworkInterceptor
-  @Multibinds
-  internal abstract fun provideNetworkInterceptors(): Set<Interceptor>
+  @Multibinds(allowEmpty = true)
+  fun provideNetworkInterceptors(): Set<Interceptor>
 
-  @Multibinds internal abstract fun provideInterceptors(): Set<Interceptor>
+  @Multibinds(allowEmpty = true) fun provideInterceptors(): Set<Interceptor>
 
   companion object {
 
@@ -67,8 +65,8 @@ abstract class DataModule {
     @SingleIn(AppScope::class)
     fun provideOkHttpClient(
       cache: Cache,
-      interceptors: DaggerSet<Interceptor>,
-      @NetworkInterceptor networkInterceptors: DaggerSet<Interceptor>,
+      interceptors: Set<Interceptor>,
+      @NetworkInterceptor networkInterceptors: Set<Interceptor>,
     ): OkHttpClient {
       if (Looper.myLooper() == Looper.getMainLooper()) {
         throw IllegalStateException("HTTP client initialized on main thread.")

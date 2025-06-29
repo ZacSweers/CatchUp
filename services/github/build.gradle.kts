@@ -15,7 +15,7 @@
  */
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.apollo)
@@ -34,16 +34,16 @@ android {
 
 apollo {
   service("github") {
-    mapScalar("DateTime", "kotlinx.datetime.Instant")
+    mapScalar("DateTime", "kotlin.time.Instant")
     mapScalar("URI", "okhttp3.HttpUrl")
     packageName.set("catchup.service.github")
     schemaFiles.from(file("src/main/graphql/catchup/service/github/schema.json"))
   }
 }
 
-slack {
+foundry {
   features {
-    dagger()
+    metro()
   }
   android {
     features {
@@ -55,7 +55,6 @@ slack {
 dependencies {
   api(libs.apollo.api)
   api(libs.apollo.runtime)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.okhttp.core)
   api(libs.retrofit.core)
@@ -73,6 +72,4 @@ dependencies {
   implementation(libs.okhttp.core)
   implementation(projects.libraries.retrofitconverters)
   implementation(projects.libraries.util)
-
-  compileOnly(libs.misc.javaxInject)
 }

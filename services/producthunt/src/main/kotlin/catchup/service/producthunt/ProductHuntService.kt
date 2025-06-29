@@ -22,8 +22,6 @@ import catchup.auth.TokenManager
 import catchup.auth.TokenManager.AuthType
 import catchup.auth.TokenManager.Credentials
 import catchup.auth.TokenStorage
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.service.api.CatchUpItem
 import catchup.service.api.Comment
 import catchup.service.api.ContentType
@@ -51,16 +49,17 @@ import com.apollographql.apollo3.network.NetworkTransport
 import com.apollographql.apollo3.network.http.DefaultHttpEngine
 import com.apollographql.apollo3.network.http.HttpEngine
 import com.apollographql.apollo3.network.http.HttpNetworkTransport
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
-import javax.inject.Inject
-import javax.inject.Qualifier
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.binding
 import kotlinx.collections.immutable.toImmutableList
 import okhttp3.OkHttpClient
 import okio.Path.Companion.toOkioPath
@@ -70,10 +69,9 @@ import okio.Path.Companion.toOkioPath
 private const val SERVICE_KEY = "ph"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(AppScope::class, boundType = Service::class)
-class ProductHuntService
+@ContributesIntoMap(AppScope::class, binding = binding<Service>())
 @Inject
-constructor(
+class ProductHuntService(
   @InternalApi private val serviceMeta: ServiceMeta,
   @InternalApi private val apolloClient: Lazy<ApolloClient>,
 ) : TextService {
@@ -82,8 +80,7 @@ constructor(
 
   override suspend fun fetch(request: DataRequest): DataResult {
     val postsQuery =
-      apolloClient
-        .get()
+      apolloClient.value
         .query(
           PostsQuery(
             first = 50,
@@ -131,8 +128,7 @@ constructor(
 
   override suspend fun fetchDetail(item: CatchUpItem, detailKey: String): Detail {
     val postsQuery =
-      apolloClient
-        .get()
+      apolloClient.value
         .query(
           PostAndCommentsQuery(postId = item.detailKey!!, commentsOrder = CommentsOrder.VOTES_COUNT)
         )
@@ -202,13 +198,12 @@ private val META =
   )
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class ProductHuntMetaModule {
+interface ProductHuntMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun productHuntServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+  fun productHuntServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
   companion object {
 
@@ -217,11 +212,12 @@ abstract class ProductHuntMetaModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module(includes = [ProductHuntMetaModule::class])
-object ProductHuntModule {
+interface ProductHuntModule {
 
-  private const val SERVER_URL = "https://api.producthunt.com/v2/api/graphql"
-  private const val AUTH_SERVER = "https://api.producthunt.com"
+  companion object {
+    private const val SERVER_URL = "https://api.producthunt.com/v2/api/graphql"
+    private const val AUTH_SERVER = "https://api.producthunt.com"
+  }
 
   @Provides
   @InternalApi
@@ -269,21 +265,21 @@ object ProductHuntModule {
   @InternalApi
   @Provides
   @SingleIn(AppScope::class)
-  fun provideHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
-    return DefaultHttpEngine(client::get)
+  fun provideApolloHttpEngine(@InternalApi client: Lazy<OkHttpClient>): HttpEngine {
+    return DefaultHttpEngine(client::value)
   }
 
   @InternalApi
   @Provides
   @SingleIn(AppScope::class)
-  fun provideHttpRequestComposer(): HttpRequestComposer {
+  fun providePhHttpRequestComposer(): HttpRequestComposer {
     return DefaultHttpRequestComposer(SERVER_URL)
   }
 
   @InternalApi
   @Provides
   @SingleIn(AppScope::class)
-  fun provideNetworkTransport(
+  fun providePhNetworkTransport(
     @InternalApi httpEngine: HttpEngine,
     @InternalApi httpRequestComposer: HttpRequestComposer,
   ): NetworkTransport {

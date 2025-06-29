@@ -1,12 +1,12 @@
 // Copyright (C) 2022 Slack Technologies, LLC
 // SPDX-License-Identifier: Apache-2.0
 import com.android.build.api.dsl.ManagedVirtualDevice
-import slack.gradle.isCi
+import foundry.gradle.isCi
 
 plugins {
   alias(libs.plugins.android.test)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.baselineprofile)
 }
 
@@ -19,7 +19,7 @@ android {
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
-  testOptions.managedDevices.devices {
+  testOptions.managedDevices.allDevices {
     create<ManagedVirtualDevice>(mvdName) {
       device = "Pixel 6"
       apiLevel = mvdApi

@@ -9,7 +9,7 @@ class FeedTest {
 
   @Test
   fun parseSmokeTest() {
-    val parsedFeed = SlashdotModule.provideXml().decodeFromString<Feed>(FEED_STRING)
+    val parsedFeed = SlashdotModule.createXml().decodeFromString<Feed>(FEED_STRING)
     assertThat(parsedFeed.entries).hasSize(1)
   }
 }

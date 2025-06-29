@@ -1,9 +1,11 @@
 #!/usr/bin/env kotlin
-@file:DependsOn("com.github.ajalt.clikt:clikt-jvm:4.4.0")
-@file:DependsOn("com.squareup.moshi:moshi:1.15.1")
-@file:DependsOn("com.squareup.moshi:moshi-kotlin:1.15.1")
+@file:DependsOn("com.github.ajalt.clikt:clikt-jvm:5.0.3")
+@file:DependsOn("com.squareup.moshi:moshi:1.15.2")
+@file:DependsOn("com.squareup.moshi:moshi-kotlin:1.15.2")
 
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.path
@@ -19,12 +21,14 @@ import okio.sink
 import okio.source
 
 @Suppress("UNCHECKED_CAST")
-class SarifCleaner :
-  CliktCommand(help = "Filters a sarif file to only include results for modified files") {
+class SarifCleaner : CliktCommand() {
 
   private val sarifFile by option("--sarif-file").path().required()
   private val modifiedFiles by option("--modified-files").path().required()
   private val outputFile by option("--output-file").path().required()
+
+  override fun help(context: Context) =
+    "Filters a sarif file to only include results for modified files"
 
   override fun run() {
     if (!sarifFile.exists()) {
@@ -76,9 +80,11 @@ class SarifCleaner :
             map[key] = value.toInt()
           }
         }
+
         is Map<*, *> -> {
           fixInts(value as MutableMap<String, Any?>)
         }
+
         is List<*> -> {
           fixInts(value as MutableList<Any?>)
         }
@@ -92,6 +98,7 @@ class SarifCleaner :
         is Map<*, *> -> {
           fixInts(item as MutableMap<String, Any?>)
         }
+
         is Double -> {
           if (item.isWholeNumber) {
             list[i] = item.toInt()

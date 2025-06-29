@@ -15,11 +15,9 @@
  */
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.anvil)
-  alias(libs.plugins.sgp.base)
-  // TODO why doesn't SGP handle this
-  alias(libs.plugins.ksp)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.sqldelight)
+  alias(libs.plugins.metro) // TODO why is foundry's handling not enough?
 }
 
 kotlin {
@@ -42,14 +40,16 @@ kotlin {
     jvmMain {
       dependencies {
         api(libs.okhttp.core)
-
-        implementation(libs.anvil.annotationsOptional)
         implementation(libs.misc.unfurl)
       }
     }
   }
 }
 
-slack { features { dagger() } }
-
 sqldelight { databases { create("UnfurlerDatabase") { packageName.set("catchup.unfurler") } } }
+
+foundry {
+  features {
+    metro()
+  }
+}

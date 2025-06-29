@@ -16,24 +16,23 @@ import catchup.service.api.toCatchUpDbItem
 import catchup.service.db.CatchUpDatabase
 import catchup.service.db.CatchUpDbItem
 import com.apollographql.apollo3.exception.ApolloException
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
 import java.io.IOException
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import retrofit2.HttpException
 import timber.log.Timber
 
 @OptIn(ExperimentalPagingApi::class)
-class ServiceMediator
-@AssistedInject
-constructor(
+@Inject
+class ServiceMediator(
   @Assisted private val service: Service,
   @Assisted private val catchUpDatabase: CatchUpDatabase,
   @FakeMode private val isFakeMode: Boolean,

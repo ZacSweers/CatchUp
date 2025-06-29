@@ -15,7 +15,7 @@
  */
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
 }
 
 kotlin {
@@ -28,9 +28,8 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        api(libs.anvil.annotationsOptional)
-        api(libs.dagger.runtime)
-}
+        api(libs.metro.runtime)
+      }
     }
   }
 }

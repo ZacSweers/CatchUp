@@ -115,3 +115,8 @@ google-services.json
 # Do not commit plain release keys
 signing/app-release.jks
 signing/play-account.p12
+
+.cache
+
+profile-out*/
+gradle-user-home/

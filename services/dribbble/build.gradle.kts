@@ -15,7 +15,7 @@
  */
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
 }
@@ -24,9 +24,9 @@ android {
   namespace = "catchup.service.dribbble"
 }
 
-slack {
+foundry {
   features {
-    dagger()
+      metro()
   }
   android {
     features {
@@ -36,7 +36,6 @@ slack {
 }
 
 dependencies {
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.okhttp.core)
   api(libs.retrofit.core)

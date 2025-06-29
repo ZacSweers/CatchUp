@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -74,7 +75,6 @@ import catchup.app.ui.debug.LogsShareResult.SHARE
 import catchup.appconfig.AppConfig
 import catchup.compose.CatchUpTheme
 import catchup.compose.rememberStableCoroutineScope
-import catchup.di.AppScope
 import catchup.di.DataMode
 import catchup.util.truncateAt
 import com.alorma.compose.settings.storage.base.SettingValueState
@@ -89,15 +89,13 @@ import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuitx.android.IntentScreen
 import com.slack.circuitx.overlays.BottomSheetOverlay
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dev.zacsweers.catchup.app.scaffold.R
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provides
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -112,8 +110,7 @@ import okhttp3.OkHttpClient
 @Parcelize private object LogsModal : Screen
 
 @ContributesTo(AppScope::class)
-@Module
-object ContributorModule {
+interface ContributorModule {
   @Provides fun provideDrawerScreen(): DrawerScreen = DrawerScreen(DebugSettingsScreen)
 }
 
@@ -134,9 +131,8 @@ object DebugSettingsScreen : Screen {
   }
 }
 
-class DebugSettingsPresenter
-@AssistedInject
-constructor(
+@Inject
+class DebugSettingsPresenter(
   @Assisted private val navigator: Navigator,
   private val client: Lazy<OkHttpClient>,
   private val lumberYard: LumberYard,
@@ -156,10 +152,10 @@ constructor(
     var showLogs by remember { mutableStateOf(false) }
 
     val clientCache by
-      produceState<Cache?>(null) { value = withContext(IO) { client.get().cache!! } }
+      produceState<Cache?>(null) { value = withContext(IO) { client.value.cache!! } }
 
     val scope = rememberStableCoroutineScope()
-    val displayMetrics = LocalContext.current.resources.displayMetrics
+    val displayMetrics = LocalResources.current.displayMetrics
     val items =
       remember(displayMetrics, clientCache) {
         clientCache?.let { items(displayMetrics, it) } ?: persistentListOf()

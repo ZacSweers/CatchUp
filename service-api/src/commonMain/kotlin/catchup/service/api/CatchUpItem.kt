@@ -21,7 +21,7 @@ import androidx.compose.runtime.Immutable
 import catchup.service.api.ContentType.HTML
 import catchup.service.api.Mark.MarkType
 import java.util.Objects
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Keep
 @Immutable

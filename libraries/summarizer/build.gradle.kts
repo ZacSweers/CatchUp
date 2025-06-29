@@ -1,18 +1,19 @@
 import com.android.build.api.variant.BuildConfigField
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.parcelize)
-  alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
+  alias(libs.plugins.ksp)
 }
 
-slack {
+foundry {
   features {
+    circuit(codegen = true)
     compose()
-    dagger()
+    metro()
     moshi(codegen = true)
   }
 }
@@ -32,16 +33,18 @@ sqldelight {
 
 androidComponents {
   onVariants {
-    it.buildConfigFields.put(
+    it.buildConfigFields?.put(
       "OPEN_AI_KEY",
       BuildConfigField("String", "\"${properties["catchup_openAiKey"]}\"", "")
     )
   }
 }
 
-dependencies {
-  ksp(libs.circuit.codegen)
+ksp {
+  arg("circuit.codegen.mode", "METRO")
+}
 
+dependencies {
   api(libs.androidx.compose.runtime)
   api(libs.androidx.compose.ui)
   api(libs.circuit.codegenAnnotations)
@@ -57,7 +60,6 @@ dependencies {
   api(projects.libraries.util)
 
   implementation(libs.androidx.annotations)
-  implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.compose.animation)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material.material3)

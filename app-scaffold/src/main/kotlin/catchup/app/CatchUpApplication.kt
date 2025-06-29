@@ -18,43 +18,42 @@ package catchup.app
 import android.app.Application
 import android.os.StrictMode
 import android.os.strictmode.DiskReadViolation
-import android.os.strictmode.UntaggedSocketViolation
 import android.util.Log
 import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
 import catchup.app.data.DiskLumberYard
 import catchup.app.data.LumberYard
-import catchup.app.injection.DaggerSet
 import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.appconfig.AppConfig
 import catchup.util.d
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.createGraphFactory
 import java.util.concurrent.Executors
-import javax.inject.Inject
+import kotlin.time.Clock
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
 import timber.log.Timber.Tree
 
-private typealias InitializerFunction = () -> @JvmSuppressWildcards Unit
+private typealias InitializerFunction = () -> Unit
 
 class CatchUpApplication : Application() {
 
   @Inject lateinit var appConfig: AppConfig
 
-  lateinit var appComponent: ApplicationComponent
+  lateinit var appComponent: AppGraph
 
   @Inject
-  fun plantTimberTrees(trees: DaggerSet<Tree>) {
+  fun plantTimberTrees(trees: Set<Tree>) {
     Timber.plant(*trees.toTypedArray())
   }
 
   @Inject
   fun asyncInits(
     scope: BackgroundAppCoroutineScope,
-    @AsyncInitializers asyncInitializers: DaggerSet<InitializerFunction>,
+    @AsyncInitializers asyncInitializers: Set<InitializerFunction>,
   ) {
     scope.launch {
       // TODO - run these in parallel?
@@ -83,22 +82,20 @@ class CatchUpApplication : Application() {
   }
 
   @Inject
-  fun inits(@Initializers initializers: DaggerSet<InitializerFunction>) {
+  fun inits(@Initializers initializers: Set<InitializerFunction>) {
     initializers.forEach { it() }
   }
 
   override fun onCreate() {
     super.onCreate()
     appComponent =
-      DaggerApplicationComponent.factory().create(this).apply { inject(this@CatchUpApplication) }
+      createGraphFactory<AppGraph.Factory>().create(this).apply { inject(this@CatchUpApplication) }
 
     StrictMode.setVmPolicy(
       StrictMode.VmPolicy.Builder()
         .detectAll()
         .penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
-          if (violation is UntaggedSocketViolation) {
-            // This is a known issue with Flipper
-          } else if (
+          if (
             violation is DiskReadViolation &&
               violation.stackTraceToString().contains("CustomTabsConnection")
           ) {
@@ -111,6 +108,7 @@ class CatchUpApplication : Application() {
     )
   }
 
+  @Suppress("DEPRECATION")
   override fun onTrimMemory(level: Int) {
     super.onTrimMemory(level)
     when (level) {

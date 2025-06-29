@@ -1,16 +1,16 @@
 package catchup.app.util
 
-import catchup.di.AppScope
-import com.squareup.anvil.annotations.optional.SingleIn
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 
-@SingleIn(AppScope::class)
-class MainAppCoroutineScope @Inject constructor() : CoroutineScope by MainScope()
+@SingleIn(AppScope::class) @Inject class MainAppCoroutineScope : CoroutineScope by MainScope()
 
 @SingleIn(AppScope::class)
-class BackgroundAppCoroutineScope @Inject constructor() :
+@Inject
+class BackgroundAppCoroutineScope :
   CoroutineScope by CoroutineScope(SupervisorJob() + Dispatchers.Default)

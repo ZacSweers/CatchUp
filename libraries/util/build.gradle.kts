@@ -15,48 +15,63 @@
  */
 
 plugins {
+  alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.redacted)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
 }
 
-android {
-  namespace = "catchup.util"
-  buildFeatures {
-    viewBinding = true
-  }
-}
+kotlin {
+  // region KMP Targets
+  androidTarget()
+  jvm()
+  // endregion
 
-redacted {
-  redactedAnnotation.set("catchup.util.network.Redacted")
-}
+  sourceSets {
+    commonMain {
+      dependencies {
+        api(libs.apollo.api)
+        api(libs.kotlin.datetime)
+        api(libs.kotlinx.immutable)
+        api(libs.metro.runtime)
+        api(libs.moshi.core)
+        api(libs.okhttp.core)
 
-slack {
-  android {
-    features {
-      resources("catchup_util_")
+        implementation(libs.androidx.annotations)
+        implementation(libs.misc.unbescape)
+        implementation(projects.libraries.appconfig)
+      }
+    }
+    commonTest {
+      dependencies {
+        implementation(libs.kotlin.test)
+      }
+    }
+    androidMain {
+      dependencies {
+        api(libs.androidx.coreKtx)
+        implementation(libs.androidx.core)
+        implementation(libs.misc.timber)
+      }
+    }
+    jvmMain {
+      dependencies {
+        api(libs.misc.okio)
+      }
+    }
+    jvmTest {
+      dependencies {
+        api(libs.misc.okio)
+        implementation(libs.misc.okio.fakeFileSystem)
+        implementation(libs.test.junit)
+        implementation(libs.test.truth)
+      }
     }
   }
 }
 
-dependencies {
-  api(libs.androidx.coreKtx)
-  api(libs.apollo.api)
-  api(libs.dagger.runtime)
-  api(libs.kotlin.datetime)
-  api(libs.kotlinx.immutable)
-  api(libs.moshi.core)
-  api(libs.okhttp.core)
+android { namespace = "catchup.util" }
 
-  implementation(libs.androidx.core)
-  implementation(libs.kotlin.datetime)
-  implementation(libs.misc.timber)
-  implementation(libs.misc.unbescape)
-  implementation(projects.libraries.appconfig)
+redacted { redactedAnnotations.add("catchup/util/network/Redacted") }
 
-  testImplementation(libs.kotlin.test)
-  testImplementation(libs.misc.okio.fakeFileSystem)
-  testImplementation(libs.test.junit)
-  testImplementation(libs.test.truth)
-}
+foundry { android { features { resources("catchup_util_") } } }

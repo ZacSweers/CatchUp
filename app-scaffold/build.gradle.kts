@@ -13,35 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import com.google.devtools.ksp.gradle.KspAATask
-import com.google.devtools.ksp.gradle.KspTaskJvm
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import foundry.gradle.DelicateFoundryGradlePluginApi
 
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt)
   alias(libs.plugins.kotlin.parcelize)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.apollo)
-  alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.moshix)
+  alias(libs.plugins.metro)
 }
 
-slack {
-  @Suppress("OPT_IN_USAGE")
+kotlin { compilerOptions { optIn.add("androidx.compose.material3.ExperimentalMaterial3Api") } }
+
+val enableCompilerReports = project.hasProperty("catchup.enableCompilerReports")
+
+if (enableCompilerReports) {
+  metro { reportsDestination.set(layout.buildDirectory.dir("metro")) }
+}
+
+foundry {
   features {
     compose {
-      if (project.hasProperty("catchup.enableComposeCompilerReports")) {
+      if (enableCompilerReports) {
         val metricsDir = project.layout.buildDirectory.dir("compose_metrics").get().asFile
-        enableCompilerMetricsForDebugging(metricsDir)
+        @OptIn(DelicateFoundryGradlePluginApi::class) enableCompilerMetricsForDebugging(metricsDir)
       }
     }
-    dagger(enableComponents = true) { alwaysEnableAnvilComponentMerging() }
+    metro()
     moshi(codegen = true)
   }
   // TODO
@@ -61,10 +63,10 @@ android {
     )
     resValue("string", "changelog_text", "haha")
   }
+  androidResources.enable = true
   buildFeatures {
     buildConfig = true
     compose = true
-    androidResources = true
     resValues = true
     viewBinding = true
   }
@@ -85,53 +87,16 @@ android {
 
 apollo {
   service("github") {
-    mapScalar("DateTime", "kotlinx.datetime.Instant")
+    mapScalar("DateTime", "kotlin.time.Instant")
     mapScalar("URI", "okhttp3.HttpUrl")
     packageName.set("catchup.app.data.github")
     schemaFiles.from(file("src/main/graphql/catchup/app/data/github/schema.json"))
   }
 }
 
-val useKsp2 = findProperty("ksp.useKSP2")?.toString().toBoolean()
-
-@Suppress("UNCHECKED_CAST")
-fun kspTaskDestinationProvider(name: String): Provider<File> {
-  val taskType = if (useKsp2) KspAATask::class else KspTaskJvm::class
-  val kspDebugTask = tasks.named(name, taskType)
-  val provider: Provider<File> =
-    if (useKsp2) {
-      // TODO double check after KSP2 resources fix if this is right, or if we need to use the base
-      //  dir instead to make it more general
-      (kspDebugTask as TaskProvider<KspAATask>).flatMap { it.kspConfig.kotlinOutputDir }
-    } else {
-      (kspDebugTask as TaskProvider<KspTaskJvm>).flatMap { it.destination }
-    }
-  return provider
-}
-
-// Workaround for https://youtrack.jetbrains.com/issue/KT-59220
-afterEvaluate {
-  val kspDebugTaskProvider = kspTaskDestinationProvider("kspDebugKotlin")
-  tasks.named<KotlinCompile>("kaptGenerateStubsDebugKotlin").configure {
-    source(kspDebugTaskProvider)
-  }
-  val kspReleaseTaskProvider = kspTaskDestinationProvider("kspReleaseKotlin")
-  tasks.named<KotlinCompile>("kaptGenerateStubsReleaseKotlin").configure {
-    source(kspReleaseTaskProvider)
-  }
-}
-
-tasks.withType<KaptGenerateStubsTask>().configureEach {
-  // TODO necessary until anvil supports something for K2 contribution merging
-  compilerOptions {
-    progressiveMode.set(false)
-    languageVersion.set(KotlinVersion.KOTLIN_1_9)
-  }
-}
+ksp { arg("circuit.codegen.mode", "METRO") }
 
 dependencies {
-  ksp(libs.circuit.codegen)
-
   implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.annotations)
@@ -139,7 +104,6 @@ dependencies {
   implementation(libs.androidx.appCompat.resources)
   implementation(libs.androidx.collection)
   implementation(libs.androidx.compose.accompanist.adaptive)
-  implementation(libs.androidx.compose.accompanist.systemUi)
   implementation(libs.androidx.compose.animation.graphics)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material.material3)
@@ -250,8 +214,6 @@ dependencies {
 
   debugImplementation(libs.androidx.compose.uiTooling)
   debugImplementation(libs.corbind)
-  debugImplementation(libs.misc.debug.flipper)
-  debugImplementation(libs.misc.debug.flipperNetwork)
   debugImplementation(libs.misc.debug.guava)
   debugImplementation(libs.misc.debug.soLoader)
   debugImplementation(libs.misc.debug.telescope)
@@ -262,13 +224,10 @@ dependencies {
   debugImplementation(libs.retrofit.moshi)
   debugImplementation(projects.libraries.retrofitconverters)
 
-  kaptDebug(projects.libraries.tooling.spiMultibindsValidator)
-  kaptDebug(projects.libraries.tooling.spiVisualizer)
-
   testImplementation(libs.kotlin.coroutines.test)
-  testImplementation(libs.misc.debug.flipper)
-  testImplementation(libs.misc.debug.flipperNetwork)
   testImplementation(libs.misc.okio.fakeFileSystem)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
+
+  ksp(libs.circuit.codegen)
 }

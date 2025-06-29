@@ -22,11 +22,12 @@ import catchup.app.data.LumberYard.Entry
 import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.util.RingBuffer
 import catchup.util.io.AtomicFile
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.collections.immutable.ImmutableList
@@ -40,7 +41,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
@@ -150,9 +150,9 @@ sealed class LumberYard {
   ) {
     fun create(useDisk: Boolean): LumberYard {
       return if (useDisk) {
-        diskLumberYard.get()
+        diskLumberYard()
       } else {
-        simpleLumberYard.get()
+        simpleLumberYard()
       }
     }
   }

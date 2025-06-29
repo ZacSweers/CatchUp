@@ -15,7 +15,7 @@
  */
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
 }
@@ -24,9 +24,9 @@ android {
   namespace = "catchup.service.reddit"
 }
 
-slack {
+foundry {
   features {
-    dagger()
+    metro()
     moshi(codegen = true)
   }
   android {
@@ -38,7 +38,6 @@ slack {
 
 dependencies {
   api(libs.androidx.annotations)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.moshi.core)
   api(libs.okhttp.core)

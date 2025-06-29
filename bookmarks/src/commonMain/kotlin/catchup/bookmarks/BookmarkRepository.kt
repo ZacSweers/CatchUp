@@ -9,6 +9,12 @@ import catchup.bookmarks.db.Bookmark
 import catchup.bookmarks.db.CatchUpDatabase
 import catchup.service.api.CatchUpItem
 import catchup.service.api.toCatchUpItem
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import kotlin.time.Clock.System
+import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,8 +23,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock.System
-import kotlinx.datetime.Instant
 
 interface BookmarkRepository {
   suspend fun addBookmark(id: Long, timestamp: Instant = System.now())
@@ -37,7 +41,10 @@ interface BookmarkRepository {
   fun bookmarksQuery(limit: Long, offset: Long): Query<CatchUpItem>
 }
 
-internal class BookmarkRepositoryImpl(
+@ContributesBinding(AppScope::class)
+@SingleIn(AppScope::class)
+@Inject
+class BookmarkRepositoryImpl(
   private val database: CatchUpDatabase,
   // TODO replace with background scope from DI graph
   scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
@@ -85,7 +92,8 @@ internal class BookmarkRepositoryImpl(
 }
 
 fun <T : Any, R : Any> Query<T>.map(mapper: (T) -> R): Query<R> {
-  @Suppress("UNCHECKED_CAST") return MappedQuery(this, mapper as (Any) -> Any) as Query<R>
+  @Suppress("UNCHECKED_CAST")
+  return MappedQuery(this, mapper as (Any) -> Any) as Query<R>
 }
 
 private class MappedQuery(private val original: Query<Any>, private val newMapper: (Any) -> Any) :

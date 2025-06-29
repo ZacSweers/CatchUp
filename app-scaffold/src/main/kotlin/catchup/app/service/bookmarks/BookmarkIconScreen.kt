@@ -11,14 +11,14 @@ import catchup.app.service.TextActionItem
 import catchup.app.service.bookmarks.BookmarkIconScreen.State
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.rememberStableCoroutineScope
-import catchup.di.AppScope
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
@@ -28,9 +28,8 @@ data class BookmarkIconScreen(val id: Long, val themeColor: Int) : Screen {
     CircuitUiState
 }
 
-class BookmarkIconPresenter
-@AssistedInject
-constructor(
+@Inject
+class BookmarkIconPresenter(
   @Assisted private val screen: BookmarkIconScreen,
   private val bookmarkRepository: BookmarkRepository,
 ) : Presenter<State> {

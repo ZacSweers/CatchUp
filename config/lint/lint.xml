@@ -32,9 +32,14 @@
   <issue id="ExtraTranslation" severity="ignore" />
   <issue id="VectorPath" severity="ignore" />
   <issue id="ComposeUnstableCollections" severity="Error" />
+  <!-- This has been broken in lint for many releases now -->
+  <issue id="ProduceStateDoesNotAssignValue" severity="ignore" />
 
   <!-- Something is up with EnsureInitializerMetadata -->
   <issue id="UnknownIssueId" severity="ignore" />
+
+  <!-- Too noisy and only really from slack -->
+  <issue id="AvoidUsingNotNullOperator" severity="ignore" />
 
   <!-- Slack-specific -->
   <issue id="RawDispatchersUse,DeprecatedCall,MoshiUsageEnumMissingUnknown,MainScopeUsage" severity="ignore" />

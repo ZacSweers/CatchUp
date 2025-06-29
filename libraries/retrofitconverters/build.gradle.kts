@@ -15,7 +15,7 @@
  */
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
 }
 
 kotlin {
@@ -28,7 +28,6 @@ kotlin {
   sourceSets {
     with(getByName("jvmMain")) {
       dependencies {
-        api(libs.dagger.runtime)
         api(libs.okhttp.core)
         api(libs.retrofit.core)
 

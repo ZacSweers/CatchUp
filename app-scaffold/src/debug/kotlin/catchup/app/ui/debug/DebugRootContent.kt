@@ -12,27 +12,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import catchup.app.data.DebugPreferences
-import catchup.base.ui.DefaultRootContent
 import catchup.base.ui.RootContent
 import catchup.base.ui.rememberSystemBarColorController
 import catchup.compose.rememberConditionalSystemUiColors
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.foundation.onNavEvent
 import com.slack.circuit.runtime.Navigator
-import com.squareup.anvil.annotations.ContributesBinding
-import javax.inject.Inject
 
-@SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, replaces = [DefaultRootContent::class])
-class DebugRootContent @Inject constructor(private val debugPreferences: DebugPreferences) :
-  RootContent {
+// TODO https://github.com/ZacSweers/metro/issues/205
+// @SingleIn(AppScope::class)
+// @ContributesBinding(AppScope::class, replaces = [DefaultRootContent::class])
+// @Inject
+class DebugRootContent(private val debugPreferences: DebugPreferences) : RootContent {
   @Composable
   override fun Content(navigator: Navigator, content: @Composable () -> Unit) {
     val original = LocalLayoutDirection.current
@@ -78,7 +74,8 @@ class DebugRootContent @Inject constructor(private val debugPreferences: DebugPr
         drawerContent = {
           CompositionLocalProvider(LocalLayoutDirection provides original) {
             // Max width of 80% of screen width
-            val maxWidth = LocalConfiguration.current.screenWidthDp.dp * 0.85f
+            val widthPx = LocalWindowInfo.current.containerSize.width * 0.85f
+            val maxWidth = LocalDensity.current.run { widthPx.toDp() }
             ModalDrawerSheet(
               modifier = Modifier.widthIn(max = maxWidth),
               windowInsets = WindowInsets(0, 0, 0, 0),

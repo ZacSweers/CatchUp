@@ -1,9 +1,9 @@
 package catchup.service.api
 
 import androidx.compose.runtime.Immutable
+import kotlin.time.Instant
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.datetime.Instant
 
 // TODO
 //  sort?

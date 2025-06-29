@@ -17,15 +17,14 @@
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
 }
 
 android { namespace = "catchup.compose" }
 
-slack { features { compose() } }
+foundry { features { compose() } }
 
 dependencies {
-  api(libs.androidx.compose.accompanist.systemUi)
   api(libs.androidx.compose.foundation)
   api(libs.androidx.compose.runtime)
   api(libs.androidx.compose.ui)

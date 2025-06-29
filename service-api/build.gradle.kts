@@ -16,7 +16,7 @@
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
 }
 
 kotlin {
@@ -31,9 +31,7 @@ kotlin {
     commonMain {
       dependencies {
         api(libs.androidx.annotations)
-        api(libs.anvil.annotations)
         api(libs.compose.runtime)
-        api(libs.dagger.runtime)
         api(libs.kotlin.datetime)
         api(libs.kotlinx.immutable)
         api(projects.libraries.di)
@@ -54,9 +52,8 @@ kotlin {
 
 android { namespace = "catchup.service.api" }
 
-slack {
+foundry {
   features {
-    compose()
-    dagger()
+    metro()
   }
 }

@@ -15,7 +15,7 @@
  */
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
 }
@@ -31,9 +31,9 @@ android {
   namespace = "catchup.service.unsplash"
 }
 
-slack {
+foundry {
   features {
-    dagger()
+    metro()
     moshi(codegen = true)
   }
   android { features { resources("catchup_service_unsplash_") } }
@@ -41,7 +41,6 @@ slack {
 
 dependencies {
   api(libs.androidx.annotations)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.okhttp.core)
   api(libs.retrofit.core)

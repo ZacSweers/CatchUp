@@ -16,7 +16,6 @@
 package catchup.service.unsplash
 
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
 import catchup.libraries.retrofitconverters.delegatingCallFactory
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ContentType
@@ -30,17 +29,17 @@ import catchup.service.api.ServiceMetaKey
 import catchup.service.api.VisualService
 import catchup.util.data.adapters.ISO8601InstantAdapter
 import catchup.util.network.AuthInterceptor
-import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.moshi.Moshi
-import dagger.Binds
-import dagger.Lazy
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.IntoMap
-import javax.inject.Inject
-import javax.inject.Qualifier
-import kotlinx.datetime.Instant
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.binding
+import kotlin.time.Instant
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -50,11 +49,12 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 private const val SERVICE_KEY = "unsplash"
 
 @ServiceKey(SERVICE_KEY)
-@ContributesMultibinding(AppScope::class, boundType = Service::class)
-class UnsplashService
+@ContributesIntoMap(AppScope::class, binding = binding<Service>())
 @Inject
-constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: UnsplashApi) :
-  VisualService {
+class UnsplashService(
+  @InternalApi private val serviceMeta: ServiceMeta,
+  private val api: UnsplashApi,
+) : VisualService {
 
   override fun meta() = serviceMeta
 
@@ -96,13 +96,12 @@ constructor(@InternalApi private val serviceMeta: ServiceMeta, private val api: 
 }
 
 @ContributesTo(AppScope::class)
-@Module
-abstract class UnsplashMetaModule {
+interface UnsplashMetaModule {
 
   @IntoMap
   @ServiceMetaKey(SERVICE_KEY)
   @Binds
-  internal abstract fun unsplashServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
+  fun unsplashServiceMeta(@InternalApi meta: ServiceMeta): ServiceMeta
 
   companion object {
 
@@ -123,8 +122,7 @@ abstract class UnsplashMetaModule {
 }
 
 @ContributesTo(AppScope::class)
-@Module(includes = [UnsplashMetaModule::class])
-object UnsplashModule {
+interface UnsplashModule {
 
   @Provides
   @InternalApi

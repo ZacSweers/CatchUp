@@ -16,7 +16,7 @@
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.noarg)
@@ -26,13 +26,12 @@ android {
   namespace = "catchup.service.hackernews"
   buildFeatures {
     resValues = true
-    viewBinding = true
   }
 }
 
-slack {
+foundry {
   features {
-    dagger()
+    metro()
   }
   android {
     features {
@@ -71,7 +70,6 @@ noArg {
 
 dependencies {
   api(libs.androidx.annotations)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(projects.libraries.di)
   api(projects.serviceApi)

@@ -43,18 +43,17 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import catchup.app.CatchUpPreferences
 import catchup.appconfig.AppConfig
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import dev.zacsweers.catchup.app.scaffold.R
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 @Stable
 @SingleIn(AppScope::class)
-class ChangelogHelper
 @Inject
-constructor(
+class ChangelogHelper(
   // TODO datastore this
   private val catchUpPreferences: CatchUpPreferences,
   private val appConfig: AppConfig,

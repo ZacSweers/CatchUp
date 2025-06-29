@@ -1,0 +1,112 @@
+anvilKsp_appScaffold_K1_KAPT_ksp2 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K1_KAPT", "-Pksp.useKSP2=true"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+anvilKsp_appScaffold_K1_KSP_ONLY_ksp1 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K1_KSP_ONLY", "-Pksp.useKSP2=false"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+anvilKsp_appScaffold_K2_KSP_ONLY_ksp1 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K2_KSP_ONLY", "-Pksp.useKSP2=false"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+anvilKsp_appScaffold_K2_KSP_KAPT_ksp1 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K2_KSP_KAPT", "-Pksp.useKSP2=false"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+anvilKsp_appScaffold_K2_KSP_KAPT_ksp2 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K2_KSP_KAPT", "-Pksp.useKSP2=true"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+# TODO not working yet
+anvilKsp_appScaffold_K2_KSP_KAPT_ksp2_k2 {
+  tasks = [":app-scaffold:compileDebugJavaWithJavac"]
+  gradle-args = ["-Psgp.anvil.mode=K2_KSP_KAPT", "-Pksp.useKSP2=true", "-Pkapt.use.k2=true"]
+  apply-abi-change-to = "app-scaffold/src/main/kotlin/catchup/app/Components.kt"
+  clear-build-cache-before = SCENARIO
+  clear-gradle-user-home-before = SCENARIO
+  clear-configuration-cache-state-before = SCENARIO
+  warm-ups = 3
+  iterations = 5
+}
+
+app_compileSources_abi {
+  warm-ups = 3
+  iterations = 5
+  tasks = [":app:compileDebugSources"]
+  apply-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/DataMode.kt", "app-scaffold/src/main/kotlin/catchup/app/CatchUpAppConfig.kt"]
+}
+
+app_compileSources_abi_noic {
+  warm-ups = 3
+  iterations = 5
+  tasks = [":app:compileDebugSources"]
+  gradle-args = ["-Pkotlin.incremental=false"]
+  apply-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/DataMode.kt", "app-scaffold/src/main/kotlin/catchup/app/CatchUpAppConfig.kt"]
+}
+
+app_compileSources_noabi {
+  warm-ups = 3
+  iterations = 5
+  tasks = [":app:compileDebugSources"]
+  apply-non-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/DataMode.kt", "app-scaffold/src/main/kotlin/catchup/app/CatchUpAppConfig.kt"]
+}
+
+app_compileSources_noabi_noic {
+  warm-ups = 3
+  iterations = 5
+  tasks = [":app:compileDebugSources"]
+  gradle-args = ["-Pkotlin.incremental=false"]
+  apply-non-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/DataMode.kt", "app-scaffold/src/main/kotlin/catchup/app/CatchUpAppConfig.kt"]
+}
+
+catchup_assembleDebug {
+    tasks = [":app:assembleDebug"]
+    warm-ups = 5
+    clear-build-cache-before = SCENARIO
+    clear-transform-cache-before = SCENARIO
+    apply-abi-change-to = "libraries/di/src/commonMain/kotlin/catchup/di/ContextualFactory.kt"
+    apply-non-abi-change-to = ["libraries/di/src/commonMain/kotlin/catchup/di/ContextualFactory.kt"]
+    gradle-args = ["--no-build-cache", "-Pkotlin.build.report.output=JSON,FILE", "-Pkotlin.build.report.json.directory=/Users/zacsweers/dev/kotlin/clones/k2-performance-metrics/reports/2.0.0-RC3/catchup_debug", "-Pkotlin.build.report.file.output_dir=/Users/zacsweers/dev/kotlin/clones/k2-performance-metrics/reports/2.0.0-RC3/catchup_debug", "-Pkotlin_version=2.0.0-RC3", ]
+}
+
+appScaffold_compileDebugKotlin {
+    tasks = [":app-scaffold:compileDebugKotlin", "--rerun"]
+    warm-ups = 1
+    iterations = 3
+}

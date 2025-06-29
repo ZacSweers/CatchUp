@@ -167,3 +167,6 @@
 -dontwarn androidx.window.sidecar.SidecarInterface
 -dontwarn androidx.window.sidecar.SidecarProvider
 -dontwarn androidx.window.sidecar.SidecarWindowLayoutInfo
+-dontwarn androidx.window.extensions.core.util.function.Consumer
+-dontwarn androidx.window.extensions.core.util.function.Function
+-dontwarn androidx.window.extensions.core.util.function.Predicate

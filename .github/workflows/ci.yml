@@ -14,7 +14,7 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}-${{ github.head_ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
@@ -23,17 +23,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Gradle Wrapper Validation
-        uses: gradle/actions/wrapper-validation@v3
-
       - name: Install JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '23'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Prepare Gradle Home
         run: |
@@ -54,7 +51,7 @@ jobs:
       - name: Compute affected projects
         if: always() && github.event_name == 'pull_request'
         id: gradle-affected-projects
-        run: ./gradlew computeAffectedProjects --changed-files tmp/changed_files.txt -Pslack.debug=true
+        run: ./gradlew computeAffectedProjects --changed-files tmp/changed_files.txt
 
       - name: Check affected projects
         run: |
@@ -62,9 +59,7 @@ jobs:
           if [[ -e "$path" ]]; then
             cat "$path"
             # Copy focus file to root of project
-            # Necessary to omit the newline because the focus plugin reads the whole file text!
-            # TODO changing settings breaks caching https://issuetracker.google.com/issues/279997228
-            # echo -n "build/skippy/merged/focus.settings.gradle" > .focus
+            # TODO generate ide-projects.txt? Or just all-projects.txt?
             # Check if app is affected
             if grep -q ":app" "$path"; then
               echo "App is affected"

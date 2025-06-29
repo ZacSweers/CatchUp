@@ -15,7 +15,7 @@
  */
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.moshix)
 }
 
@@ -30,18 +30,18 @@ kotlin {
     commonMain {
       dependencies {
         api(libs.androidx.annotations)
-        api(libs.dagger.runtime)
         api(libs.misc.okio)
         api(libs.okhttp.core)
 
         implementation(libs.androidx.datastore.preferences.core)
         implementation(libs.eithernet)
+        implementation(libs.eithernet.retrofit)
         implementation(libs.kotlin.coroutines)
         implementation(libs.kotlin.datetime)
         implementation(libs.okhttp.core)
         implementation(libs.retrofit.core)
         implementation(libs.retrofit.moshi)
-}
+      }
     }
   }
 }

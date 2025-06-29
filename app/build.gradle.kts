@@ -29,7 +29,7 @@ import okio.source
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.licensee)
   alias(libs.plugins.bugsnag)
   alias(libs.plugins.baselineprofile)
@@ -110,7 +110,7 @@ baselineProfile {
   // Don't save the profiles in source, generate adhoc
   saveInSrc = !automaticBaselineProfileGeneration
 
-  from(projects.benchmark.dependencyProject)
+  from(project(projects.benchmark.path))
 
   if (automaticBaselineProfileGeneration) {
     variants {
@@ -294,7 +294,7 @@ constructor(providers: ProviderFactory, private val execOps: ExecOperations) : D
     val latestVersionString = "$major.$minor.$patch"
     println("Updating version to $latestVersionString")
     ByteArrayOutputStream().use { os ->
-      project.rootProject.exec {
+      execOps.exec {
         commandLine(
           "git",
           "tag",
@@ -323,7 +323,7 @@ constructor(providers: ProviderFactory, private val execOps: ExecOperations) : D
   }
 }
 
-tasks.create("updateVersion", UpdateVersion::class.java) {
+tasks.register("updateVersion", UpdateVersion::class.java) {
   group = "build"
   description =
     "Updates the current version. Supports CLI option --updateType={type} where type is (major|minor|patch)"
@@ -400,6 +400,7 @@ tasks.named { it.startsWith("licensee") && !it.endsWith("AndroidRelease") }
 licensee {
   allow("Apache-2.0")
   allow("MIT")
+  allow("BSD-3-Clause")
   allowUrl("http://opensource.org/licenses/BSD-2-Clause")
   allowUrl("https://developer.android.com/studio/terms.html")
   allowUrl("https://jsoup.org/license")
@@ -408,9 +409,6 @@ licensee {
   // MIT
   allowUrl("https://raw.githubusercontent.com/apollographql/apollo-kotlin/main/LICENSE")
   // MIT
-  allowUrl("https://github.com/facebook/flipper/blob/main/LICENSE")
-  allowUrl("https://github.com/facebook/soloader/blob/main/LICENSE")
-  allowUrl("https://github.com/facebookincubator/fbjni/blob/main/LICENSE")
   allowUrl("https://github.com/TooTallNate/Java-WebSocket/blob/master/LICENSE")
   allowUrl("https://www.openssl.org/source/license-openssl-ssleay.txt")
   // MIT

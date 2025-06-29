@@ -4,19 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import catchup.di.AppScope
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.LocalCircuit
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.Multibinds
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Multibinds
+import dev.zacsweers.metro.Provides
 
 @ContributesTo(AppScope::class)
-@Module
 interface CircuitModule {
   @Multibinds fun presenterFactories(): Set<Presenter.Factory>
 
@@ -25,8 +23,8 @@ interface CircuitModule {
   companion object {
     @Provides
     fun provideCircuit(
-      presenterFactories: @JvmSuppressWildcards Set<Presenter.Factory>,
-      uiFactories: @JvmSuppressWildcards Set<Ui.Factory>,
+      presenterFactories: Set<Presenter.Factory>,
+      uiFactories: Set<Ui.Factory>,
     ): Circuit {
       return Circuit.Builder()
         .addPresenterFactories(presenterFactories)

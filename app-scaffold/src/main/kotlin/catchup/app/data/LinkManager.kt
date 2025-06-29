@@ -19,9 +19,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.annotation.RequiresApi
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.collection.ArrayMap
@@ -32,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.unit.Density
+import androidx.core.net.toUri
 import androidx.window.layout.WindowMetricsCalculator
 import catchup.app.CatchUpPreferences
 import catchup.app.service.LinkHandler
@@ -39,30 +38,25 @@ import catchup.app.ui.activity.MainActivity
 import catchup.app.util.customtabs.CustomTabActivityHelper
 import catchup.appconfig.AppConfig
 import catchup.appconfig.isSdkAtLeast
-import catchup.di.AppScope
-import catchup.di.SingleIn
 import catchup.flowbinding.intentReceivers
 import catchup.util.isInNightMode
-import catchup.util.kotlin.any
 import catchup.util.kotlin.mergeWith
-import com.squareup.anvil.annotations.ContributesBinding
-import javax.inject.Inject
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl
 import timber.log.Timber
 
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
-class LinkManager
 @Inject
-constructor(
+class LinkManager(
   private val customTab: CustomTabActivityHelper,
   private val catchUpPreferences: CatchUpPreferences,
   private val appConfig: AppConfig,
@@ -136,7 +130,7 @@ constructor(
   override suspend fun openUrl(url: HttpUrl, accentColor: Color): Boolean {
     val context = currentActivity ?: return false
     // TODO this isn't great, should we make a StateFlow backed by this?
-    val uri = Uri.parse(url.toString())
+    val uri = url.toString().toUri()
     if (!catchUpPreferences.smartlinkingGlobal.first()) {
       Timber.tag("LinkManager").d("Smartlinking disabled, skipping query")
       openCustomTab(context, uri, accentColor)
@@ -159,18 +153,13 @@ constructor(
     }
   }
 
-  private suspend fun queryAndOpen(
+  private fun queryAndOpen(
     context: Context,
     uri: Uri,
     intent: Intent,
     accentColor: Color,
   ): Boolean {
-    val matchedUri =
-      if (appConfig.isSdkAtLeast(30)) {
-        queryAndOpen30(context, intent)
-      } else {
-        queryAndOpenLegacy(context, intent)
-      }
+    val matchedUri = queryAndOpen(context, intent)
 
     return if (matchedUri) {
       dumbCache[uri.host] = true
@@ -185,33 +174,13 @@ constructor(
    * On API 30+, we can't query activities to handle intents. Instead, we do an old-fashioned
    * try/catch.
    */
-  @RequiresApi(30)
-  private fun queryAndOpen30(context: Context, inputIntent: Intent): Boolean {
+  private fun queryAndOpen(context: Context, inputIntent: Intent): Boolean {
     val intent =
       Intent(inputIntent).apply { flags = flags or Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER }
     return try {
       context.startActivity(intent)
       true
-    } catch (e: ActivityNotFoundException) {
-      false
-    }
-  }
-
-  private suspend fun queryAndOpenLegacy(context: Context, intent: Intent): Boolean {
-    val manager = context.packageManager
-    val hasMatch =
-      flow {
-          manager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).forEach {
-            emit(it)
-          }
-        }
-        .flowOn(Dispatchers.IO)
-        .any { resolveInfo -> isSpecificUriMatch(resolveInfo.match) }
-
-    return if (hasMatch) {
-      context.startActivity(intent)
-      true
-    } else {
+    } catch (_: ActivityNotFoundException) {
       false
     }
   }

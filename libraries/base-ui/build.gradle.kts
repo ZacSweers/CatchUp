@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
 }
@@ -24,10 +23,10 @@ android {
   namespace = "catchup.ui.core"
 }
 
-slack {
+foundry {
   features {
     compose()
-    dagger()
+    metro()
   }
   android {
     features {

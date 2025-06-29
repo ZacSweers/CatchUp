@@ -15,7 +15,7 @@
  */
 
 plugins {
-  alias(libs.plugins.sgp.base)
+  alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.apollo)
@@ -37,16 +37,16 @@ android {
 apollo {
   // https://api.producthunt.com/v2/api/graphql
   service("producthunt") {
-    mapScalar("DateTime", "kotlinx.datetime.Instant")
+    mapScalar("DateTime", "kotlin.time.Instant")
     packageName.set("catchup.service.producthunt")
     schemaFiles.from(file("src/main/graphql/catchup/service/producthunt/schema.graphqls"))
   }
 }
 
-slack {
+foundry {
   features {
-    dagger()
-    moshi(codegen = true)
+    metro()
+    moshi(codegen = false)
   }
   android {
     features {
@@ -58,7 +58,6 @@ slack {
 dependencies {
   api(libs.apollo.api)
   api(libs.apollo.runtime)
-  api(libs.dagger.runtime)
   api(libs.kotlin.datetime)
   api(libs.moshi.core)
   api(libs.okhttp.core)

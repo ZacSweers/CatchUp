@@ -56,7 +56,6 @@ import catchup.base.ui.BackPressNavButton
 import catchup.bookmarks.BookmarkRepository
 import catchup.compose.rememberStableCoroutineScope
 import catchup.deeplink.DeepLinkable
-import catchup.di.AppScope
 import catchup.service.api.CatchUpItem
 import catchup.service.api.ServiceMeta
 import catchup.util.share.createFileShareIntent
@@ -67,12 +66,14 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuitx.android.IntentScreen
-import com.squareup.anvil.annotations.ContributesMultibinding
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.multibindings.StringKey
 import dev.zacsweers.catchup.app.scaffold.R.string
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.StringKey
+import dev.zacsweers.metro.binding
 import java.nio.file.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createTempFile
@@ -83,7 +84,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 
-@ContributesMultibinding(AppScope::class, boundType = DeepLinkable::class)
+@ContributesIntoMap(AppScope::class, binding = binding<DeepLinkable>())
 @StringKey("bookmarks")
 @Parcelize
 object BookmarksScreen : Screen, DeepLinkable {
@@ -105,9 +106,8 @@ object BookmarksScreen : Screen, DeepLinkable {
 }
 
 @OptIn(ExperimentalPagingApi::class)
-class BookmarksPresenter
-@AssistedInject
-constructor(
+@Inject
+class BookmarksPresenter(
   @Assisted private val navigator: Navigator,
   private val bookmarksRepository: BookmarkRepository,
   private val linkManager: LinkManager,
