@@ -42,6 +42,7 @@ data class CatchUpItem(
   val serviceId: String? = null,
   val indexInResponse: Int? = null,
   val contentType: ContentType? = null, // Null indicates unset, try to infer it
+  val imagePreviewUrl: String? = null,
 ) {
 
   val clickUrl: String?
@@ -99,6 +100,7 @@ data class CatchUpItem(
         serviceId = serviceId,
         indexInResponse = index,
         contentType = HTML,
+        imagePreviewUrl = "https://picsum.photos/seed/$index/300/300",
       )
     }
   }
