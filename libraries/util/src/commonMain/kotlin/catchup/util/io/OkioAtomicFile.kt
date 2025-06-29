@@ -15,10 +15,8 @@
  */
 package catchup.util.io
 
-import android.util.Log
+import androidx.annotation.VisibleForTesting
 import java.nio.charset.Charset
-import java.nio.file.Files
-import java.nio.file.attribute.PosixFilePermission
 import okio.BufferedSink
 import okio.BufferedSource
 import okio.FileHandle
@@ -27,7 +25,8 @@ import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
 import okio.buffer
-import org.jetbrains.annotations.VisibleForTesting
+
+internal expect fun Path.setPosixFilePermissions()
 
 /**
  * Helper class for performing atomic operations on a file by writing to a new file and renaming it
@@ -58,7 +57,7 @@ constructor(
   private val fs: FileSystem = FileSystem.SYSTEM,
   private val setPosixPermissions: Boolean = true,
   private val logError: ((String, Throwable?) -> Unit) = { message, throwable ->
-    Log.e(LOG_TAG, message, throwable)
+    println(LOG_TAG + message)
   },
 ) {
   private val newName = "$baseFile.new".toPath()
@@ -98,29 +97,14 @@ constructor(
             it.resize(0L)
           }
         }
-    } catch (e: IOException) {
+    } catch (_: IOException) {
       val parent = newName.parent ?: error("Couldn't find a parent directory for $newName")
       fs.createDirectories(parent)
       if (!fs.exists(parent)) {
         throw IOException("Failed to create directory for $newName")
       }
       if (setPosixPermissions) {
-        // Set perms to 00771
-        Files.setPosixFilePermissions(
-          parent.toNioPath(),
-          setOf(
-            // Owner
-            PosixFilePermission.OWNER_READ,
-            PosixFilePermission.OWNER_WRITE,
-            PosixFilePermission.OWNER_EXECUTE,
-            // Group
-            PosixFilePermission.GROUP_READ,
-            PosixFilePermission.GROUP_WRITE,
-            PosixFilePermission.GROUP_EXECUTE,
-            // Other
-            PosixFilePermission.OTHERS_EXECUTE,
-          ),
-        )
+        parent.setPosixFilePermissions()
       }
       try {
         fs

@@ -16,7 +16,6 @@
 package catchup.util.data.adapters
 
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonAdapter.Factory
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Types

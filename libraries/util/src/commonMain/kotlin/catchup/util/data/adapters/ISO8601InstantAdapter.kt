@@ -15,27 +15,17 @@
  */
 package catchup.util.data.adapters
 
+import catchup.util.parsePossiblyOffsetInstant
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import java.util.concurrent.TimeUnit
 import kotlin.time.Instant
 
-/**
- * Formats dates in UTC seconds or milliseconds time to [Instant] instances.
- *
- * @param timeUnit because some APIs give you UTC time in different units
- */
-class EpochInstantJsonAdapter(private val timeUnit: TimeUnit = TimeUnit.SECONDS) :
-  JsonAdapter<Instant>() {
+class ISO8601InstantAdapter : JsonAdapter<Instant>() {
 
-  override fun fromJson(reader: JsonReader): Instant? {
-    val l = reader.nextLong()
-    return Instant.fromEpochMilliseconds(TimeUnit.MILLISECONDS.convert(l, timeUnit))
-  }
+  override fun fromJson(reader: JsonReader) = reader.nextString().parsePossiblyOffsetInstant()
 
-  override fun toJson(writer: JsonWriter, value: Instant?) {
-    val longTime = value!!.toEpochMilliseconds()
-    writer.value(TimeUnit.MILLISECONDS.convert(longTime, timeUnit))
+  override fun toJson(writer: JsonWriter, instant: Instant?) {
+    writer.value(instant!!.toString())
   }
 }
