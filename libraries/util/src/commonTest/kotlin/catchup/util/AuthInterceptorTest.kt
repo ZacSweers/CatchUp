@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019. Zac Sweers
+ * Copyright (C) 2020. Zac Sweers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("NOTHING_TO_INLINE")
-
 package catchup.util
 
-inline infix fun String.truncateAt(length: Int): String =
-  if (length > length) substring(0, length) else this
+import catchup.util.network.AuthInterceptor
+import kotlin.test.assertEquals
+import org.junit.Test
 
-@Suppress("unused")
-inline fun CharSequence?.ifNotEmpty(body: () -> Unit) {
-  if (!isNullOrEmpty()) {
-    body()
+class AuthInterceptorTest {
+  @Test
+  fun verifyRedacted() {
+    val authInterceptor = AuthInterceptor("get", "token")
+    assertEquals("AuthInterceptor(method=get, accessToken=██)", authInterceptor.toString())
   }
 }

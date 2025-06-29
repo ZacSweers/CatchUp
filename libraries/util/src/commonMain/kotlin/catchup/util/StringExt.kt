@@ -13,22 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package catchup.util.data.adapters
+@file:Suppress("NOTHING_TO_INLINE")
 
-import catchup.util.parsePossiblyOffsetInstant
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import java.io.IOException
-import kotlin.time.Instant
+package catchup.util
 
-class ISO8601InstantAdapter : JsonAdapter<Instant>() {
+inline infix fun String.truncateAt(length: Int): String =
+  if (this.length > length) substring(0, length) else this
 
-  @Throws(IOException::class)
-  override fun fromJson(reader: JsonReader) = reader.nextString().parsePossiblyOffsetInstant()
-
-  @Throws(IOException::class)
-  override fun toJson(writer: JsonWriter, instant: Instant?) {
-    writer.value(instant!!.toString())
+@Suppress("unused")
+inline fun CharSequence?.ifNotEmpty(body: () -> Unit) {
+  if (!isNullOrEmpty()) {
+    body()
   }
 }

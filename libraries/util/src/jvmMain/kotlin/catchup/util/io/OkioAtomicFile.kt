@@ -15,7 +15,7 @@
  */
 package catchup.util.io
 
-import android.util.Log
+import androidx.annotation.VisibleForTesting
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
@@ -27,7 +27,6 @@ import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
 import okio.buffer
-import org.jetbrains.annotations.VisibleForTesting
 
 /**
  * Helper class for performing atomic operations on a file by writing to a new file and renaming it
@@ -58,7 +57,7 @@ constructor(
   private val fs: FileSystem = FileSystem.SYSTEM,
   private val setPosixPermissions: Boolean = true,
   private val logError: ((String, Throwable?) -> Unit) = { message, throwable ->
-    Log.e(LOG_TAG, message, throwable)
+    println(LOG_TAG + message)
   },
 ) {
   private val newName = "$baseFile.new".toPath()
@@ -70,17 +69,17 @@ constructor(
   }
 
   /**
-   * Start a new write operation on the file. This returns a [FileHandle] to which you can write the
-   * new file data. The existing file is replaced with the new data. You *must not* directly close
-   * the given [FileHandle]; instead call either [finishWrite] or [failWrite].
+   * Start a new write operation on the file. This returns a [okio.FileHandle] to which you can
+   * write the new file data. The existing file is replaced with the new data. You *must not*
+   * directly close the given [okio.FileHandle]; instead call either [finishWrite] or [failWrite].
    *
    * Note that if another thread is currently performing a write, this will simply replace whatever
    * that thread is writing with the new file being written by this thread, and when the other
    * thread finishes the write the new write operation will no longer be safe (or will be lost). You
    * must do your own threading protection for access to AtomicFile.
    *
-   * Note that when you call [FileHandle.sink] or [FileHandle.appendingSink] on the returned handle,
-   * you _must_ close it before calling [finishWrite] or [failWrite].
+   * Note that when you call [okio.FileHandle.sink] or [okio.FileHandle.appendingSink] on the
+   * returned handle, you _must_ close it before calling [finishWrite] or [failWrite].
    */
   @VisibleForTesting
   internal fun startWrite(append: Boolean = false): FileHandle {
@@ -98,7 +97,7 @@ constructor(
             it.resize(0L)
           }
         }
-    } catch (e: IOException) {
+    } catch (_: IOException) {
       val parent = newName.parent ?: error("Couldn't find a parent directory for $newName")
       fs.createDirectories(parent)
       if (!fs.exists(parent)) {
@@ -139,8 +138,8 @@ constructor(
   }
 
   /**
-   * Perform an fsync/flush on the given [FileHandle]. The handle at this point must be flushed but
-   * not yet closed.
+   * Perform an fsync/flush on the given [okio.FileHandle]. The handle at this point must be flushed
+   * but not yet closed.
    */
   private fun sync(handle: FileHandle): Boolean {
     try {
@@ -192,8 +191,8 @@ constructor(
   }
 
   /**
-   * Open the atomic file for reading. You should call close() on the [FileHandle] when you are done
-   * reading from it.
+   * Open the atomic file for reading. You should call close() on the [okio.FileHandle] when you are
+   * done reading from it.
    *
    * You must do your own threading protection for access to AtomicFile.
    */
