@@ -71,7 +71,7 @@ licensee = { id = "app.cash.licensee", version = "1.13.0" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.12.1" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.14.0" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.14.1" }
 retry = { id = "org.gradle.test-retry", version = "1.6.2" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
 foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
