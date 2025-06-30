@@ -135,7 +135,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0-beta02"
 
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.2.1"
-androidx-test-monitor = "androidx.test:monitor:1.8.0-alpha03"
+androidx-test-monitor = "androidx.test:monitor:1.8.0-beta01"
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 
 # Hopefully BC someday publishes a BOM: https://github.com/bcgit/bc-java/issues/899
