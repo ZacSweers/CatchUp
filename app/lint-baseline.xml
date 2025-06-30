@@ -1,5 +1,179 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 8.4.0-alpha06" type="baseline" client="gradle" dependencies="true" name="AGP (8.4.0-alpha06)" variant="all" version="8.4.0-alpha06">
+<issues format="6" by="lint 8.11.0" type="baseline" client="gradle" dependencies="true" name="AGP (8.11.0)" variant="all" version="8.11.0">
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.avd_no_connection` appears to be unused"
+        errorLine1="&lt;animated-vector"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/drawable/avd_no_connection.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.baseline_redeem_24` appears to be unused"
+        errorLine1="&lt;vector android:height=&quot;24dp&quot; android:tint=&quot;#000000&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/drawable/baseline_redeem_24.xml"
+            line="1"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.changelog_text` appears to be unused">
+        <location
+            file="../app-scaffold/build.gradle.kts"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.changelog_text` appears to be unused">
+        <location
+            file="../app-scaffold/build.gradle.kts"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.ga_trackingId` appears to be unused">
+        <location
+            file="../services/hackernews/build.gradle.kts"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.ga_trackingId` appears to be unused">
+        <location
+            file="../services/hackernews/build.gradle.kts"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.project_id` appears to be unused">
+        <location
+            file="../services/hackernews/build.gradle.kts"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.project_id` appears to be unused">
+        <location
+            file="../services/hackernews/build.gradle.kts"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.animator.button_frown` appears to be unused"
+        errorLine1="&lt;objectAnimator"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/animator/button_frown.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.catchup_service_dribbble_logo` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../services/dribbble/src/main/res/drawable/catchup_service_dribbble_logo.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.catchup_service_github_logo` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../services/github/src/main/res/drawable/catchup_service_github_logo.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.catchup_service_hn_logo` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../services/hackernews/src/main/res/drawable/catchup_service_hn_logo.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.catchup_service_ph_logo` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../services/producthunt/src/main/res/drawable/catchup_service_ph_logo.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.catchup_service_reddit_logo` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../services/reddit/src/main/res/drawable/catchup_service_reddit_logo.xml"
+            line="17"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.catchup_service_sd_logo` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../services/slashdot/src/main/res/drawable/catchup_service_sd_logo.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.catchup_service_unsplash_logo` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../services/unsplash/src/main/res/drawable/catchup_service_unsplash_logo.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.catchup_service_uplabs_logo` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../services/uplabs/src/main/res/drawable/catchup_service_uplabs_logo.xml"
+            line="17"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.development_settings` appears to be unused"
+        errorLine1="  &lt;string name=&quot;development_settings&quot;>Development Settings&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/debug/res/values/debug_strings.xml"
+            line="20"
+            column="11"/>
+    </issue>
 
     <issue
         id="UnusedResources"
@@ -10,6 +184,116 @@
             file="../app-scaffold/src/debug/res/values/debug_strings.xml"
             line="21"
             column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.dimen.touch_raise` appears to be unused"
+        errorLine1="  &lt;dimen name=&quot;touch_raise&quot;>6dp&lt;/dimen>"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/dimen.xml"
+            line="19"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_dribbble_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_dribbble_name&quot;>Dribbble&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/dribbble/src/main/res/values/dribbble_service_values.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.catchup_service_dribbble_accent` appears to be unused"
+        errorLine1="  &lt;color name=&quot;catchup_service_dribbble_accent&quot;>#ffEA4C89&lt;/color>"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/dribbble/src/main/res/values/dribbble_service_values.xml"
+            line="20"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_github_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_github_name&quot;>GitHub&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/github/src/main/res/values/github_service_values.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.catchup_service_github_accent` appears to be unused"
+        errorLine1="  &lt;color name=&quot;catchup_service_github_accent&quot;>#181717&lt;/color>"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/github/src/main/res/values/github_service_values.xml"
+            line="20"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_hn_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_hn_name&quot;>Hacker News&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/hackernews/src/main/res/values/hn_service_values.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.catchup_service_hn_accent` appears to be unused"
+        errorLine1="  &lt;color name=&quot;catchup_service_hn_accent&quot;>#ffF0652F&lt;/color>"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/hackernews/src/main/res/values/hn_service_values.xml"
+            line="20"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_check_black_24dp` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/debug/res/drawable/ic_check_black_24dp.xml"
+            line="17"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_comment_black_24dp` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/drawable/ic_comment_black_24dp.xml"
+            line="17"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_error_black_24dp` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/debug/res/drawable/ic_error_black_24dp.xml"
+            line="17"
+            column="1"/>
     </issue>
 
     <issue
@@ -25,12 +309,485 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.drawable.ic_save_black_24dp` appears to be unused"
+        errorLine1="&lt;vector android:autoMirrored=&quot;true&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/drawable/ic_save_black_24dp.xml"
+            line="17"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_share_black_24dp` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/debug/res/drawable/ic_share_black_24dp.xml"
+            line="17"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_shuffle_black_24dp` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/drawable/ic_shuffle_black_24dp.xml"
+            line="17"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.no_connection` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/drawable/no_connection.xml"
+            line="16"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.connection_line_mask_hidden` appears to be unused"
+        errorLine1="  &lt;string name=&quot;connection_line_mask_hidden&quot;>M26,159 L26,159 L32,159 L32,159 Z&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/no_connection.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.connection_line_mask_shown` appears to be unused"
+        errorLine1="  &lt;string name=&quot;connection_line_mask_shown&quot;>M26,67 L26,159 L32,159 L32,67 Z&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/no_connection.xml"
+            line="20"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.phone_button` appears to be unused"
+        errorLine1="  &lt;string name=&quot;phone_button&quot;>M24,206.5 C24,206.5 27.6392462,206.449997 28,206.449997 C28.3607538,206.449997 32,206.5 32,206.5&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/no_connection.xml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.phone_button_frown` appears to be unused"
+        errorLine1="  &lt;string name=&quot;phone_button_frown&quot;>M23.6061137,207.020699 C23.6061137,207.020699 26.2397148,206 28.494994,206 C30.7502732,206 32.753258,207.020699 32.753258,207.020699&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/no_connection.xml"
+            line="22"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_ph_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_ph_name&quot;>Product Hunt&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/producthunt/src/main/res/values/ph_service_values.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.catchup_service_ph_accent` appears to be unused"
+        errorLine1="  &lt;color name=&quot;catchup_service_ph_accent&quot;>#ffDA552F&lt;/color>"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/producthunt/src/main/res/values/ph_service_values.xml"
+            line="20"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_reddit_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_reddit_name&quot;>reddit&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/reddit/src/main/res/values/reddit_service_values.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.catchup_service_reddit_accent` appears to be unused"
+        errorLine1="  &lt;color name=&quot;catchup_service_reddit_accent&quot;>#336699&lt;/color>"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/reddit/src/main/res/values/reddit_service_values.xml"
+            line="20"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.animator.show_connection_cross` appears to be unused"
+        errorLine1="&lt;set xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/animator/show_connection_cross.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.animator.show_connection_line` appears to be unused"
+        errorLine1="&lt;objectAnimator"
+        errorLine2="^">
+        <location
+            file="../app-scaffold/src/main/res/animator/show_connection_line.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_sd_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_sd_name&quot;>Slashdot&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/slashdot/src/main/res/values/slashdot_service_values.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.catchup_service_sd_accent` appears to be unused"
+        errorLine1="  &lt;color name=&quot;catchup_service_sd_accent&quot;>#ff026664&lt;/color>"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/slashdot/src/main/res/values/slashdot_service_values.xml"
+            line="20"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_baseui_back` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_baseui_back&quot;>Back&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../libraries/base-ui/src/main/res/values/strings.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_util_no_intent_handler` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_util_no_intent_handler&quot;>There are no applications available to handle this action.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../libraries/util/src/androidMain/res/values/strings.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.retry` appears to be unused"
+        errorLine1="  &lt;string name=&quot;retry&quot;>Retry&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_baseui_close` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_baseui_close&quot;>Close&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../libraries/base-ui/src/main/res/values/strings.xml"
+            line="20"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_clear_cache` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_clear_cache&quot;>Clear cache&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="20"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_clear_cache_summary` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_clear_cache_summary&quot;>Clears the current cache&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="21"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.about` appears to be unused"
+        errorLine1="  &lt;string name=&quot;about&quot;>About&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="22"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.licenses` appears to be unused"
+        errorLine1="  &lt;string name=&quot;licenses&quot;>Licenses&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="23"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.changelog` appears to be unused"
+        errorLine1="  &lt;string name=&quot;changelog&quot;>Changelog&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="24"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_reports` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_reports&quot;>Analytics and Crash Reporting&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="25"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_reports_summary` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_reports_summary&quot;>Help me help you! Enable this to allow automatic uploads of analytics and crash reports. No personally identifiable data is sent.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="26"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.general` appears to be unused"
+        errorLine1="  &lt;string name=&quot;general&quot;>General&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="27"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.prefs_theme` appears to be unused"
+        errorLine1="  &lt;string name=&quot;prefs_theme&quot;>Theming&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="28"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_smart_linking_title` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_smart_linking_title&quot;>Enable smart linking&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="29"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_smart_linking_summary` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_smart_linking_summary&quot;>Smart linking will open links in a dedicated app if one exists, otherwise it will fall back to using a Chrome custom tab or browser.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="30"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.title_activity_settings` appears to be unused"
+        errorLine1="  &lt;string name=&quot;title_activity_settings&quot;>Settings&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="31"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.title_bookmarks` appears to be unused"
+        errorLine1="  &lt;string name=&quot;title_bookmarks&quot;>Bookmarks&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="32"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.clear_cache_success` appears to be unused"
+        errorLine1="  &lt;string name=&quot;clear_cache_success&quot;>Cleaned %s&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="33"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.about_description` appears to be unused"
+        errorLine1="  &lt;string name=&quot;about_description&quot;>An app for catching up on things.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="34"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.about_version` appears to be unused"
+        errorLine1="  &lt;string name=&quot;about_version&quot;>Version %1s&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="35"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.about_by` appears to be unused"
+        errorLine1="  &lt;string name=&quot;about_by&quot;>By&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="36"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.about_source_code` appears to be unused"
+        errorLine1="  &lt;string name=&quot;about_source_code&quot;>Source code&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="37"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.string.icon_attribution` appears to be unused"
         errorLine1="  &lt;string name=&quot;icon_attribution&quot;>Icon by Michael Cook&lt;/string>"
         errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="../app-scaffold/src/main/res/values/strings.xml"
             line="38"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.changelog_error` appears to be unused"
+        errorLine1="  &lt;string name=&quot;changelog_error&quot;>Could not load changelog.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="39"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.licenses_error` appears to be unused"
+        errorLine1="  &lt;string name=&quot;licenses_error&quot;>Could not load open source licenses.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="40"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.settings_error_cleaning_cache` appears to be unused"
+        errorLine1="  &lt;string name=&quot;settings_error_cleaning_cache&quot;>There was an error cleaning cache&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="41"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.settings_reset` appears to be unused"
+        errorLine1="  &lt;string name=&quot;settings_reset&quot;>Will take full effect on next app restart&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="42"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.restart` appears to be unused"
+        errorLine1="  &lt;string name=&quot;restart&quot;>Restart now&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="43"
             column="11"/>
     </issue>
 
@@ -47,6 +804,182 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.string.pref_force_dark_theme` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_force_dark_theme&quot;>Force dark theme.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="45"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_dark_theme_enabled` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_dark_theme_enabled&quot;>Dark theme is enabled&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="46"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_dark_theme_disabled` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_dark_theme_disabled&quot;>Dark theme is disabled, light theme is the default.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="47"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_dark_theme_disabled_auto` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_dark_theme_disabled_auto&quot;>Dark theme is disabled because auto-theme is enabled.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="48"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_dynamic_theme_title` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_dynamic_theme_title&quot;>Dynamic Theme&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="49"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_dynamic_theme_summary` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_dynamic_theme_summary&quot;>Enables dynamic Material You theming.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="50"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_auto_set_theme` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_auto_set_theme&quot;>Automatically set theme&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="51"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_auto_set_theme_summary` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_auto_set_theme_summary&quot;>Sets the theme automatically via depending on the time of day (via DayNight).&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="52"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.changes` appears to be unused"
+        errorLine1="  &lt;string name=&quot;changes&quot;>Changelog&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="53"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_reorder_services` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_reorder_services&quot;>Reorder services&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="54"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_order_services_description` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pref_order_services_description&quot;>Drag and drop to reorder services.\nThis save button will show when you have pending changes, click to save when you\&apos;re done.&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="55"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pending_changes_title` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pending_changes_title&quot;>Save changes?&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="56"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pending_changes_message` appears to be unused"
+        errorLine1="  &lt;string name=&quot;pending_changes_message&quot;>You have unsaved changes. Do you want to proceed without saving?&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="57"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dontsave` appears to be unused"
+        errorLine1="  &lt;string name=&quot;dontsave&quot;>Don\&apos;t save&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="58"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.save` appears to be unused"
+        errorLine1="  &lt;string name=&quot;save&quot;>Save&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="59"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.service_icon` appears to be unused"
+        errorLine1="  &lt;string name=&quot;service_icon&quot;>Service icon&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="60"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.string.transition_image` appears to be unused"
         errorLine1="  &lt;string name=&quot;transition_image&quot; translatable=&quot;false&quot;>image&lt;/string>"
         errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~">
@@ -58,12 +991,34 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.string.shuffle` appears to be unused"
+        errorLine1="  &lt;string name=&quot;shuffle&quot;>Shuffle&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings.xml"
+            line="62"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.string.hacker_news` appears to be unused"
         errorLine1="  &lt;string name=&quot;hacker_news&quot;>Hacker News&lt;/string>"
         errorLine2="          ~~~~~~~~~~~~~~~~~~">
         <location
             file="../app-scaffold/src/main/res/values/strings_services.xml"
             line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_reddit_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_reddit_name&quot;>reddit&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings_services.xml"
+            line="20"
             column="11"/>
     </issue>
 
@@ -98,6 +1053,72 @@
             file="../app-scaffold/src/main/res/values/strings_services.xml"
             line="23"
             column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_dribbble_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_dribbble_name&quot;>Dribbble&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings_services.xml"
+            line="24"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_github_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_github_name&quot;>GitHub&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../app-scaffold/src/main/res/values/strings_services.xml"
+            line="25"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_unsplash_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_unsplash_name&quot;>Unsplash&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/unsplash/src/main/res/values/unsplash_service_values.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.catchup_service_unsplash_accent` appears to be unused"
+        errorLine1="  &lt;color name=&quot;catchup_service_unsplash_accent&quot;>#ff000000&lt;/color>"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/unsplash/src/main/res/values/unsplash_service_values.xml"
+            line="20"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.catchup_service_uplabs_name` appears to be unused"
+        errorLine1="  &lt;string name=&quot;catchup_service_uplabs_name&quot;>Uplabs&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/uplabs/src/main/res/values/uplabs_service_values.xml"
+            line="19"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.catchup_service_uplabs_accent` appears to be unused"
+        errorLine1="  &lt;color name=&quot;catchup_service_uplabs_accent&quot;>#461ab6&lt;/color>"
+        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../services/uplabs/src/main/res/values/uplabs_service_values.xml"
+            line="20"
+            column="10"/>
     </issue>
 
 </issues>
