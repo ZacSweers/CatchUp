@@ -11,7 +11,6 @@ import com.fueledbycaffeine.spotlight.buildscript.SpotlightRulesList
 import com.fueledbycaffeine.spotlight.buildscript.gradlePathRelativeTo
 import com.fueledbycaffeine.spotlight.buildscript.graph.BreadthFirstSearch
 import com.fueledbycaffeine.spotlight.buildscript.graph.DependencyRule
-import com.fueledbycaffeine.spotlight.buildscript.graph.FullModeTypeSafeProjectAccessorRule
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.main
@@ -76,8 +75,7 @@ class DependencyGraphParser : CliktCommand() {
             .map { it.parent.gradlePathRelativeTo(rootDir) }
             .toList()
 
-        val rules =
-          SpotlightRulesList(rootDir).read()
+        val rules = SpotlightRulesList(rootDir).read()
 
         // If focusing one target, find it and BFS it
         // If parsing whole repo, skip BFS and compute the whole graph
