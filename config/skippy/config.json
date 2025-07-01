@@ -1,0 +1,17 @@
+[
+  {
+    "tool": "global",
+    "buildUponDefaults": true,
+    "includePatterns": [
+      "**/schemas/**",
+      "app/proguard-rules.pro",
+      "**/src/**/graphql/**"
+    ],
+    "neverSkipPatterns": [
+      ".github/workflows/**",
+      "spotless/**",
+      "scripts/github/schema.json",
+      "config/lint/lint.xml"
+    ]
+  }
+]

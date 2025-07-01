@@ -34,12 +34,12 @@ kotlin {
         api(libs.compose.runtime)
         api(libs.kotlin.datetime)
         api(libs.kotlinx.immutable)
-        api(projects.libraries.di)
+        api(project(":libraries:di"))
 
         implementation(libs.androidx.annotations)
         implementation(libs.kotlin.coroutinesAndroid)
         implementation(libs.kotlin.datetime)
-        implementation(projects.serviceDb)
+        implementation(project(":service-db"))
       }
     }
     with(getByName("androidMain")) {

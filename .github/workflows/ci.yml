@@ -51,7 +51,7 @@ jobs:
       - name: Compute affected projects
         if: always() && github.event_name == 'pull_request'
         id: gradle-affected-projects
-        run: ./gradlew computeAffectedProjects --changed-files tmp/changed_files.txt
+        run: ./scripts/compute_affected_projects.sh
 
       - name: Check affected projects
         run: |
@@ -59,7 +59,7 @@ jobs:
           if [[ -e "$path" ]]; then
             cat "$path"
             # Copy focus file to root of project
-            # TODO generate ide-projects.txt? Or just all-projects.txt?
+            # TODO an all-projects.txt?
             # Check if app is affected
             if grep -q ":app" "$path"; then
               echo "App is affected"
