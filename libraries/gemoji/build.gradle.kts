@@ -31,20 +31,20 @@ foundry {
 }
 
 dependencies {
-  api(projects.libraries.di)
-  api(projects.libraries.gemoji.db)
+ api(project(":libraries:di"))
+ api(project(":libraries:gemoji:db"))
 
-  implementation(libs.androidx.annotations)
-  implementation(libs.androidx.sqlite)
-  implementation(libs.androidx.sqlite.framework)
-  implementation(libs.kotlin.coroutines)
-  implementation(libs.misc.timber)
-  implementation(libs.sqldelight.coroutines)
-  implementation(libs.sqldelight.driver.android)
-  implementation(libs.sqldelight.runtime)
-  implementation(projects.libraries.util)
+ implementation(project(":libraries:util"))
+ implementation(libs.androidx.annotations)
+ implementation(libs.androidx.sqlite)
+ implementation(libs.androidx.sqlite.framework)
+ implementation(libs.kotlin.coroutines)
+ implementation(libs.misc.timber)
+ implementation(libs.sqldelight.coroutines)
+ implementation(libs.sqldelight.driver.android)
+ implementation(libs.sqldelight.runtime)
 
-  testImplementation(libs.kotlin.coroutines.test)
-  testImplementation(libs.test.junit)
-  testImplementation(libs.test.truth)
+ testImplementation(libs.kotlin.coroutines.test)
+ testImplementation(libs.test.junit)
+ testImplementation(libs.test.truth)
 }

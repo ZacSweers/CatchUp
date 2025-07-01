@@ -56,19 +56,19 @@ foundry {
 }
 
 dependencies {
-  api(libs.apollo.api)
-  api(libs.apollo.runtime)
-  api(libs.kotlin.datetime)
-  api(libs.moshi.core)
-  api(libs.okhttp.core)
-  api(projects.libraries.auth)
-  api(projects.libraries.di)
-  api(projects.libraries.util)
-  api(projects.serviceApi)
+ api(project(":libraries:auth"))
+ api(project(":libraries:di"))
+ api(project(":libraries:util"))
+ api(project(":service-api"))
+ api(libs.apollo.api)
+ api(libs.apollo.runtime)
+ api(libs.kotlin.datetime)
+ api(libs.moshi.core)
+ api(libs.okhttp.core)
 
-  implementation(libs.androidx.datastore.preferences)
-  implementation(libs.apollo.httpcache)
-  implementation(libs.kotlin.datetime)
-  implementation(libs.misc.okio)
-  implementation(libs.okhttp.core)
+ implementation(libs.androidx.datastore.preferences)
+ implementation(libs.apollo.httpcache)
+ implementation(libs.kotlin.datetime)
+ implementation(libs.misc.okio)
+ implementation(libs.okhttp.core)
 }

@@ -40,18 +40,18 @@ foundry {
 }
 
 dependencies {
-  api(libs.androidx.annotations)
-  api(libs.kotlin.datetime)
-  api(libs.okhttp.core)
-  api(libs.retrofit.core)
-  api(projects.libraries.appconfig)
-  api(projects.libraries.di)
-  api(projects.serviceApi)
+ api(project(":libraries:appconfig"))
+ api(project(":libraries:di"))
+ api(project(":service-api"))
+ api(libs.androidx.annotations)
+ api(libs.kotlin.datetime)
+ api(libs.okhttp.core)
+ api(libs.retrofit.core)
 
-  implementation(libs.androidx.annotations)
-  implementation(libs.kotlin.datetime)
-  implementation(libs.okhttp.core)
-  implementation(libs.retrofit.moshi)
-  implementation(projects.libraries.retrofitconverters)
-  implementation(projects.libraries.util)
+ implementation(project(":libraries:retrofitconverters"))
+ implementation(project(":libraries:util"))
+ implementation(libs.androidx.annotations)
+ implementation(libs.kotlin.datetime)
+ implementation(libs.okhttp.core)
+ implementation(libs.retrofit.moshi)
 }

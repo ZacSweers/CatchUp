@@ -11,10 +11,10 @@ foundry {
 }
 
 dependencies {
+  api(project(":libraries:di"))
   api(libs.circuit.runtime.screen)
   api(libs.kotlinx.immutable)
   api(libs.okhttp.core)
-  api(projects.libraries.di)
 
   implementation(libs.misc.timber)
 }

@@ -53,23 +53,23 @@ foundry {
 }
 
 dependencies {
-  api(libs.apollo.api)
-  api(libs.apollo.runtime)
-  api(libs.kotlin.datetime)
-  api(libs.okhttp.core)
-  api(libs.retrofit.core)
-  api(projects.libraries.appconfig)
-  api(projects.libraries.di)
-  api(projects.libraries.gemoji)
-  api(projects.serviceApi)
+ api(project(":libraries:appconfig"))
+ api(project(":libraries:di"))
+ api(project(":libraries:gemoji"))
+ api(project(":service-api"))
+ api(libs.apollo.api)
+ api(libs.apollo.runtime)
+ api(libs.kotlin.datetime)
+ api(libs.okhttp.core)
+ api(libs.retrofit.core)
 
-  implementation(libs.apollo.httpcache)
-  // Apollo
-  implementation(libs.apollo.runtime)
-  implementation(libs.kotlin.datetime)
-  implementation(libs.misc.jsoup)
-  implementation(libs.misc.timber)
-  implementation(libs.okhttp.core)
-  implementation(projects.libraries.retrofitconverters)
-  implementation(projects.libraries.util)
+ implementation(project(":libraries:retrofitconverters"))
+ implementation(project(":libraries:util"))
+ implementation(libs.apollo.httpcache)
+ // Apollo
+ implementation(libs.apollo.runtime)
+ implementation(libs.kotlin.datetime)
+ implementation(libs.misc.jsoup)
+ implementation(libs.misc.timber)
+ implementation(libs.okhttp.core)
 }
