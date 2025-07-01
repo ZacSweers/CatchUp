@@ -31,10 +31,10 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        api(libs.kotlin.datetime)
-        api(libs.sqldelight.runtime)
-        api(projects.serviceDb)
-      }
+    api(project(":service-db"))
+    api(libs.kotlin.datetime)
+    api(libs.sqldelight.runtime)
+   }
     }
   }
 }
@@ -45,7 +45,7 @@ sqldelight {
   databases {
     create("CatchUpDatabase") {
       packageName.set("catchup.bookmarks.db")
-      dependency(projects.serviceDb)
+      dependency(project(":service-db"))
       schemaOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/databases"))
       migrationOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/migrations"))
     }

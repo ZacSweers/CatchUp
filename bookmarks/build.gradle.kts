@@ -33,9 +33,9 @@ kotlin {
         api(libs.kotlin.datetime)
         api(libs.sqldelight.coroutines)
         api(libs.sqldelight.runtime)
-        api(projects.bookmarks.db)
+        api(project(":bookmarks:db"))
 
-        implementation(projects.serviceApi)
+        implementation(project(":service-api"))
       }
     }
   }

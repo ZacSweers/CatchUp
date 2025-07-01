@@ -15,7 +15,7 @@ sqldelight {
     create("GemojiDatabase") {
       // Must be set before dependencies
       packageName.set("catchup.gemoji.db.mutable")
-      dependency(projects.libraries.gemoji.db)
+      dependency(project(":libraries:gemoji:db"))
       schemaOutputDirectory.set(layout.projectDirectory.dir("src/main/sqldelight/databases"))
       migrationOutputDirectory.set(layout.projectDirectory.dir("src/main/sqldelight/migrations"))
     }
@@ -23,7 +23,7 @@ sqldelight {
 }
 
 dependencies {
+  implementation(project(":libraries:gemoji:db"))
   implementation(libs.clikt)
   implementation(libs.sqldelight.driver.jvm)
-  implementation(projects.libraries.gemoji.db)
 }
