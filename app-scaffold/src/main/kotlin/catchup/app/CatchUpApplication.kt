@@ -18,6 +18,7 @@ package catchup.app
 import android.app.Application
 import android.os.StrictMode
 import android.os.strictmode.DiskReadViolation
+import android.os.strictmode.UntaggedSocketViolation
 import android.util.Log
 import catchup.app.ApplicationModule.AsyncInitializers
 import catchup.app.ApplicationModule.Initializers
@@ -95,7 +96,10 @@ class CatchUpApplication : Application() {
       StrictMode.VmPolicy.Builder()
         .detectAll()
         .penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
-          if (
+          if (violation is UntaggedSocketViolation) {
+            // No idea where these are from at this point
+            violation.printStackTrace()
+          } else if (
             violation is DiskReadViolation &&
               violation.stackTraceToString().contains("CustomTabsConnection")
           ) {

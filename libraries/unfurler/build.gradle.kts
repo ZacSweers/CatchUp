@@ -30,18 +30,19 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        api(libs.compose.runtime)
-        api(libs.kotlin.coroutines)
-        api(projects.libraries.di)
-        api(projects.libraries.kotlinutil)
-        api(projects.libraries.sqldelightExtensions)
-      }
+    api(project(":libraries:di"))
+    api(project(":libraries:kotlinutil"))
+    api(project(":libraries:sqldelight-extensions"))
+    api(libs.compose.runtime)
+    api(libs.kotlin.coroutines)
+   }
     }
     jvmMain {
       dependencies {
-        api(libs.okhttp.core)
-        implementation(libs.misc.unfurl)
-      }
+    api(libs.okhttp.core)
+
+    implementation(libs.misc.unfurl)
+   }
     }
   }
 }

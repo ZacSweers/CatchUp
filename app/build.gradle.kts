@@ -110,7 +110,7 @@ baselineProfile {
   // Don't save the profiles in source, generate adhoc
   saveInSrc = !automaticBaselineProfileGeneration
 
-  from(project(projects.benchmark.path))
+  from(project(":benchmark"))
 
   if (automaticBaselineProfileGeneration) {
     variants {
@@ -439,4 +439,4 @@ androidComponents {
   }
 }
 
-dependencies { implementation(projects.appScaffold) }
+dependencies { implementation(project(":app-scaffold")) }

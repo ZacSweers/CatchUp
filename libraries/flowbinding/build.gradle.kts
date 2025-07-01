@@ -26,5 +26,5 @@ android {
 
 dependencies {
   api(libs.kotlin.coroutines)
-  implementation(projects.libraries.kotlinutil)
+  implementation(project(":libraries:kotlinutil"))
 }

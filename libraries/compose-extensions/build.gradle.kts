@@ -25,16 +25,16 @@ android { namespace = "catchup.compose" }
 foundry { features { compose() } }
 
 dependencies {
-  api(libs.androidx.compose.foundation)
-  api(libs.androidx.compose.runtime)
-  api(libs.androidx.compose.ui)
-  api(libs.androidx.compose.uiTooling)
-  api(libs.androidx.window)
-  api(libs.circuit.retained)
-  api(libs.kotlin.coroutines)
+ api(libs.androidx.compose.foundation)
+ api(libs.androidx.compose.runtime)
+ api(libs.androidx.compose.ui)
+ api(libs.androidx.compose.uiTooling)
+ api(libs.androidx.window)
+ api(libs.circuit.retained)
+ api(libs.kotlin.coroutines)
 
-  implementation(libs.androidx.compose.animation)
-  implementation(libs.androidx.compose.googleFonts)
-  implementation(libs.androidx.compose.material.material3)
-  implementation(projects.libraries.baseUi)
+ implementation(project(":libraries:base-ui"))
+ implementation(libs.androidx.compose.animation)
+ implementation(libs.androidx.compose.googleFonts)
+ implementation(libs.androidx.compose.material.material3)
 }
