@@ -45,6 +45,10 @@ ksp {
 }
 
 dependencies {
+  api(project(":libraries:appconfig"))
+  api(project(":libraries:di"))
+  api(project(":libraries:sqldelight-extensions"))
+  api(project(":libraries:util"))
   api(libs.androidx.compose.runtime)
   api(libs.androidx.compose.ui)
   api(libs.circuit.codegenAnnotations)
@@ -54,11 +58,9 @@ dependencies {
   api(libs.circuit.runtime.ui)
   api(libs.okhttp.core)
   api(libs.retrofit.core)
-  api(projects.libraries.appconfig)
-  api(projects.libraries.di)
-  api(projects.libraries.sqldelightExtensions)
-  api(projects.libraries.util)
 
+  implementation(project(":libraries:base-ui"))
+  implementation(project(":libraries:retrofitconverters"))
   implementation(libs.androidx.annotations)
   implementation(libs.androidx.compose.animation)
   implementation(libs.androidx.compose.foundation)
@@ -67,6 +69,4 @@ dependencies {
   implementation(libs.androidx.sqlite)
   implementation(libs.kotlin.coroutines)
   implementation(libs.retrofit.moshi)
-  implementation(projects.libraries.baseUi)
-  implementation(projects.libraries.retrofitconverters)
 }

@@ -335,7 +335,7 @@ fun LazyStaggeredGridScope.handleLoadStates(
       }
       loadState.refresh is LoadState.Error -> {
         val e = loadState.refresh as LoadState.Error
-        Timber.e(e.error)
+        Timber.e(e.error, "Unexpected error state from $loadState")
         item(key = "errorLoading", span = StaggeredGridItemSpan.FullLine) {
           ErrorItem(
             "Error loading service: ${e.error.localizedMessage}",

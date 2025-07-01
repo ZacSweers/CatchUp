@@ -58,22 +58,6 @@ if (!useProjectIsolation) {
   apply(plugin = libs.plugins.spotless.get().pluginId)
 }
 
-skippy {
-  mergeOutputs = true
-  global {
-    applyDefaults()
-    // Glob patterns of files to include in computing
-    includePatterns.addAll("**/schemas/**", "app/proguard-rules.pro", "**/src/**/graphql/**")
-    // Glob patterns of files that, if changed, should result in not skipping anything in the build
-    neverSkipPatterns.addAll(
-      ".github/workflows/**",
-      "spotless/**",
-      "scripts/github/schema.json",
-      "config/lint/lint.xml",
-    )
-  }
-}
-
 if (!useProjectIsolation) {
   // https://github.com/autonomousapps/dependency-analysis-gradle-plugin/issues/1111
   //  apply(plugin = libs.plugins.dependencyAnalysis.get().pluginId)
