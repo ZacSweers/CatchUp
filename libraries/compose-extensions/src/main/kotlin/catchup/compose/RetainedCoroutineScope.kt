@@ -17,7 +17,7 @@ fun rememberRetainedCoroutineScope(): CoroutineScope {
 
         override fun onForgotten() {
           // We've been forgotten, cancel the CoroutineScope
-          scope.cancel()
+          scope.cancel(null)
         }
 
         // Not called by Circuit

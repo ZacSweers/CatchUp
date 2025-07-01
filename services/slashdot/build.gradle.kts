@@ -32,22 +32,22 @@ foundry {
 }
 
 dependencies {
-  api(libs.kotlin.datetime)
-  api(libs.kotlinx.serialization.core)
-  api(libs.okhttp.core)
-  api(libs.retrofit.core)
-  api(libs.xmlutil.serialization)
-  api(projects.libraries.appconfig)
-  api(projects.libraries.di)
-  api(projects.serviceApi)
+ api(project(":libraries:appconfig"))
+ api(project(":libraries:di"))
+ api(project(":service-api"))
+ api(libs.kotlin.datetime)
+ api(libs.kotlinx.serialization.core)
+ api(libs.okhttp.core)
+ api(libs.retrofit.core)
+ api(libs.xmlutil.serialization)
 
-  implementation(libs.kotlin.datetime)
-  implementation(libs.okhttp.core)
-  implementation(libs.retrofit.kotlinxSerialization)
-  implementation(libs.tikxml.htmlEscape)
-  implementation(projects.libraries.retrofitconverters)
-  implementation(projects.libraries.util)
+ implementation(project(":libraries:retrofitconverters"))
+ implementation(project(":libraries:util"))
+ implementation(libs.kotlin.datetime)
+ implementation(libs.okhttp.core)
+ implementation(libs.retrofit.kotlinxSerialization)
+ implementation(libs.tikxml.htmlEscape)
 
-  testImplementation(libs.test.junit)
-  testImplementation(libs.test.truth)
+ testImplementation(libs.test.junit)
+ testImplementation(libs.test.truth)
 }

@@ -30,42 +30,44 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        api(libs.apollo.api)
-        api(libs.kotlin.datetime)
-        api(libs.kotlinx.immutable)
-        api(libs.metro.runtime)
-        api(libs.moshi.core)
-        api(libs.okhttp.core)
+    api(libs.apollo.api)
+    api(libs.kotlin.datetime)
+    api(libs.kotlinx.immutable)
+    api(libs.metro.runtime)
+    api(libs.moshi.core)
+    api(libs.okhttp.core)
 
-        implementation(libs.androidx.annotations)
-        implementation(libs.misc.unbescape)
-        implementation(projects.libraries.appconfig)
-      }
+    implementation(project(":libraries:appconfig"))
+    implementation(libs.androidx.annotations)
+    implementation(libs.misc.unbescape)
+   }
     }
     commonTest {
       dependencies {
-        implementation(libs.kotlin.test)
-      }
+    implementation(libs.kotlin.test)
+   }
     }
     androidMain {
       dependencies {
-        api(libs.androidx.coreKtx)
-        implementation(libs.androidx.core)
-        implementation(libs.misc.timber)
-      }
+    api(libs.androidx.coreKtx)
+
+    implementation(libs.androidx.core)
+    implementation(libs.misc.timber)
+   }
     }
     jvmMain {
       dependencies {
-        api(libs.misc.okio)
-      }
+    api(libs.misc.okio)
+   }
     }
     jvmTest {
       dependencies {
-        api(libs.misc.okio)
-        implementation(libs.misc.okio.fakeFileSystem)
-        implementation(libs.test.junit)
-        implementation(libs.test.truth)
-      }
+    api(libs.misc.okio)
+
+    implementation(libs.misc.okio.fakeFileSystem)
+    implementation(libs.test.junit)
+    implementation(libs.test.truth)
+   }
     }
   }
 }
