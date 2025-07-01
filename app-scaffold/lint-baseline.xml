@@ -35,6 +35,17 @@
     </issue>
 
     <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableFloatStateOf` instead of `mutableStateOf`"
+        errorLine1="  val offsetState = mutableStateOf(0f)"
+        errorLine2="                    ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/catchup/app/ui/activity/FlickToDismiss.kt"
+            line="90"
+            column="21"/>
+    </issue>
+
+    <issue
         id="HardcodedText"
         message="Hardcoded string &quot;Your GitHub username&quot;, should use `@string` resource"
         errorLine1="      android:hint=&quot;Your GitHub username&quot;"
