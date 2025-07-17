@@ -78,12 +78,9 @@ interface ApplicationModule {
 
   @Multibinds fun timberTrees(): Set<Timber.Tree>
 
-  @Binds
-  @ApplicationContext
-  @SingleIn(AppScope::class)
-  fun provideApplicationContext(real: Application): Context
+  @Binds @ApplicationContext fun provideApplicationContext(real: Application): Context
 
-  @Binds @SingleIn(AppScope::class) fun bindAppConfig(real: CatchUpAppConfig): AppConfig
+  @Binds fun bindAppConfig(real: CatchUpAppConfig): AppConfig
 
   companion object {
 

@@ -120,3 +120,5 @@ signing/play-account.p12
 
 profile-out*/
 gradle-user-home/
+
+gradle/ide-projects.txt
