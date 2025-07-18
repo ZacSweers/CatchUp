@@ -101,7 +101,7 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-object OrderServicesScreen : Screen {
+data object OrderServicesScreen : Screen {
   data class State(
     val services: SnapshotStateList<ServiceMeta>?,
     val showSave: Boolean = false,

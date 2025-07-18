@@ -87,7 +87,7 @@ import kotlinx.parcelize.Parcelize
 @ContributesIntoMap(AppScope::class, binding = binding<DeepLinkable>())
 @StringKey("bookmarks")
 @Parcelize
-object BookmarksScreen : Screen, DeepLinkable {
+data object BookmarksScreen : Screen, DeepLinkable {
   override fun createScreen(queryParams: ImmutableMap<String, List<String?>>) = BookmarksScreen
 
   data class State(

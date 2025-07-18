@@ -107,7 +107,7 @@ import leakcanary.LeakCanary
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 
-@Parcelize private object LogsModal : Screen
+@Parcelize private data object LogsModal : Screen
 
 @ContributesTo(AppScope::class)
 interface ContributorModule {
@@ -115,7 +115,7 @@ interface ContributorModule {
 }
 
 @Parcelize
-object DebugSettingsScreen : Screen {
+data object DebugSettingsScreen : Screen {
   data class State(
     val items: ImmutableList<DebugItem>,
     val logsToShow: ImmutableList<Entry>,

@@ -90,7 +90,7 @@ import okio.source
 import timber.log.Timber
 
 @Parcelize
-object LicensesScreen : Screen {
+data object LicensesScreen : Screen {
   data class State(val items: ImmutableList<OssBaseItem>?, val eventSink: (Event) -> Unit) :
     CircuitUiState
 

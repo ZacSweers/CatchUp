@@ -127,7 +127,7 @@ import kotlinx.parcelize.Parcelize
 @ContributesIntoMap(AppScope::class, binding = binding<DeepLinkable>())
 @StringKey("home")
 @Parcelize
-object HomeScreen : Screen, DeepLinkable {
+data object HomeScreen : Screen, DeepLinkable {
   override fun createScreen(queryParams: ImmutableMap<String, List<String?>>): Screen = HomeScreen
 
   data class State(

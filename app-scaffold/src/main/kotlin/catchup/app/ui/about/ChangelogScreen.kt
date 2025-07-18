@@ -51,7 +51,7 @@ import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
 @Parcelize
-object ChangelogScreen : Screen {
+data object ChangelogScreen : Screen {
   data class State(val items: ImmutableList<CatchUpItem>?, val eventSink: (Event) -> Unit) :
     CircuitUiState
 
