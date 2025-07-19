@@ -197,9 +197,8 @@ class SettingsPresenter(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(SettingsScreen::class, AppScope::class)
-class SettingsUi
 @Inject
-constructor(
+class SettingsUi(
   // TODO this is unfortunate but sorta how the settings library used here works
   private val catchUpPreferences: CatchUpPreferences
 ) : Ui<State>, BaseSettingsUi by RealBaseSettingsUi(catchUpPreferences.datastore) {

@@ -105,9 +105,8 @@ interface LicensesModule {
 }
 
 @CircuitInject(LicensesScreen::class, AppScope::class)
-class LicensesPresenter
 @Inject
-constructor(
+class LicensesPresenter(
   private val linkManager: LinkManager,
   private val licensesRepository: LicensesRepository,
 ) : Presenter<State> {

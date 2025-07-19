@@ -4,12 +4,14 @@ import catchup.app.ui.about.ChangelogRepository
 import catchup.app.ui.about.ChangelogRepositoryImpl
 import catchup.di.FakeMode
 import catchup.service.api.CatchUpItem
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-// TODO https://github.com/ZacSweers/metro/issues/205
-// @ContributesBinding(AppScope::class, replaces = [ChangelogRepositoryImpl::class])
-// @Inject
+@ContributesBinding(AppScope::class, replaces = [ChangelogRepositoryImpl::class])
+@Inject
 class StubChangelogRepository(
   @FakeMode private val isFakeMode: Boolean,
   private val realImpl: Lazy<ChangelogRepositoryImpl>,

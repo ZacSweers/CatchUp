@@ -142,9 +142,8 @@ sealed class LumberYard {
     }
   }
 
-  class Factory
   @Inject
-  constructor(
+  class Factory(
     private val simpleLumberYard: Provider<SimpleLumberYard>,
     private val diskLumberYard: Provider<SimpleLumberYard>,
   ) {
