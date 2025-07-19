@@ -331,7 +331,8 @@ private enum class LogsShareResult {
 }
 
 @CircuitInject(DebugSettingsScreen::class, AppScope::class)
-class DebugSettingsUi @Inject constructor(private val debugPreferences: DebugPreferences) :
+@Inject
+class DebugSettingsUi(private val debugPreferences: DebugPreferences) :
   Ui<State>, BaseSettingsUi by RealBaseSettingsUi(debugPreferences.datastore) {
   @Composable
   override fun Content(state: State, modifier: Modifier) {

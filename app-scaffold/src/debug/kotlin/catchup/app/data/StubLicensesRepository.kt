@@ -5,12 +5,14 @@ import catchup.app.ui.about.LicensesRepositoryImpl
 import catchup.app.ui.about.OssBaseItem
 import catchup.app.ui.about.OssItem
 import catchup.di.FakeMode
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-// TODO https://github.com/ZacSweers/metro/issues/205
-// @ContributesBinding(AppScope::class, replaces = [LicensesRepositoryImpl::class])
-// @Inject
+@ContributesBinding(AppScope::class, replaces = [LicensesRepositoryImpl::class])
+@Inject
 class StubLicensesRepository(
   @FakeMode private val isFakeMode: Boolean,
   private val realImpl: Lazy<LicensesRepositoryImpl>,

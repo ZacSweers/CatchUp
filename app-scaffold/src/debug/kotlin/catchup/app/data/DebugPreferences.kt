@@ -26,19 +26,22 @@ import catchup.app.CatchUpPreferences
 import catchup.app.CatchUpPreferencesImpl
 import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.util.injection.qualifiers.ApplicationContext
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.binding
 
 /**
  * Debug build preferences. This is a superset of [CatchUpPreferences] and uses the same underlying
  * store.
  */
-// TODO https://github.com/ZacSweers/metro/issues/205
-// @SingleIn(AppScope::class)
-// @ContributesBinding(
-//  AppScope::class,
-//  binding = binding<CatchUpPreferences>(),
-//  replaces = [CatchUpPreferencesImpl::class],
-// )
+@SingleIn(AppScope::class)
+@ContributesBinding(
+  AppScope::class,
+  binding = binding<CatchUpPreferences>(),
+  replaces = [CatchUpPreferencesImpl::class],
+)
 class DebugPreferences
 private constructor(
   private val catchUpPreferencesImpl: CatchUpPreferencesImpl,
