@@ -152,7 +152,7 @@ compose-material-material = { module = "org.jetbrains.compose.material:material"
 compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
-firebase-database = "com.google.firebase:firebase-database:21.0.0"
+firebase-database = "com.google.firebase:firebase-database:22.0.0"
 
 anvil-annotations = { module = "dev.zacsweers.anvil:annotations", version.ref = "anvil" }
 anvil-annotationsOptional = { module = "dev.zacsweers.anvil:annotations-optional", version.ref = "anvil" }
