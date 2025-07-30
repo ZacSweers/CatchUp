@@ -79,7 +79,8 @@ class DependencyGraphParser : CliktCommand() {
 
         // If focusing one target, find it and BFS it
         // If parsing whole repo, skip BFS and compute the whole graph
-        target?.let { focusTarget(it, rules) } ?: computeGraph(rules, allProjects)
+        target?.let { focusTarget(it, rules.implicitRules) }
+          ?: computeGraph(rules.implicitRules, allProjects)
       }
 
     if (verbose) {
