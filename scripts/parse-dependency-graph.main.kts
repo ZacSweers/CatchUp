@@ -4,7 +4,7 @@
 @file:DependsOn("com.slack.foundry:cli:0.28.1")
 @file:DependsOn("com.slack.foundry:skippy:0.28.1")
 @file:DependsOn("com.github.ajalt.clikt:clikt-jvm:5.0.3")
-@file:DependsOn("com.fueledbycaffeine.spotlight:buildscript-utils:1.2.3")
+@file:DependsOn("com.fueledbycaffeine.spotlight:buildscript-utils:1.3.1")
 
 import com.fueledbycaffeine.spotlight.buildscript.GradlePath
 import com.fueledbycaffeine.spotlight.buildscript.SpotlightRulesList
@@ -79,7 +79,8 @@ class DependencyGraphParser : CliktCommand() {
 
         // If focusing one target, find it and BFS it
         // If parsing whole repo, skip BFS and compute the whole graph
-        target?.let { focusTarget(it, rules) } ?: computeGraph(rules, allProjects)
+        target?.let { focusTarget(it, rules.implicitRules) }
+          ?: computeGraph(rules.implicitRules, allProjects)
       }
 
     if (verbose) {
