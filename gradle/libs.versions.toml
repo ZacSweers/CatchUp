@@ -5,7 +5,7 @@ androidx-activity = "1.12.0-alpha04"
 androidx-core = "1.17.0-beta01"
 androidx-sqlite = "2.6.0-alpha01"
 appcompat = "1.7.1"
-benchmark = "1.4.0-rc01"
+benchmark = "1.4.0"
 bouncycastle = "1.81"
 compose-material3 = "1.3.2"
 emoji = "1.2.0-alpha03"
@@ -40,11 +40,11 @@ preferences = "1.2.1"
 retrofit = "3.0.0"
 slack-lint = "0.11.0"
 sortDependencies = "0.14"
-spotless = "7.2.0"
+spotless = "7.2.1"
 sqldelight = "2.1.0"
 telephoto = "0.16.0"
 tikxml = "0.8.15"
-xerial = "3.50.2.0"
+xerial = "3.50.3.0"
 collapsingToolbar = "2.3.5"
 
 [plugins]
@@ -94,7 +94,7 @@ androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
 androidx-customTabs = "androidx.browser:browser:1.9.0-rc01"
-androidx-design = "com.google.android.material:material:1.14.0-alpha02"
+androidx-design = "com.google.android.material:material:1.14.0-alpha03"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
@@ -152,7 +152,7 @@ compose-material-material = { module = "org.jetbrains.compose.material:material"
 compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
-firebase-database = "com.google.firebase:firebase-database:21.0.0"
+firebase-database = "com.google.firebase:firebase-database:22.0.0"
 
 anvil-annotations = { module = "dev.zacsweers.anvil:annotations", version.ref = "anvil" }
 anvil-annotationsOptional = { module = "dev.zacsweers.anvil:annotations-optional", version.ref = "anvil" }
@@ -205,7 +205,7 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 eithernet-retrofit = { module = "com.slack.eithernet:eithernet-integration-retrofit", version.ref = "eithernet" }
 
-errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.40.0"
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.41.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
@@ -294,7 +294,7 @@ test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.4.4"
 
 xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.91.1"
-xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.91.1"
+xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.91.2"
 
 [bundles]
 common-lint = ["slack-lint-checks", "lints-compose"]
