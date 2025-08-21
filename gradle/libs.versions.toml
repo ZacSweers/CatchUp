@@ -58,7 +58,7 @@ bugsnag = { id = "com.bugsnag.android.gradle", version = "8.2.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "2.19.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-doctor = { id = "com.osacky.doctor", version = "0.11.0" }
+doctor = { id = "com.osacky.doctor", version = "0.12.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
