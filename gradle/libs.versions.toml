@@ -24,16 +24,16 @@ eithernet = "2.0.0"
 foundry = "0.31.0"
 jdk = "23"
 jvmTarget = "17"
-kotlin = "2.2.20-RC2"
+kotlin = "2.2.20"
 kotlinx-serialization = "1.9.0"
-ksp = "2.2.20-RC-2.0.2"
+ksp = "2.2.20-2.0.2"
 ktfmt = "0.56"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.10.0-alpha03"
 markdown = "0.35.0"
-metro = "0.7.0-2.2.20-RC2-alpha06"
+metro = "0.6.6"
 moshi = "1.15.2"
-moshix = "0.32.0-2.2.20-Beta2-alpha01"
+moshix = "0.32.0"
 okhttp = "5.1.0"
 okio = "3.16.0"
 preferences = "1.2.1"
@@ -71,7 +71,7 @@ licensee = { id = "app.cash.licensee", version = "1.13.0" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.12.1" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.15.0-2.2.20-Beta2-alpha01" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.15.0" }
 retry = { id = "org.gradle.test-retry", version = "1.6.2" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
 foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
