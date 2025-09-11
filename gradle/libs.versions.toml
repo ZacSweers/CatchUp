@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.37.3"
-agp = "8.12.2"
+agp = "8.13.0"
 androidx-activity = "1.12.0-alpha07"
 androidx-core = "1.17.0"
 androidx-sqlite = "2.6.0-rc02"
@@ -21,25 +21,25 @@ dagger = "2.57.1"
 datastore = "1.2.0-alpha02"
 detekt = "1.23.8"
 eithernet = "2.0.0"
-foundry = "0.31.0"
+foundry = "0.31.1"
 jdk = "23"
 jvmTarget = "17"
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 kotlinx-serialization = "1.9.0"
-ksp = "2.2.10-2.0.2"
+ksp = "2.2.20-2.0.2"
 ktfmt = "0.56"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.10.0-alpha03"
 markdown = "0.35.0"
-metro = "0.6.4"
+metro = "0.6.6"
 moshi = "1.15.2"
-moshix = "0.31.0"
+moshix = "0.32.0"
 okhttp = "5.1.0"
 okio = "3.16.0"
 preferences = "1.2.1"
 retrofit = "3.0.0"
 slack-lint = "0.11.0"
-sortDependencies = "0.14"
+sortDependencies = "0.15"
 spotless = "7.2.1"
 sqldelight = "2.1.0"
 telephoto = "0.16.0"
@@ -56,7 +56,7 @@ apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.2.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.1" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.0.1" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.0.2" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.12.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -71,7 +71,7 @@ licensee = { id = "app.cash.licensee", version = "1.13.0" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.12.1" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.14.1" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.15.0" }
 retry = { id = "org.gradle.test-retry", version = "1.6.2" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
 foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
@@ -291,7 +291,7 @@ tikxml-htmlEscape = { module = "com.tickaroo.tikxml:converter-htmlescape", versi
 collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "collapsingToolbar" }
 
 test-junit = "junit:junit:4.13.2"
-test-truth = "com.google.truth:truth:1.4.4"
+test-truth = "com.google.truth:truth:1.4.5"
 
 xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.91.2"
 xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.91.2"
