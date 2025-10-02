@@ -1,7 +1,7 @@
 [versions]
 accompanist = "0.37.3"
 agp = "8.13.0"
-androidx-activity = "1.12.0-alpha07"
+androidx-activity = "1.12.0-alpha09"
 androidx-core = "1.17.0"
 androidx-sqlite = "2.6.1"
 appcompat = "1.7.1"
