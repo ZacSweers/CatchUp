@@ -1,5 +1,5 @@
 #!/usr/bin/env kotlin
-@file:DependsOn("com.slack.foundry:cli:0.31.2")
+@file:DependsOn("com.slack.foundry:cli:0.31.3")
 @file:OptIn(ExperimentalPathApi::class)
 
 import foundry.cli.skipBuildAndCacheDirs
