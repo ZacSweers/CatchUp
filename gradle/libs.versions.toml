@@ -294,7 +294,7 @@ test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.4.5"
 
 xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.91.2"
-xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.91.2"
+xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.91.3"
 
 [bundles]
 common-lint = ["slack-lint-checks", "lints-compose"]
