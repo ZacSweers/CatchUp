@@ -22,9 +22,9 @@ datastore = "1.2.0-rc01"
 detekt = "1.23.8"
 eithernet = "2.0.0"
 foundry = "0.31.3"
-jdk = "23"
+jdk = "24"
 jvmTarget = "17"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 kotlinx-serialization = "1.9.0"
 ksp = "2.2.20-2.0.4"
 ktfmt = "0.56"
@@ -294,7 +294,7 @@ test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.4.5"
 
 xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.91.3"
-xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.91.2"
+xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.91.3"
 
 [bundles]
 common-lint = ["slack-lint-checks", "lints-compose"]
