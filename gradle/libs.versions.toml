@@ -44,7 +44,7 @@ spotless = "8.0.0"
 sqldelight = "2.1.0"
 telephoto = "0.18.0"
 tikxml = "0.8.15"
-xerial = "3.50.3.0"
+xerial = "3.51.0.0"
 collapsingToolbar = "2.3.5"
 
 [plugins]
