@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.37.3"
-agp = "8.13.0"
+agp = "8.13.1"
 androidx-activity = "1.12.0-rc01"
 androidx-core = "1.17.0"
 androidx-sqlite = "2.6.1"
@@ -11,7 +11,7 @@ compose-material3 = "1.4.0"
 emoji = "1.2.0-alpha03"
 anvil = "0.4.1"
 apollo = "4.0.0-beta.7"
-circuit = "0.30.0"
+circuit = "0.31.0"
 coil = "2.7.0"
 compose = "1.9.4"
 compose-jb = "1.8.2"
@@ -27,24 +27,24 @@ jvmTarget = "17"
 kotlin = "2.2.21"
 kotlinx-serialization = "1.9.0"
 ksp = "2.3.2"
-ktfmt = "0.56"
+ktfmt = "0.59"
 leakcanary = "3.0-alpha-8"
-lifecycle = "2.10.0-alpha05"
+lifecycle = "2.10.0-rc01"
 markdown = "0.35.0"
 metro = "0.6.9"
 moshi = "1.15.2"
-moshix = "0.32.0"
-okhttp = "5.2.1"
-okio = "3.16.2"
+moshix = "0.33.0"
+okhttp = "5.3.1"
+okio = "3.16.3"
 preferences = "1.2.1"
 retrofit = "3.0.0"
 slack-lint = "0.11.1"
 sortDependencies = "0.15"
 spotless = "8.0.0"
-sqldelight = "2.1.0"
+sqldelight = "2.2.1"
 telephoto = "0.18.0"
 tikxml = "0.8.15"
-xerial = "3.50.3.0"
+xerial = "3.51.0.0"
 collapsingToolbar = "2.3.5"
 
 [plugins]
@@ -55,7 +55,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.2.0" }
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.2" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.3" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.4.1" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.12.1" }
@@ -70,7 +70,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.14.1" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
-playPublisher = { id = "com.github.triplet.play", version = "3.12.1" }
+playPublisher = { id = "com.github.triplet.play", version = "3.12.2" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.15.0" }
 retry = { id = "org.gradle.test-retry", version = "1.6.4" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
@@ -205,11 +205,11 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
 eithernet-retrofit = { module = "com.slack.eithernet:eithernet-integration-retrofit", version.ref = "eithernet" }
 
-errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.42.0"
+errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.44.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:1.6.10"
+haze = "dev.chrisbanes.haze:haze:1.7.0"
 
 javaxInject = "javax.inject:javax.inject:1"
 
