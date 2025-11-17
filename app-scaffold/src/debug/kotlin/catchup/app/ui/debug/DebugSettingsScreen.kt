@@ -93,6 +93,7 @@ import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Provides
@@ -131,7 +132,7 @@ data object DebugSettingsScreen : Screen {
   }
 }
 
-@Inject
+@AssistedInject
 class DebugSettingsPresenter(
   @Assisted private val navigator: Navigator,
   private val client: Lazy<OkHttpClient>,

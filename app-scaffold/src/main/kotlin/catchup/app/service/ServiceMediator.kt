@@ -18,7 +18,7 @@ import catchup.service.db.CatchUpDbItem
 import com.apollographql.apollo3.exception.ApolloException
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import java.io.IOException
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -31,7 +31,7 @@ import retrofit2.HttpException
 import timber.log.Timber
 
 @OptIn(ExperimentalPagingApi::class)
-@Inject
+@AssistedInject
 class ServiceMediator(
   @Assisted private val service: Service,
   @Assisted private val catchUpDatabase: CatchUpDatabase,

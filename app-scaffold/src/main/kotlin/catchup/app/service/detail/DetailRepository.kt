@@ -11,7 +11,7 @@ import catchup.unfurler.UnfurlResult
 import catchup.unfurler.UnfurlerRepository
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.Provider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
-@Inject
+@AssistedInject
 class DetailRepository(
   @Assisted private val itemId: Long,
   @Assisted private val serviceId: String,

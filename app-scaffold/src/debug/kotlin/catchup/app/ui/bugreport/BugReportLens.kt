@@ -40,7 +40,7 @@ import com.mattprecious.telescope.Lens
 import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -52,7 +52,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
  * Pops a dialog asking for more information about the bug report and then creates an upload with a
  * markdown-formatted body.
  */
-@Inject
+@AssistedInject
 class BugReportLens(
   @Assisted private val activity: ComponentActivity,
   private val lumberYard: LumberYard,

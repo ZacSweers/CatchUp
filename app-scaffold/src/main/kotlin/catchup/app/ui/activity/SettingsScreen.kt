@@ -67,6 +67,7 @@ import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.StringKey
@@ -98,7 +99,7 @@ data class SettingsScreen(val showTopAppBar: Boolean = true) : Screen {
   }
 }
 
-@Inject
+@AssistedInject
 class SettingsPresenter(
   @Assisted private val screen: SettingsScreen,
   @Assisted private val navigator: Navigator,
