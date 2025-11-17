@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.37.3"
-agp = "8.13.0"
+agp = "8.13.1"
 androidx-activity = "1.12.0-rc01"
 androidx-core = "1.17.0"
 androidx-sqlite = "2.6.1"
@@ -33,15 +33,15 @@ lifecycle = "2.10.0-rc01"
 markdown = "0.35.0"
 metro = "0.7.5"
 moshi = "1.15.2"
-moshix = "0.32.0"
-okhttp = "5.3.0"
-okio = "3.16.2"
+moshix = "0.33.0"
+okhttp = "5.3.1"
+okio = "3.16.3"
 preferences = "1.2.1"
 retrofit = "3.0.0"
 slack-lint = "0.11.1"
 sortDependencies = "0.15"
 spotless = "8.0.0"
-sqldelight = "2.1.0"
+sqldelight = "2.2.1"
 telephoto = "0.18.0"
 tikxml = "0.8.15"
 xerial = "3.51.0.0"
@@ -55,7 +55,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.2.0" }
-cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.2" }
+cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.3" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.4.1" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.12.1" }
@@ -209,7 +209,7 @@ errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.44.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:1.6.10"
+haze = "dev.chrisbanes.haze:haze:1.7.0"
 
 javaxInject = "javax.inject:javax.inject:1"
 
