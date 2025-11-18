@@ -95,7 +95,7 @@ import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -123,7 +123,7 @@ data object OrderServicesScreen : Screen {
 }
 
 // TODO Syllabus handling - requires integrating tap target on the location
-@Inject
+@AssistedInject
 class OrderServicesPresenter(
   @Assisted private val navigator: Navigator,
   private val serviceMetas: Map<String, ServiceMeta>,

@@ -40,7 +40,7 @@ import com.slack.circuit.runtime.screen.Screen
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -65,7 +65,7 @@ private fun SummarizerResult.toState(title: String, url: String): State {
   }
 }
 
-@Inject
+@AssistedInject
 class SummarizerPresenter(
   @Assisted private val screen: SummarizerScreen,
   private val repository: SummarizerRepository,
