@@ -60,7 +60,7 @@ import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -101,7 +101,7 @@ data class ImageViewerScreen(
   }
 }
 
-@Inject
+@AssistedInject
 class ImageViewerPresenter(
   @Assisted private val screen: ImageViewerScreen,
   @Assisted private val navigator: Navigator,

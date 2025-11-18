@@ -31,8 +31,8 @@ import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesIntoMap
-import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.StringKey
 import java.util.Locale
 import kotlinx.collections.immutable.ImmutableMap
@@ -75,7 +75,7 @@ data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenCompon
   }
 }
 
-@Inject
+@AssistedInject
 class AboutPresenter(@Assisted val screen: AboutScreen, private val appConfig: AppConfig) :
   Presenter<State> {
   @Composable override fun present() = State(screen.selectedTab.ordinal, appConfig.versionName)

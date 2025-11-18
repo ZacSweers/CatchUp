@@ -70,8 +70,8 @@ import dev.zacsweers.catchup.app.scaffold.R.string
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesIntoMap
-import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.StringKey
 import dev.zacsweers.metro.binding
 import java.nio.file.Path
@@ -106,7 +106,7 @@ data object BookmarksScreen : Screen, DeepLinkable {
 }
 
 @OptIn(ExperimentalPagingApi::class)
-@Inject
+@AssistedInject
 class BookmarksPresenter(
   @Assisted private val navigator: Navigator,
   private val bookmarksRepository: BookmarkRepository,
