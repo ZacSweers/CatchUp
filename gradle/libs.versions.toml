@@ -149,7 +149,7 @@ compose-runtime-saveable = { module = "org.jetbrains.compose.runtime:runtime-sav
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-jb" }
 compose-uiUtil = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "compose-jb" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-jb" }
-compose-material-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-jb-material3" }
+compose-material-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-jb" }
 compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb-material3" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
