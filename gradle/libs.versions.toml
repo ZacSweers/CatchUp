@@ -14,7 +14,8 @@ apollo = "4.0.0-beta.7"
 circuit = "0.31.0"
 coil = "2.7.0"
 compose = "1.9.4"
-compose-jb = "1.8.2"
+compose-jb = "1.9.3"
+compose-jb-material3 = "1.9.0"
 corbind = "1.12.0"
 coroutines = "1.10.2"
 dagger = "2.57.2"
@@ -149,7 +150,7 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-jb
 compose-uiUtil = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "compose-jb" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-jb" }
 compose-material-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-jb" }
-compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb" }
+compose-material-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-jb-material3" }
 
 firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-database = "com.google.firebase:firebase-database:22.0.1"
