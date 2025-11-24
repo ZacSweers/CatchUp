@@ -25,12 +25,12 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -93,6 +93,7 @@ import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Provides
@@ -131,7 +132,7 @@ data object DebugSettingsScreen : Screen {
   }
 }
 
-@Inject
+@AssistedInject
 class DebugSettingsPresenter(
   @Assisted private val navigator: Navigator,
   private val client: Lazy<OkHttpClient>,
@@ -523,7 +524,7 @@ sealed interface DebugItem {
           ) {
             OutlinedTextField(
               value = formatSelection(state.value),
-              modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
+              modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
               textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
               onValueChange = {},
               readOnly = true,

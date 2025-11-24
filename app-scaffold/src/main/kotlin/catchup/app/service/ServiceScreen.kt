@@ -85,7 +85,7 @@ import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.Provider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -128,7 +128,7 @@ data class ServiceScreen(val serviceKey: String) : Screen {
   }
 }
 
-@Inject
+@AssistedInject
 class ServicePresenter(
   @Assisted private val screen: ServiceScreen,
   @Assisted private val navigator: Navigator,
