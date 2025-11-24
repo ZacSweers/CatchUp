@@ -9,7 +9,7 @@ benchmark = "1.4.1"
 bouncycastle = "1.82"
 compose-material3 = "1.4.0"
 emoji = "1.2.0-beta01"
-anvil = "0.4.1"
+anvil = "0.5.0"
 apollo = "4.0.0-beta.7"
 circuit = "0.31.0"
 coil = "2.7.0"
@@ -34,7 +34,7 @@ lifecycle = "2.10.0"
 markdown = "0.35.0"
 metro = "0.7.7"
 moshi = "1.15.2"
-moshix = "0.33.0"
+moshix = "0.34.0"
 okhttp = "5.3.2"
 okio = "3.16.4"
 preferences = "1.2.1"
@@ -57,7 +57,7 @@ apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.2.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.3" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.4.1" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.5.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.12.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -210,7 +210,7 @@ errorProneAnnotations = "com.google.errorprone:error_prone_annotations:2.44.0"
 
 fileSize = "me.saket.filesize:filesize:1.2.0"
 
-haze = "dev.chrisbanes.haze:haze:1.7.0"
+haze = "dev.chrisbanes.haze:haze:1.7.1"
 
 javaxInject = "javax.inject:javax.inject:1"
 
