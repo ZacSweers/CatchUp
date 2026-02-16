@@ -1,19 +1,19 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "prHourlyLimit": 20,
   "packageRules": [
     {
-      "matchDepPatterns": [
-        "^androidx\\.([\\w-:]+)$",
-        "^org\\.robolectric([\\w-.]*):([\\w-]+)$",
-        "^com\\.google\\.accompanist:([\\w-]+)$",
-        "^com\\.google\\.android\\.material:([\\w-]+)$"
-      ],
       "description": "Libraries allowed to use non-stable releases.",
-      "ignoreUnstable": false
+      "ignoreUnstable": false,
+      "matchDepNames": [
+        "/^androidx\\.([\\w-:]+)$/",
+        "/^org\\.robolectric([\\w-.]*):([\\w-]+)$/",
+        "/^com\\.google\\.accompanist:([\\w-]+)$/",
+        "/^com\\.google\\.android\\.material:([\\w-]+)$/"
+      ]
     },
     {
       "matchManagers": [
@@ -21,7 +21,7 @@
       ],
       "description": "Disable snapshot versions",
       "matchCurrentVersion": "/.*-SNAPSHOT/",
-      "enabled": "false"
+      "enabled": false
     }
   ]
 }
