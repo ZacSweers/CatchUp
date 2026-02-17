@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 plugins {
+  alias(libs.plugins.android.kmp)
   alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.android.library)
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.sqldelight)
 }
 
 kotlin {
   // region KMP Targets
-  androidTarget()
+  android { namespace = "catchup.bookmarks.db" }
   jvm()
   // endregion
 
@@ -38,8 +38,6 @@ kotlin {
     }
   }
 }
-
-android { namespace = "catchup.bookmarks.db" }
 
 sqldelight {
   databases {

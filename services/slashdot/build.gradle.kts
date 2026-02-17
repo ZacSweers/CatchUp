@@ -17,37 +17,33 @@
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.serialization)
 }
 
 android { namespace = "catchup.service.slashdot" }
 
 foundry {
-  features {
-    metro()
-  }
-  android { features {
-    resources("catchup_service_sd_") } }
+  features { metro() }
+  android { features { resources("catchup_service_sd_") } }
 }
 
 dependencies {
- api(project(":libraries:appconfig"))
- api(project(":libraries:di"))
- api(project(":service-api"))
- api(libs.kotlin.datetime)
- api(libs.kotlinx.serialization.core)
- api(libs.okhttp.core)
- api(libs.retrofit.core)
- api(libs.xmlutil.serialization)
+  api(project(":libraries:appconfig"))
+  api(project(":libraries:di"))
+  api(project(":service-api"))
+  api(libs.kotlin.datetime)
+  api(libs.kotlinx.serialization.core)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
+  api(libs.xmlutil.serialization)
 
- implementation(project(":libraries:retrofitconverters"))
- implementation(project(":libraries:util"))
- implementation(libs.kotlin.datetime)
- implementation(libs.okhttp.core)
- implementation(libs.retrofit.kotlinxSerialization)
- implementation(libs.tikxml.htmlEscape)
+  implementation(project(":libraries:retrofitconverters"))
+  implementation(project(":libraries:util"))
+  implementation(libs.kotlin.datetime)
+  implementation(libs.okhttp.core)
+  implementation(libs.retrofit.kotlinxSerialization)
+  implementation(libs.tikxml.htmlEscape)
 
- testImplementation(libs.test.junit)
- testImplementation(libs.test.truth)
+  testImplementation(libs.test.junit)
+  testImplementation(libs.test.truth)
 }

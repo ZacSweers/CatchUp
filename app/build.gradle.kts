@@ -28,7 +28,6 @@ import okio.source
 
 plugins {
   alias(libs.plugins.android.application)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.licensee)
   alias(libs.plugins.bugsnag)
@@ -48,7 +47,8 @@ android {
     versionCode = 1
     versionName = "1.0"
 
-    configure<BasePluginExtension> { archivesName.set("catchup") }
+    // TODO wat
+    //    configure<BasePluginExtension> { archivesName.set("catchup") }
 
     manifestPlaceholders["BUGSNAG_API_KEY"] = "placeholder"
   }
@@ -94,12 +94,13 @@ android {
   experimentalProperties["android.experimental.r8.dex-startup-optimization"] = true
 }
 
-val automaticBaselineProfileGeneration = providers.environmentVariable("AUTOMATIC_BASELINE_GENERATION").getOrElse("false").toBoolean()
+val automaticBaselineProfileGeneration =
+  providers.environmentVariable("AUTOMATIC_BASELINE_GENERATION").getOrElse("false").toBoolean()
 
 if (!automaticBaselineProfileGeneration) {
-  tasks.named { it == "mergeProductionReleaseStartupProfile"}.configureEach {
-    mustRunAfter(":app:copyProductionReleaseBaselineProfileIntoSrc")
-  }
+  tasks
+    .named { it == "mergeProductionReleaseStartupProfile" }
+    .configureEach { mustRunAfter(":app:copyProductionReleaseBaselineProfileIntoSrc") }
 }
 
 baselineProfile {
@@ -121,9 +122,7 @@ baselineProfile {
     }
   }
 
-  warnings {
-    maxAgpVersion = false
-  }
+  warnings { maxAgpVersion = false }
 }
 
 bugsnag {
@@ -394,7 +393,8 @@ val generateLicenseTask =
 
 generateLicenseTask.dependsOn("licenseeAndroidRelease")
 
-tasks.named { it.startsWith("licensee") && !it.endsWith("AndroidRelease") }
+tasks
+  .named { it.startsWith("licensee") && !it.endsWith("AndroidRelease") }
   .configureEach { enabled = false }
 
 licensee {

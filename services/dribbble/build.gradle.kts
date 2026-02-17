@@ -17,34 +17,25 @@
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
 }
 
-android {
-  namespace = "catchup.service.dribbble"
-}
+android { namespace = "catchup.service.dribbble" }
 
 foundry {
-  features {
-      metro()
-  }
-  android {
-    features {
-      resources("catchup_service_dribbble_")
-    }
-  }
+  features { metro() }
+  android { features { resources("catchup_service_dribbble_") } }
 }
 
 dependencies {
- api(project(":libraries:appconfig"))
- api(project(":libraries:di"))
- api(project(":service-api"))
- api(libs.kotlin.datetime)
- api(libs.okhttp.core)
- api(libs.retrofit.core)
+  api(project(":libraries:appconfig"))
+  api(project(":libraries:di"))
+  api(project(":service-api"))
+  api(libs.kotlin.datetime)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
 
- implementation(project(":libraries:retrofitconverters"))
- implementation(libs.kotlin.datetime)
- implementation(libs.misc.jsoup)
- implementation(libs.okhttp.core)
+  implementation(project(":libraries:retrofitconverters"))
+  implementation(libs.kotlin.datetime)
+  implementation(libs.misc.jsoup)
+  implementation(libs.okhttp.core)
 }

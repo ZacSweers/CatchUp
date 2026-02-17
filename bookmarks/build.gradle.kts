@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 plugins {
+  alias(libs.plugins.android.kmp)
   alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.android.library)
   alias(libs.plugins.foundry.base)
 }
 
 kotlin {
   // region KMP Targets
-  androidTarget()
+  android { namespace = "catchup.bookmarks" }
   jvm()
   // endregion
 
@@ -40,8 +40,6 @@ kotlin {
     }
   }
 }
-
-android { namespace = "catchup.bookmarks" }
 
 foundry {
   features {

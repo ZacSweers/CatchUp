@@ -5,7 +5,6 @@ import foundry.gradle.isCi
 
 plugins {
   alias(libs.plugins.android.test)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.baselineprofile)
 }

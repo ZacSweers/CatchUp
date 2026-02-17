@@ -17,12 +17,9 @@
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
 }
 
-android {
-  namespace = "catchup.service.uplabs"
-}
+android { namespace = "catchup.service.uplabs" }
 
 foundry {
   features {
@@ -33,16 +30,16 @@ foundry {
 }
 
 dependencies {
- api(project(":libraries:appconfig"))
- api(project(":libraries:di"))
- api(project(":service-api"))
- api(libs.kotlin.datetime)
- api(libs.okhttp.core)
- api(libs.retrofit.core)
+  api(project(":libraries:appconfig"))
+  api(project(":libraries:di"))
+  api(project(":service-api"))
+  api(libs.kotlin.datetime)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
 
- implementation(project(":libraries:retrofitconverters"))
- implementation(project(":libraries:util"))
- implementation(libs.kotlin.datetime)
- implementation(libs.okhttp.core)
- implementation(libs.retrofit.moshi)
+  implementation(project(":libraries:retrofitconverters"))
+  implementation(project(":libraries:util"))
+  implementation(libs.kotlin.datetime)
+  implementation(libs.okhttp.core)
+  implementation(libs.retrofit.moshi)
 }

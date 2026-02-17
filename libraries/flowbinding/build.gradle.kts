@@ -16,13 +16,10 @@
 
 plugins {
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.foundry.base)
 }
 
-android {
-  namespace = "catchup.flowbinding"
-}
+android { namespace = "catchup.flowbinding" }
 
 dependencies {
   api(libs.kotlin.coroutines)
