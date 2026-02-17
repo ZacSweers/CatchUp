@@ -15,7 +15,7 @@ import catchup.service.api.VisualService
 import catchup.service.api.toCatchUpDbItem
 import catchup.service.db.CatchUpDatabase
 import catchup.service.db.CatchUpDbItem
-import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo.exception.ApolloException
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
