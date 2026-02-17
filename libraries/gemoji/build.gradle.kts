@@ -17,34 +17,27 @@
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
 }
 
-android {
-  namespace = "catchup.gemoji"
-}
+android { namespace = "catchup.gemoji" }
 
-foundry {
-  features {
-    metro()
-  }
-}
+foundry { features { metro() } }
 
 dependencies {
- api(project(":libraries:di"))
- api(project(":libraries:gemoji:db"))
+  api(project(":libraries:di"))
+  api(project(":libraries:gemoji:db"))
 
- implementation(project(":libraries:util"))
- implementation(libs.androidx.annotations)
- implementation(libs.androidx.sqlite)
- implementation(libs.androidx.sqlite.framework)
- implementation(libs.kotlin.coroutines)
- implementation(libs.misc.timber)
- implementation(libs.sqldelight.coroutines)
- implementation(libs.sqldelight.driver.android)
- implementation(libs.sqldelight.runtime)
+  implementation(project(":libraries:util"))
+  implementation(libs.androidx.annotations)
+  implementation(libs.androidx.sqlite)
+  implementation(libs.androidx.sqlite.framework)
+  implementation(libs.kotlin.coroutines)
+  implementation(libs.misc.timber)
+  implementation(libs.sqldelight.coroutines)
+  implementation(libs.sqldelight.driver.android)
+  implementation(libs.sqldelight.runtime)
 
- testImplementation(libs.kotlin.coroutines.test)
- testImplementation(libs.test.junit)
- testImplementation(libs.test.truth)
+  testImplementation(libs.kotlin.coroutines.test)
+  testImplementation(libs.test.junit)
+  testImplementation(libs.test.truth)
 }

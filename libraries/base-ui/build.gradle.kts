@@ -16,45 +16,38 @@
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
 }
 
-android {
-  namespace = "catchup.ui.core"
-}
+android { namespace = "catchup.ui.core" }
 
 foundry {
   features {
     compose()
     metro()
   }
-  android {
-    features {
-      resources("catchup_baseui_")
-    }
-  }
+  android { features { resources("catchup_baseui_") } }
 }
 
 dependencies {
- api(project(":libraries:di"))
- api(libs.androidx.annotations)
- api(libs.androidx.compose.runtime)
- api(libs.androidx.compose.ui)
- api(libs.androidx.palette)
- api(libs.androidx.paletteKtx)
- api(libs.circuit.runtime)
- api(libs.kotlin.coroutines)
+  api(project(":libraries:di"))
+  api(libs.androidx.annotations)
+  api(libs.androidx.compose.runtime)
+  api(libs.androidx.compose.ui)
+  api(libs.androidx.palette)
+  api(libs.androidx.paletteKtx)
+  api(libs.circuit.runtime)
+  api(libs.kotlin.coroutines)
 
- implementation(project(":libraries:appconfig"))
- implementation(project(":libraries:util"))
- implementation(libs.androidx.activity)
- implementation(libs.androidx.activity.compose)
- implementation(libs.androidx.annotations)
- implementation(libs.androidx.compose.foundation)
- implementation(libs.androidx.compose.material.material3)
- implementation(libs.androidx.compose.materialIcons)
- implementation(libs.androidx.compose.uiTooling)
- implementation(libs.androidx.core)
- implementation(libs.haze)
- implementation(libs.kotlin.coroutines)
+  implementation(project(":libraries:appconfig"))
+  implementation(project(":libraries:util"))
+  implementation(libs.androidx.activity)
+  implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.annotations)
+  implementation(libs.androidx.compose.foundation)
+  implementation(libs.androidx.compose.material.material3)
+  implementation(libs.androidx.compose.materialIcons)
+  implementation(libs.androidx.compose.uiTooling)
+  implementation(libs.androidx.core)
+  implementation(libs.haze)
+  implementation(libs.kotlin.coroutines)
 }

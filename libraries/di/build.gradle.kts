@@ -25,11 +25,5 @@ kotlin {
 
   applyDefaultHierarchyTemplate()
 
-  sourceSets {
-    commonMain {
-      dependencies {
-        api(libs.metro.runtime)
-      }
-    }
-  }
+  sourceSets { commonMain { dependencies { api(libs.metro.runtime) } } }
 }
