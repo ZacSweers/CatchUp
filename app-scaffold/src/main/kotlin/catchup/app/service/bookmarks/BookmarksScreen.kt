@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue.EndToStart
 import androidx.compose.material3.SwipeToDismissBoxValue.Settled
 import androidx.compose.material3.SwipeToDismissBoxValue.StartToEnd
@@ -225,7 +226,8 @@ private fun BookmarksList(state: BookmarksScreen.State, modifier: Modifier = Mod
       if (item == null) {
         PlaceholderItem(Color.Unspecified)
       } else {
-        val dismissState = rememberSwipeToDismissBoxState(confirmValueChange = { it == EndToStart })
+        val dismissState =
+          rememberSwipeToDismissBoxState(Settled, SwipeToDismissBoxDefaults.positionalThreshold)
 
         if (dismissState.currentValue == EndToStart) {
           // TODO offer an undo option after a pause?
