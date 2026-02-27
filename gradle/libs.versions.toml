@@ -71,7 +71,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 licensee = { id = "app.cash.licensee", version = "1.14.1" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
-playPublisher = { id = "com.github.triplet.play", version = "3.13.0" }
+playPublisher = { id = "com.github.triplet.play", version = "4.0.0" }
 redacted = { id = "dev.zacsweers.redacted", version = "1.15.1" }
 retry = { id = "org.gradle.test-retry", version = "1.6.4" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
