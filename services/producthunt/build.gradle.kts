@@ -17,20 +17,23 @@
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.apollo)
 }
 
 android {
   defaultConfig {
-    buildConfigField("String", "PRODUCT_HUNT_CLIENT_ID",
-        "\"${project.properties["catchup_product_hunt_client_id"]}\"")
-    buildConfigField("String", "PRODUCT_HUNT_CLIENT_SECRET",
-        "\"${project.properties["catchup_product_hunt_client_secret"]}\"")
+    buildConfigField(
+      "String",
+      "PRODUCT_HUNT_CLIENT_ID",
+      "\"${project.properties["catchup_product_hunt_client_id"]}\"",
+    )
+    buildConfigField(
+      "String",
+      "PRODUCT_HUNT_CLIENT_SECRET",
+      "\"${project.properties["catchup_product_hunt_client_secret"]}\"",
+    )
   }
-  buildFeatures {
-    buildConfig = true
-  }
+  buildFeatures { buildConfig = true }
   namespace = "catchup.service.producthunt"
 }
 
@@ -48,27 +51,23 @@ foundry {
     metro()
     moshi(codegen = false)
   }
-  android {
-    features {
-      resources("catchup_service_ph_")
-    }
-  }
+  android { features { resources("catchup_service_ph_") } }
 }
 
 dependencies {
- api(project(":libraries:auth"))
- api(project(":libraries:di"))
- api(project(":libraries:util"))
- api(project(":service-api"))
- api(libs.apollo.api)
- api(libs.apollo.runtime)
- api(libs.kotlin.datetime)
- api(libs.moshi.core)
- api(libs.okhttp.core)
+  api(project(":libraries:auth"))
+  api(project(":libraries:di"))
+  api(project(":libraries:util"))
+  api(project(":service-api"))
+  api(libs.apollo.api)
+  api(libs.apollo.runtime)
+  api(libs.kotlin.datetime)
+  api(libs.moshi.core)
+  api(libs.okhttp.core)
 
- implementation(libs.androidx.datastore.preferences)
- implementation(libs.apollo.httpcache)
- implementation(libs.kotlin.datetime)
- implementation(libs.misc.okio)
- implementation(libs.okhttp.core)
+  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.apollo.httpcache)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.misc.okio)
+  implementation(libs.okhttp.core)
 }

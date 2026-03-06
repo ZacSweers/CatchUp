@@ -18,26 +18,17 @@ import com.android.build.api.variant.LibraryAndroidComponentsExtension
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.noarg)
 }
 
 android {
   namespace = "catchup.service.hackernews"
-  buildFeatures {
-    resValues = true
-  }
+  buildFeatures { resValues = true }
 }
 
 foundry {
-  features {
-    metro()
-  }
-  android {
-    features {
-      resources("catchup_service_hn_")
-    }
-  }
+  features { metro() }
+  android { features { resources("catchup_service_hn_") } }
 }
 
 configure<LibraryAndroidComponentsExtension> {
@@ -45,12 +36,15 @@ configure<LibraryAndroidComponentsExtension> {
     // Configure firebase
     fun firebaseProperty(property: String, resolveName: Boolean = true) {
       val buildTypeName = variant.buildType!!
-      val name = if (resolveName && buildTypeName == "debug") {
-        "$property.debug"
-      } else property
+      val name =
+        if (resolveName && buildTypeName == "debug") {
+          "$property.debug"
+        } else property
       val value = project.properties[name].toString()
-      variant.resValues.put(variant.makeResValueKey("string", property.removePrefix("catchup.")),
-        com.android.build.api.variant.ResValue(value))
+      variant.resValues.put(
+        variant.makeResValueKey("string", property.removePrefix("catchup.")),
+        com.android.build.api.variant.ResValue(value),
+      )
     }
     firebaseProperty("catchup.google_api_key")
     firebaseProperty("catchup.google_app_id")
@@ -64,21 +58,19 @@ configure<LibraryAndroidComponentsExtension> {
   }
 }
 
-noArg {
-  annotation("catchup.service.hackernews.model.NoArg")
-}
+noArg { annotation("catchup.service.hackernews.model.NoArg") }
 
 dependencies {
- api(project(":libraries:di"))
- api(project(":service-api"))
- api(libs.androidx.annotations)
- api(libs.kotlin.datetime)
+  api(project(":libraries:di"))
+  api(project(":service-api"))
+  api(libs.androidx.annotations)
+  api(libs.kotlin.datetime)
 
- implementation(project(":libraries:kotlinutil"))
- implementation(project(":libraries:util"))
- implementation(libs.androidx.annotations)
- implementation(libs.firebase.database)
- implementation(libs.kotlin.coroutines)
- implementation(libs.kotlin.datetime)
- implementation(libs.okhttp.core)
+  implementation(project(":libraries:kotlinutil"))
+  implementation(project(":libraries:util"))
+  implementation(libs.androidx.annotations)
+  implementation(libs.firebase.database)
+  implementation(libs.kotlin.coroutines)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.okhttp.core)
 }
