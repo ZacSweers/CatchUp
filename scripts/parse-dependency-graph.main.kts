@@ -4,7 +4,7 @@
 @file:DependsOn("com.slack.foundry:cli:0.34.1")
 @file:DependsOn("com.slack.foundry:skippy:0.34.1")
 @file:DependsOn("com.github.ajalt.clikt:clikt-jvm:5.1.0")
-@file:DependsOn("com.fueledbycaffeine.spotlight:buildscript-utils:1.6.7")
+@file:DependsOn("com.fueledbycaffeine.spotlight:buildscript-utils:1.6.8")
 
 import com.fueledbycaffeine.spotlight.buildscript.GradlePath
 import com.fueledbycaffeine.spotlight.buildscript.SpotlightRulesList
