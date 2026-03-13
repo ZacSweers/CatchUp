@@ -3,7 +3,6 @@ import com.android.build.api.variant.BuildConfigField
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.ksp)
@@ -24,25 +23,19 @@ android {
 }
 
 sqldelight {
-  databases {
-    create("SummarizationsDatabase") {
-      packageName.set("catchup.summarizer")
-    }
-  }
+  databases { create("SummarizationsDatabase") { packageName.set("catchup.summarizer") } }
 }
 
 androidComponents {
   onVariants {
     it.buildConfigFields?.put(
       "OPEN_AI_KEY",
-      BuildConfigField("String", "\"${properties["catchup_openAiKey"]}\"", "")
+      BuildConfigField("String", "\"${properties["catchup_openAiKey"]}\"", ""),
     )
   }
 }
 
-ksp {
-  arg("circuit.codegen.mode", "METRO")
-}
+ksp { arg("circuit.codegen.mode", "METRO") }
 
 dependencies {
   api(project(":libraries:appconfig"))

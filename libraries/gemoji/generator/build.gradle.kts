@@ -6,9 +6,7 @@ plugins {
   alias(libs.plugins.moshix)
 }
 
-application {
-  mainClass.set("catchup.gemoji.generator.MainKt")
-}
+application { mainClass.set("catchup.gemoji.generator.MainKt") }
 
 sqldelight {
   databases {

@@ -17,39 +17,32 @@
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
 }
 
-android {
-  namespace = "catchup.service.reddit"
-}
+android { namespace = "catchup.service.reddit" }
 
 foundry {
   features {
     metro()
     moshi(codegen = true)
   }
-  android {
-    features {
-      resources("catchup_service_reddit_")
-    }
-  }
+  android { features { resources("catchup_service_reddit_") } }
 }
 
 dependencies {
- api(project(":libraries:appconfig"))
- api(project(":libraries:di"))
- api(project(":service-api"))
- api(libs.androidx.annotations)
- api(libs.kotlin.datetime)
- api(libs.moshi.core)
- api(libs.okhttp.core)
- api(libs.retrofit.core)
+  api(project(":libraries:appconfig"))
+  api(project(":libraries:di"))
+  api(project(":service-api"))
+  api(libs.androidx.annotations)
+  api(libs.kotlin.datetime)
+  api(libs.moshi.core)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
 
- implementation(project(":libraries:retrofitconverters"))
- implementation(project(":libraries:util"))
- implementation(libs.androidx.annotations)
- implementation(libs.kotlin.datetime)
- implementation(libs.okhttp.core)
- implementation(libs.retrofit.moshi)
+  implementation(project(":libraries:retrofitconverters"))
+  implementation(project(":libraries:util"))
+  implementation(libs.androidx.annotations)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.okhttp.core)
+  implementation(libs.retrofit.moshi)
 }
