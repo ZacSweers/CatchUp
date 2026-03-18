@@ -120,8 +120,9 @@ class CatchUpPreferencesImpl(
 ) : CatchUpPreferences, BasePreferences {
 
   // TODO hide this, only exposed for settings
-  override val datastore =
-    PreferenceDataStoreFactory.create { CatchUpPreferences.dataStoreFile(context) }
+  override val datastore = PreferenceDataStoreFactory.create {
+    CatchUpPreferences.dataStoreFile(context)
+  }
 
   // TODO this is... ugly, but needed to force initial values to load from the store
   override val initialValues = runBlocking { datastore.data.first() }

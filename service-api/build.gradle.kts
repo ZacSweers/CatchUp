@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 plugins {
-  alias(libs.plugins.android.library)
+  alias(libs.plugins.android.kmp)
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.foundry.base)
 }
 
 kotlin {
   // region KMP Targets
-  androidTarget()
+  android { namespace = "catchup.service.api" }
   jvm()
   // endregion
 
@@ -42,18 +42,8 @@ kotlin {
         implementation(project(":service-db"))
       }
     }
-    with(getByName("androidMain")) {
-      dependencies {
-        api(libs.androidx.compose.runtime)
-      }
-    }
+    with(getByName("androidMain")) { dependencies { api(libs.androidx.compose.runtime) } }
   }
 }
 
-android { namespace = "catchup.service.api" }
-
-foundry {
-  features {
-    metro()
-  }
-}
+foundry { features { metro() } }

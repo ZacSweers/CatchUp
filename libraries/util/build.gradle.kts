@@ -16,63 +16,53 @@
 
 plugins {
   alias(libs.plugins.kotlin.multiplatform)
-  alias(libs.plugins.android.library)
+  alias(libs.plugins.android.kmp)
   alias(libs.plugins.redacted)
   alias(libs.plugins.foundry.base)
 }
 
 kotlin {
   // region KMP Targets
-  androidTarget()
+  android { namespace = "catchup.util" }
   jvm()
   // endregion
 
   sourceSets {
     commonMain {
       dependencies {
-    api(libs.apollo.api)
-    api(libs.kotlin.datetime)
-    api(libs.kotlinx.immutable)
-    api(libs.metro.runtime)
-    api(libs.moshi.core)
-    api(libs.okhttp.core)
+        api(libs.apollo.api)
+        api(libs.kotlin.datetime)
+        api(libs.kotlinx.immutable)
+        api(libs.metro.runtime)
+        api(libs.moshi.core)
+        api(libs.okhttp.core)
 
-    implementation(project(":libraries:appconfig"))
-    implementation(libs.androidx.annotations)
-    implementation(libs.misc.unbescape)
-   }
+        implementation(project(":libraries:appconfig"))
+        implementation(libs.androidx.annotations)
+        implementation(libs.misc.unbescape)
+      }
     }
-    commonTest {
-      dependencies {
-    implementation(libs.kotlin.test)
-   }
-    }
+    commonTest { dependencies { implementation(libs.kotlin.test) } }
     androidMain {
       dependencies {
-    api(libs.androidx.coreKtx)
+        api(libs.androidx.coreKtx)
 
-    implementation(libs.androidx.core)
-    implementation(libs.misc.timber)
-   }
+        implementation(libs.androidx.core)
+        implementation(libs.misc.timber)
+      }
     }
-    jvmMain {
-      dependencies {
-    api(libs.misc.okio)
-   }
-    }
+    jvmMain { dependencies { api(libs.misc.okio) } }
     jvmTest {
       dependencies {
-    api(libs.misc.okio)
+        api(libs.misc.okio)
 
-    implementation(libs.misc.okio.fakeFileSystem)
-    implementation(libs.test.junit)
-    implementation(libs.test.truth)
-   }
+        implementation(libs.misc.okio.fakeFileSystem)
+        implementation(libs.test.junit)
+        implementation(libs.test.truth)
+      }
     }
   }
 }
-
-android { namespace = "catchup.util" }
 
 redacted { redactedAnnotations.add("catchup/util/network/Redacted") }
 

@@ -17,7 +17,9 @@ sqldelight {
     create("GemojiDatabase") {
       packageName.set("catchup.gemoji.db")
       schemaOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/databases"))
-      migrationOutputDirectory.set(layout.projectDirectory.dir("src/commonMain/sqldelight/migrations"))
+      migrationOutputDirectory.set(
+        layout.projectDirectory.dir("src/commonMain/sqldelight/migrations")
+      )
     }
   }
 }

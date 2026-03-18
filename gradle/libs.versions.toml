@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.37.3"
-agp = "8.13.2"
+agp = "9.1.0"
 androidx-activity = "1.13.0"
 androidx-core = "1.18.0"
 androidx-sqlite = "2.7.0-alpha01"
@@ -10,11 +10,12 @@ bouncycastle = "1.83"
 compose-material3 = "1.4.0"
 emoji = "1.2.0"
 anvil = "0.5.3"
-apollo = "4.0.0-beta.7"
+# TODO 5.x
+apollo = "4.4.1"
 circuit = "0.33.1"
 coil = "2.7.0"
 compose = "1.10.5"
-compose-jb = "1.10.2"
+compose-jb = "1.10.3"
 compose-jb-material3 = "1.9.0"
 corbind = "1.12.1"
 coroutines = "1.10.2"
@@ -22,17 +23,17 @@ dagger = "2.59.2"
 datastore = "1.3.0-alpha07"
 detekt = "1.23.8"
 eithernet = "2.0.0"
-foundry = "0.33.1"
+foundry = "0.35.0"
 jdk = "25"
 jvmTarget = "17"
 kotlin = "2.3.20"
 kotlinx-serialization = "1.10.0"
 ksp = "2.3.6"
-ktfmt = "0.61"
+ktfmt = "0.62"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.11.0-alpha02"
 markdown = "0.35.0"
-metro = "0.11.2"
+metro = "0.11.4"
 moshi = "1.15.2"
 moshix = "0.34.5"
 okhttp = "5.3.2"
@@ -41,11 +42,11 @@ preferences = "1.2.1"
 retrofit = "3.0.0"
 slack-lint = "0.11.1"
 sortDependencies = "0.16"
-spotless = "8.2.1"
-sqldelight = "2.3.1"
+spotless = "8.4.0"
+sqldelight = "2.3.2"
 telephoto = "0.18.0"
 tikxml = "0.8.15"
-xerial = "3.51.2.0"
+xerial = "3.51.3.0"
 collapsingToolbar = "2.3.5"
 
 [plugins]
@@ -53,7 +54,8 @@ anvil = { id = "dev.zacsweers.anvil", version.ref = "anvil" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
-apollo = { id = "com.apollographql.apollo3", version.ref = "apollo" }
+android-kmp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 bugsnag = { id = "com.bugsnag.android.gradle", version = "8.2.0" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.3" }
@@ -72,7 +74,7 @@ licensee = { id = "app.cash.licensee", version = "1.14.1" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "3.13.0" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.15.1" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.16.0" }
 retry = { id = "org.gradle.test-retry", version = "1.6.4" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
 foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
@@ -159,11 +161,11 @@ anvil-annotations = { module = "dev.zacsweers.anvil:annotations", version.ref = 
 anvil-annotationsOptional = { module = "dev.zacsweers.anvil:annotations-optional", version.ref = "anvil" }
 anvil-compiler = { module = "dev.zacsweers.anvil:compiler", version.ref = "anvil" }
 
-apollo-api = { module = "com.apollographql.apollo3:apollo-api", version.ref = "apollo" }
-apollo-httpcache = { module = "com.apollographql.apollo3:apollo-http-cache", version.ref = "apollo" }
-apollo-normalizedCache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
-apollo-normalizedCache-api = { module = "com.apollographql.apollo3:apollo-normalized-cache-api", version.ref = "apollo" }
-apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
+apollo-api = { module = "com.apollographql.apollo:apollo-api", version.ref = "apollo" }
+apollo-httpcache = { module = "com.apollographql.apollo:apollo-http-cache", version.ref = "apollo" }
+apollo-normalizedCache = { module = "com.apollographql.apollo:apollo-normalized-cache", version.ref = "apollo" }
+apollo-normalizedCache-api = { module = "com.apollographql.apollo:apollo-normalized-cache-api", version.ref = "apollo" }
+apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
 
 autoService-annotations = "com.google.auto.service:auto-service:1.1.1"
 autoService-ksp = "dev.zacsweers.autoservice:auto-service-ksp:1.2.0"

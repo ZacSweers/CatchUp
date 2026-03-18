@@ -210,32 +210,30 @@ internal constructor(
   private val flushChannel = Channel<Unit>(Channel.CONFLATED)
 
   @OptIn(DelicateCoroutinesApi::class)
-  private val writeJob: Job =
-    scope.launch {
-      try {
-        while (isActive && !flushChannel.isClosedForReceive) {
-          for (flush in flushChannel) {
-            if (logChannel.isClosedForReceive) break
-            val results = logChannel.drain(this)
-            if (results.isNotEmpty()) {
-              save(results)
-              results.clear()
-            }
+  private val writeJob: Job = scope.launch {
+    try {
+      while (isActive && !flushChannel.isClosedForReceive) {
+        for (flush in flushChannel) {
+          if (logChannel.isClosedForReceive) break
+          val results = logChannel.drain(this)
+          if (results.isNotEmpty()) {
+            save(results)
+            results.clear()
           }
         }
-      } catch (e: Exception) {
-        Timber.e(e, "Error writing logs to disk")
       }
+    } catch (e: Exception) {
+      Timber.e(e, "Error writing logs to disk")
     }
+  }
 
   @OptIn(DelicateCoroutinesApi::class)
-  private val flushJob: Job =
-    scope.launch {
-      while (isActive && !flushChannel.isClosedForSend) {
-        delay(flushInterval)
-        flushChannel.send(Unit)
-      }
+  private val flushJob: Job = scope.launch {
+    while (isActive && !flushChannel.isClosedForSend) {
+      delay(flushInterval)
+      flushChannel.send(Unit)
     }
+  }
 
   override fun protectedTryAddEntry(entry: Entry) {
     logChannel.trySend(entry)
