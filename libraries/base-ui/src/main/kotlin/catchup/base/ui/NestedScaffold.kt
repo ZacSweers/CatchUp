@@ -146,12 +146,11 @@ private fun NestedScaffoldLayout(
           .map { it.measure(looseConstraints) }
 
       val bottomBarHeight = bottomBarPlaceables.maxByOrNull { it.height }?.height
-      val fabOffsetFromBottom =
-        fabPlacement?.let {
-          // Total height is the bottom bar height + the FAB height + the padding
-          // between the FAB and bottom bar
-          (bottomBarHeight ?: bottomInset) + it.height + FabSpacing.roundToPx()
-        }
+      val fabOffsetFromBottom = fabPlacement?.let {
+        // Total height is the bottom bar height + the FAB height + the padding
+        // between the FAB and bottom bar
+        (bottomBarHeight ?: bottomInset) + it.height + FabSpacing.roundToPx()
+      }
 
       val snackbarOffsetFromBottom =
         if (snackbarHeight != 0) {

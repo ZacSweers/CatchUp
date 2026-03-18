@@ -29,8 +29,9 @@ interface TokenStorage {
 data class AuthData(val tokenType: String, val expiration: Instant, val token: String)
 
 internal class TokenStorageImpl(pathFactory: (prefix: String) -> Path) : TokenStorage {
-  private val datastore =
-    PreferenceDataStoreFactory.createWithPath { pathFactory(TOKEN_STORAGE_FILE_NAME_PREFIX) }
+  private val datastore = PreferenceDataStoreFactory.createWithPath {
+    pathFactory(TOKEN_STORAGE_FILE_NAME_PREFIX)
+  }
 
   override suspend fun updateAuthData(authData: AuthData) {
     datastore.edit { prefs ->
