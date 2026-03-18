@@ -121,16 +121,15 @@ internal class TokenManagerImpl(
     return newBuilder.build()
   }
 
-  private suspend fun refreshToken() =
-    mutex.withLock {
-      println("INFO: Refreshing token")
+  private suspend fun refreshToken() = mutex.withLock {
+    println("INFO: Refreshing token")
 
-      when (val result = authFunction()) {
-        is ApiResult.Success -> tokenStorage.updateAuthData(result.value)
-        is ApiResult.Failure -> {
-          // TODO this will infinite loop!
-          println("ERROR: Failed to refresh token: $result")
-        }
+    when (val result = authFunction()) {
+      is ApiResult.Success -> tokenStorage.updateAuthData(result.value)
+      is ApiResult.Failure -> {
+        // TODO this will infinite loop!
+        println("ERROR: Failed to refresh token: $result")
       }
     }
+  }
 }
