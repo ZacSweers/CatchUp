@@ -50,10 +50,10 @@ import catchup.util.kotlin.sortBy
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.cache.http.HttpFetchPolicy
-import com.apollographql.apollo3.cache.http.httpFetchPolicy
-import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.cache.http.HttpFetchPolicy
+import com.apollographql.apollo.cache.http.httpFetchPolicy
+import com.apollographql.apollo.exception.ApolloException
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState

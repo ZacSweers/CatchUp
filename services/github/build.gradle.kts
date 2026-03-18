@@ -17,18 +17,18 @@
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.apollo)
 }
 
 android {
   defaultConfig {
-    buildConfigField("String", "GITHUB_DEVELOPER_TOKEN",
-        "\"${properties["catchup_github_developer_token"]}\"")
+    buildConfigField(
+      "String",
+      "GITHUB_DEVELOPER_TOKEN",
+      "\"${properties["catchup_github_developer_token"]}\"",
+    )
   }
-  buildFeatures {
-    buildConfig = true
-  }
+  buildFeatures { buildConfig = true }
   namespace = "catchup.service.github"
 }
 
@@ -42,34 +42,28 @@ apollo {
 }
 
 foundry {
-  features {
-    metro()
-  }
-  android {
-    features {
-      resources("catchup_service_github_")
-    }
-  }
+  features { metro() }
+  android { features { resources("catchup_service_github_") } }
 }
 
 dependencies {
- api(project(":libraries:appconfig"))
- api(project(":libraries:di"))
- api(project(":libraries:gemoji"))
- api(project(":service-api"))
- api(libs.apollo.api)
- api(libs.apollo.runtime)
- api(libs.kotlin.datetime)
- api(libs.okhttp.core)
- api(libs.retrofit.core)
+  api(project(":libraries:appconfig"))
+  api(project(":libraries:di"))
+  api(project(":libraries:gemoji"))
+  api(project(":service-api"))
+  api(libs.apollo.api)
+  api(libs.apollo.runtime)
+  api(libs.kotlin.datetime)
+  api(libs.okhttp.core)
+  api(libs.retrofit.core)
 
- implementation(project(":libraries:retrofitconverters"))
- implementation(project(":libraries:util"))
- implementation(libs.apollo.httpcache)
- // Apollo
- implementation(libs.apollo.runtime)
- implementation(libs.kotlin.datetime)
- implementation(libs.misc.jsoup)
- implementation(libs.misc.timber)
- implementation(libs.okhttp.core)
+  implementation(project(":libraries:retrofitconverters"))
+  implementation(project(":libraries:util"))
+  implementation(libs.apollo.httpcache)
+  // Apollo
+  implementation(libs.apollo.runtime)
+  implementation(libs.kotlin.datetime)
+  implementation(libs.misc.jsoup)
+  implementation(libs.misc.timber)
+  implementation(libs.okhttp.core)
 }
