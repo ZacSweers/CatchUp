@@ -2,7 +2,7 @@
 // Gradle plugin repo required for the module-graph-assert plugin dep
 @file:Repository("https://plugins.gradle.org/m2")
 @file:DependsOn("com.slack.foundry:cli:0.35.0")
-@file:DependsOn("com.slack.foundry:skippy:0.35.0")
+@file:DependsOn("com.slack.foundry:skippy:0.35.1")
 @file:DependsOn("com.github.ajalt.clikt:clikt-jvm:5.1.0")
 
 import com.github.ajalt.clikt.command.main
