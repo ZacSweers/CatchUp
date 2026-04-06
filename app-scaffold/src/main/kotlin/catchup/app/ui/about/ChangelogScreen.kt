@@ -21,6 +21,7 @@ import catchup.app.data.LinkManager
 import catchup.app.data.github.RepoReleasesQuery
 import catchup.app.service.ClickableItem
 import catchup.app.service.ErrorItem
+import catchup.app.service.LinkHandler
 import catchup.app.service.TextItem
 import catchup.app.service.openUrl
 import catchup.app.service.rememberClickableItemState
@@ -42,6 +43,7 @@ import com.slack.circuit.runtime.screen.Screen
 import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.ExposeImplBinding
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -63,7 +65,7 @@ data object ChangelogScreen : Screen {
 @CircuitInject(ChangelogScreen::class, AppScope::class)
 @Inject
 class ChangelogPresenter(
-  private val linkManager: LinkManager,
+  private val linkManager: LinkHandler,
   private val changelogRepository: ChangelogRepository,
 ) : Presenter<State> {
   @Composable

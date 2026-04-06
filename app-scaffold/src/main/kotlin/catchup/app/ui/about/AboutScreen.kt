@@ -33,6 +33,7 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.ExposeImplBinding
 import dev.zacsweers.metro.StringKey
 import java.util.Locale
 import kotlinx.collections.immutable.ImmutableMap
