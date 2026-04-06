@@ -47,7 +47,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.map
 import app.cash.sqldelight.paging3.QueryPagingSource
 import catchup.app.CatchUpPreferences
-import catchup.app.data.LinkManager
 import catchup.app.service.ServiceScreen.Event
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE

@@ -45,7 +45,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import app.cash.sqldelight.paging3.QueryPagingSource
-import catchup.app.data.LinkManager
 import catchup.app.service.ClickableItem
 import catchup.app.service.LinkHandler
 import catchup.app.service.PlaceholderItem
@@ -74,7 +73,6 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesIntoMap
-import dev.zacsweers.metro.ExposeImplBinding
 import dev.zacsweers.metro.StringKey
 import dev.zacsweers.metro.binding
 import java.nio.file.Path

@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import catchup.app.data.LinkManager
 import catchup.app.data.github.ProjectOwnersByIdsQuery
 import catchup.app.data.github.RepositoriesByIdsQuery
 import catchup.app.data.github.RepositoryByNameAndOwnerQuery
@@ -66,7 +65,6 @@ import com.squareup.moshi.Types
 import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
-import dev.zacsweers.metro.ExposeImplBinding
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Provides

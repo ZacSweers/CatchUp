@@ -27,8 +27,8 @@ import catchup.app.CatchUpPreferencesImpl
 import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.util.injection.qualifiers.ApplicationContext
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ExposeImplBinding
 import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.ExposeImplBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metro.binding

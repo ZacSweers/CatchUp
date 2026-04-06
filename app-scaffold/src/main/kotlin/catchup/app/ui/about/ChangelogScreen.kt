@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import catchup.app.data.LinkManager
 import catchup.app.data.github.RepoReleasesQuery
 import catchup.app.service.ClickableItem
 import catchup.app.service.ErrorItem
@@ -43,7 +42,6 @@ import com.slack.circuit.runtime.screen.Screen
 import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
-import dev.zacsweers.metro.ExposeImplBinding
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

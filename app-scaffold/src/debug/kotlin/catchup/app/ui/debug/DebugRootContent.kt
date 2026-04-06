@@ -28,7 +28,6 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
-import dev.zacsweers.metro.ExposeImplBinding
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class, replaces = [DefaultRootContent::class])
