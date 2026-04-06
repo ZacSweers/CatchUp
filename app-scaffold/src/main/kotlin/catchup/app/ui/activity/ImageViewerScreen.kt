@@ -31,7 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import catchup.app.data.LinkManager
+import catchup.app.service.LinkHandler
 import catchup.app.service.openUrl
 import catchup.app.ui.activity.FlickToDismissState.FlickGestureState.Dismissed
 import catchup.app.ui.activity.ImageViewerScreen.Event
@@ -105,7 +105,7 @@ data class ImageViewerScreen(
 class ImageViewerPresenter(
   @Assisted private val screen: ImageViewerScreen,
   @Assisted private val navigator: Navigator,
-  private val linkManager: LinkManager,
+  private val linkManager: LinkHandler,
 ) : Presenter<State> {
   @CircuitInject(ImageViewerScreen::class, AppScope::class)
   @AssistedFactory

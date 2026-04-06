@@ -57,8 +57,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import catchup.app.data.LinkManager
 import catchup.app.service.ActionRow
+import catchup.app.service.LinkHandler
 import catchup.app.service.TextItemFooter
 import catchup.app.service.TextItemHeader
 import catchup.app.service.detail.ServiceDetailScreen.Event.OpenImage
@@ -144,7 +144,7 @@ class ServiceDetailPresenter(
   @Assisted val screen: ServiceDetailScreen,
   @ApplicationContext private val context: Context,
   services: Map<String, Provider<Service>>,
-  private val linkManager: LinkManager,
+  private val linkManager: LinkHandler,
   private val detailRepoFactory: DetailRepository.Factory,
 ) : Presenter<ServiceDetailScreen.State> {
 

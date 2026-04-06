@@ -45,8 +45,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import app.cash.sqldelight.paging3.QueryPagingSource
-import catchup.app.data.LinkManager
 import catchup.app.service.ClickableItem
+import catchup.app.service.LinkHandler
 import catchup.app.service.PlaceholderItem
 import catchup.app.service.TextItem
 import catchup.app.service.bookmarks.BookmarksScreen.Event.Click
@@ -111,7 +111,7 @@ data object BookmarksScreen : Screen, DeepLinkable {
 class BookmarksPresenter(
   @Assisted private val navigator: Navigator,
   private val bookmarksRepository: BookmarkRepository,
-  private val linkManager: LinkManager,
+  private val linkManager: LinkHandler,
   private val serviceMetaMap: Map<String, ServiceMeta>,
 ) : Presenter<BookmarksScreen.State> {
 

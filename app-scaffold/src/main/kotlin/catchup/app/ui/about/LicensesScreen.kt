@@ -29,12 +29,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import catchup.app.data.LinkManager
 import catchup.app.data.github.ProjectOwnersByIdsQuery
 import catchup.app.data.github.RepositoriesByIdsQuery
 import catchup.app.data.github.RepositoryByNameAndOwnerQuery
 import catchup.app.service.ClickableItem
 import catchup.app.service.ErrorItem
+import catchup.app.service.LinkHandler
 import catchup.app.service.TextItem
 import catchup.app.service.openUrl
 import catchup.app.ui.about.LicensesScreen.Event.Click
@@ -107,7 +107,7 @@ interface LicensesModule {
 @CircuitInject(LicensesScreen::class, AppScope::class)
 @Inject
 class LicensesPresenter(
-  private val linkManager: LinkManager,
+  private val linkManager: LinkHandler,
   private val licensesRepository: LicensesRepository,
 ) : Presenter<State> {
   @Composable

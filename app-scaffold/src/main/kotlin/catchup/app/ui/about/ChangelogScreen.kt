@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import catchup.app.data.LinkManager
 import catchup.app.data.github.RepoReleasesQuery
 import catchup.app.service.ClickableItem
 import catchup.app.service.ErrorItem
+import catchup.app.service.LinkHandler
 import catchup.app.service.TextItem
 import catchup.app.service.openUrl
 import catchup.app.service.rememberClickableItemState
@@ -63,7 +63,7 @@ data object ChangelogScreen : Screen {
 @CircuitInject(ChangelogScreen::class, AppScope::class)
 @Inject
 class ChangelogPresenter(
-  private val linkManager: LinkManager,
+  private val linkManager: LinkHandler,
   private val changelogRepository: ChangelogRepository,
 ) : Presenter<State> {
   @Composable

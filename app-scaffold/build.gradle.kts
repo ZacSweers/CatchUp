@@ -21,7 +21,6 @@ plugins {
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.apollo)
-  alias(libs.plugins.ksp)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.moshix)
   alias(libs.plugins.metro)
@@ -95,8 +94,6 @@ apollo {
     schemaFiles.from(file("src/main/graphql/catchup/app/data/github/schema.json"))
   }
 }
-
-ksp { arg("circuit.codegen.mode", "METRO") }
 
 dependencies {
   implementation(project(":bookmarks"))
@@ -230,6 +227,4 @@ dependencies {
   testImplementation(libs.misc.okio.fakeFileSystem)
   testImplementation(libs.test.junit)
   testImplementation(libs.test.truth)
-
-  ksp(libs.circuit.codegen)
 }

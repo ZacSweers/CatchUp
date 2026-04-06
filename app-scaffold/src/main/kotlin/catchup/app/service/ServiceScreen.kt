@@ -47,7 +47,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.map
 import app.cash.sqldelight.paging3.QueryPagingSource
 import catchup.app.CatchUpPreferences
-import catchup.app.data.LinkManager
 import catchup.app.service.ServiceScreen.Event
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked
 import catchup.app.service.ServiceScreen.Event.ItemActionClicked.Action.SHARE
@@ -132,7 +131,7 @@ data class ServiceScreen(val serviceKey: String) : Screen {
 class ServicePresenter(
   @Assisted private val screen: ServiceScreen,
   @Assisted private val navigator: Navigator,
-  private val linkManager: LinkManager,
+  private val linkManager: LinkHandler,
   private val services: Map<String, Provider<Service>>,
   private val dbFactory: ContextualFactory<DataMode, out CatchUpDatabase>,
   private val serviceMediatorFactory: ServiceMediator.Factory,
