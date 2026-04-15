@@ -238,7 +238,7 @@ misc-bugsnag = "com.bugsnag:bugsnag-android:6.26.0"
 misc-byteunits = "com.jakewharton.byteunits:byteunits:0.9.1"
 
 misc-debug-soLoader = "com.facebook.soloader:soloader:0.12.1"
-misc-debug-guava = "com.google.guava:guava:33.5.0-jre"
+misc-debug-guava = "com.google.guava:guava:33.6.0-jre"
 misc-debug-processPhoenix = "com.jakewharton:process-phoenix:3.0.0"
 misc-debug-telescope = "com.mattprecious.telescope:telescope:2.4.0"
 
