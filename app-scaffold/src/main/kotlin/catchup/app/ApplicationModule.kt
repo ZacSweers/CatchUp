@@ -58,6 +58,8 @@ import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
 import timber.log.Timber
 
+fun interface Initializer : () -> Unit
+
 @ContributesTo(AppScope::class)
 interface ApplicationModule {
 
@@ -71,10 +73,10 @@ interface ApplicationModule {
   @Multibinds(allowEmpty = true) fun metadataContributors(): Set<AppConfigMetadataContributor>
 
   /** Provides initializers for app startup. */
-  @Initializers @Multibinds fun initializers(): Set<() -> Unit>
+  @Initializers @Multibinds fun initializers(): Set<Initializer>
 
   /** Provides initializers for app startup that can be initialized async. */
-  @AsyncInitializers @Multibinds fun asyncInitializers(): Set<() -> Unit>
+  @AsyncInitializers @Multibinds fun asyncInitializers(): Set<Initializer>
 
   @Multibinds fun timberTrees(): Set<Timber.Tree>
 
@@ -102,7 +104,7 @@ interface ApplicationModule {
     @AsyncInitializers
     @IntoSet
     @Provides
-    fun mainDispatcherInit(): () -> Unit = {
+    fun mainDispatcherInit(): Initializer = {
       // This makes a call to disk, so initialize it off the main thread first... ironically
       Dispatchers.Main
     }
@@ -110,7 +112,7 @@ interface ApplicationModule {
     @Initializers
     @IntoSet
     @Provides
-    fun coilInit(imageLoader: ImageLoader): () -> Unit = { Coil.setImageLoader(imageLoader) }
+    fun coilInit(imageLoader: ImageLoader): Initializer = { Coil.setImageLoader(imageLoader) }
 
     @Qualifier @Retention(BINARY) annotation class IsLowRamDevice
 

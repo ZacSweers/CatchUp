@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 @DependencyGraph(AppScope::class)
 interface AppGraph {
 
-  val activityProviders: Map<KClass<out Activity>, Provider<Activity>>
+  val activityProviders: Map<KClass<out Activity>, () -> Activity>
 
   fun inject(application: CatchUpApplication)
 

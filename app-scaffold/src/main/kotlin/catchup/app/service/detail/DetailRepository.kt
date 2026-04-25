@@ -24,7 +24,7 @@ class DetailRepository(
   @Assisted private val itemId: Long,
   @Assisted private val serviceId: String,
   private val dbFactory: ContextualFactory<DataMode, out CatchUpDatabase>,
-  services: Map<String, Provider<Service>>,
+  services: Map<String, () -> Service>,
   private val unfurlerRepository: UnfurlerRepository,
 ) {
 

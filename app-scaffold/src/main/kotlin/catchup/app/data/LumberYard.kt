@@ -144,8 +144,8 @@ sealed class LumberYard {
 
   @Inject
   class Factory(
-    private val simpleLumberYard: Provider<SimpleLumberYard>,
-    private val diskLumberYard: Provider<SimpleLumberYard>,
+    private val simpleLumberYard: () -> SimpleLumberYard,
+    private val diskLumberYard: () -> SimpleLumberYard,
   ) {
     fun create(useDisk: Boolean): LumberYard {
       return if (useDisk) {

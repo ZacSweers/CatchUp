@@ -143,7 +143,7 @@ data class ServiceDetailScreen(
 class ServiceDetailPresenter(
   @Assisted val screen: ServiceDetailScreen,
   @ApplicationContext private val context: Context,
-  services: Map<String, Provider<Service>>,
+  services: Map<String, () -> Service>,
   private val linkManager: LinkHandler,
   private val detailRepoFactory: DetailRepository.Factory,
 ) : Presenter<ServiceDetailScreen.State> {
