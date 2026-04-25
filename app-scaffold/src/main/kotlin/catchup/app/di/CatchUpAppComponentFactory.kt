@@ -22,7 +22,6 @@ import androidx.annotation.Keep
 import androidx.core.app.AppComponentFactory
 import catchup.app.CatchUpApplication
 import dev.zacsweers.catchup.app.scaffold.BuildConfig
-import dev.zacsweers.metro.Provider
 import kotlin.reflect.KClass
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 

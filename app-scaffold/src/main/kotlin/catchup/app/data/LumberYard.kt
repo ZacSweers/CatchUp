@@ -23,7 +23,6 @@ import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.util.RingBuffer
 import catchup.util.io.AtomicFile
 import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.Provider
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
