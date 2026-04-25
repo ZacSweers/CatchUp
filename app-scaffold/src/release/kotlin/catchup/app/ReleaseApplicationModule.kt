@@ -48,7 +48,7 @@ interface ReleaseApplicationModule {
   @Initializers
   @IntoSet
   @Provides
-  fun bugsnagInit(application: Application, @BugsnagKey key: String): () -> Unit = {
+  fun bugsnagInit(application: Application, @BugsnagKey key: String): Initializer = {
     getOrStartBugsnag(application, key)
   }
 
