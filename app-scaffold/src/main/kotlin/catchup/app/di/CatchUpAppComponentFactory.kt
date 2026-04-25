@@ -22,7 +22,6 @@ import androidx.annotation.Keep
 import androidx.core.app.AppComponentFactory
 import catchup.app.CatchUpApplication
 import dev.zacsweers.catchup.app.scaffold.BuildConfig
-import dev.zacsweers.metro.Provider
 import kotlin.reflect.KClass
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 
@@ -32,7 +31,7 @@ class CatchUpAppComponentFactory : AppComponentFactory() {
   private inline fun <reified T : Any> getInstance(
     cl: ClassLoader,
     className: String,
-    providers: Map<KClass<out T>, Provider<T>>,
+    providers: Map<KClass<out T>, () -> T>,
   ): T? {
     val clazz = Class.forName(className, false, cl).asSubclass(T::class.java)
     val modelProvider = providers[clazz.kotlin] ?: return null

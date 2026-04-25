@@ -84,7 +84,7 @@ interface DebugApplicationModule {
     application: Application,
     objectWatcher: CatchUpObjectWatcher,
     leakCanaryConfig: LeakCanary.Config,
-  ): () -> Unit = {
+  ): Initializer = {
     LeakCanary.config = leakCanaryConfig
 
     application.registerActivityLifecycleCallbacks(
@@ -123,7 +123,7 @@ interface DebugApplicationModule {
   @Provides
   fun strictModeInit(
     @StrictModeExecutor penaltyListenerExecutor: Lazy<ExecutorService>
-  ): () -> Unit = {
+  ): Initializer = {
     StrictMode.setThreadPolicy(
       StrictMode.ThreadPolicy.Builder()
         .detectAll()

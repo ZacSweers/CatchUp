@@ -98,7 +98,6 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
-import dev.zacsweers.metro.Provider
 import kotlin.time.Instant
 import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentListOf
@@ -143,7 +142,7 @@ data class ServiceDetailScreen(
 class ServiceDetailPresenter(
   @Assisted val screen: ServiceDetailScreen,
   @ApplicationContext private val context: Context,
-  services: Map<String, Provider<Service>>,
+  services: Map<String, () -> Service>,
   private val linkManager: LinkHandler,
   private val detailRepoFactory: DetailRepository.Factory,
 ) : Presenter<ServiceDetailScreen.State> {

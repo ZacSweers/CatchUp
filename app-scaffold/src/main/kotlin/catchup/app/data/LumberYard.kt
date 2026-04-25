@@ -23,7 +23,6 @@ import catchup.app.util.BackgroundAppCoroutineScope
 import catchup.util.RingBuffer
 import catchup.util.io.AtomicFile
 import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.Provider
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
@@ -144,8 +143,8 @@ sealed class LumberYard {
 
   @Inject
   class Factory(
-    private val simpleLumberYard: Provider<SimpleLumberYard>,
-    private val diskLumberYard: Provider<SimpleLumberYard>,
+    private val simpleLumberYard: () -> SimpleLumberYard,
+    private val diskLumberYard: () -> SimpleLumberYard,
   ) {
     fun create(useDisk: Boolean): LumberYard {
       return if (useDisk) {

@@ -38,8 +38,6 @@ import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
 import timber.log.Timber.Tree
 
-private typealias InitializerFunction = () -> Unit
-
 class CatchUpApplication : Application() {
 
   @Inject lateinit var appConfig: AppConfig
@@ -54,7 +52,7 @@ class CatchUpApplication : Application() {
   @Inject
   fun asyncInits(
     scope: BackgroundAppCoroutineScope,
-    @AsyncInitializers asyncInitializers: Set<InitializerFunction>,
+    @AsyncInitializers asyncInitializers: Set<Initializer>,
   ) {
     scope.launch {
       // TODO - run these in parallel?
@@ -83,7 +81,7 @@ class CatchUpApplication : Application() {
   }
 
   @Inject
-  fun inits(@Initializers initializers: Set<InitializerFunction>) {
+  fun inits(@Initializers initializers: Set<Initializer>) {
     initializers.forEach { it() }
   }
 
