@@ -3,7 +3,13 @@ package catchup.app.service.detail
 import android.content.Context
 import android.text.format.DateUtils
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -333,7 +339,6 @@ private fun CommentsList(state: ServiceDetailScreen.State, modifier: Modifier = 
             comment,
             isCollapsed = comment.id in state.collapsedItems,
             themeColor = state.themeColor,
-            modifier = Modifier.animateItem(),
           ) {
             state.eventSink(ToggleCollapse(comment.id))
           }
@@ -412,7 +417,6 @@ private fun CommentItem(
         Column(
           modifier =
             Modifier.padding(start = startPadding + 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp)
-              .animateContentSize()
         ) {
           Row {
             val commonModifier =
@@ -461,20 +465,26 @@ private fun CommentItem(
               )
             }
           }
-          if (!isCollapsed) {
-            Spacer(Modifier.height(4.dp))
-            Markdown(
-              comment.text,
-              colors = catchupMarkdownColors(themeColor),
-              typography = catchupMarkdownTypography(),
-            )
-            if (comment.clickableUrls.isNotEmpty()) {
+          AnimatedVisibility(
+            visible = !isCollapsed,
+            enter = expandVertically(tween(300)) + fadeIn(tween(300)),
+            exit = shrinkVertically(tween(300)) + fadeOut(tween(300)),
+          ) {
+            Column {
               Spacer(Modifier.height(4.dp))
-              // TODO refine this UI. Currently unsupported though
-              Column(verticalArrangement = spacedBy(4.dp)) {
-                val uriHandler = LocalUriHandler.current
-                for (url in comment.clickableUrls) {
-                  OutlinedButton(onClick = { uriHandler.openUri(url.url) }) { Text(url.text) }
+              Markdown(
+                comment.text,
+                colors = catchupMarkdownColors(themeColor),
+                typography = catchupMarkdownTypography(),
+              )
+              if (comment.clickableUrls.isNotEmpty()) {
+                Spacer(Modifier.height(4.dp))
+                // TODO refine this UI. Currently unsupported though
+                Column(verticalArrangement = spacedBy(4.dp)) {
+                  val uriHandler = LocalUriHandler.current
+                  for (url in comment.clickableUrls) {
+                    OutlinedButton(onClick = { uriHandler.openUri(url.url) }) { Text(url.text) }
+                  }
                 }
               }
             }

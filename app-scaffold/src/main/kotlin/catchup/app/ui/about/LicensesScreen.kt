@@ -66,6 +66,7 @@ import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.ExposeImplBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Provides
 import java.util.Objects
@@ -224,6 +225,7 @@ interface LicensesRepository {
   suspend fun requestItems(): ImmutableList<OssBaseItem>
 }
 
+@ExposeImplBinding
 @ContributesBinding(AppScope::class)
 @Inject
 class LicensesRepositoryImpl(

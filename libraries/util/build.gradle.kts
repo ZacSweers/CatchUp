@@ -23,7 +23,10 @@ plugins {
 
 kotlin {
   // region KMP Targets
-  android { namespace = "catchup.util" }
+  android {
+    namespace = "catchup.util"
+    withHostTest {}
+  }
   jvm()
   // endregion
 

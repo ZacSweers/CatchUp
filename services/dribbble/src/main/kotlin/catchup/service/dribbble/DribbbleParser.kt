@@ -75,7 +75,7 @@ internal object DribbbleParser {
       imageAlt = altText,
       videoUrl = videoUrl,
       createdAt = createdAt,
-      likesCount = element.getElementsByClass("js-shot-likes-count").first()!!.text().parseCount(),
+      likesCount = element.getElementsByClass("js-shot-likes-count").first()?.text()?.parseCount() ?: 0,
       commentsCount = 0,
       viewsCount = element.getElementsByClass("js-shot-views-count").first()!!.text().parseCount(),
       user = parsePlayer(element),

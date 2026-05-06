@@ -19,9 +19,9 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import kotlin.time.Instant
+import kotlin.time.toDuration
 
 /**
  * Formats dates in UTC seconds or milliseconds time to [Instant] instances.
@@ -33,7 +33,7 @@ class EpochInstantJsonAdapter(private val durationUnit: DurationUnit = DurationU
 
   override fun fromJson(reader: JsonReader): Instant? {
     val l = reader.nextLong()
-    return Instant.fromEpochMilliseconds(l.seconds.toLong(durationUnit))
+    return Instant.fromEpochMilliseconds(l.toDuration(durationUnit).inWholeMilliseconds)
   }
 
   override fun toJson(writer: JsonWriter, value: Instant?) {

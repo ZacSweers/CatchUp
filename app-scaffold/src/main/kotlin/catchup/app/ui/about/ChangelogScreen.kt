@@ -42,6 +42,7 @@ import com.slack.circuit.runtime.screen.Screen
 import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.ExposeImplBinding
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -134,6 +135,7 @@ interface ChangelogRepository {
   suspend fun requestItems(): ImmutableList<CatchUpItem>
 }
 
+@ExposeImplBinding
 @ContributesBinding(AppScope::class)
 @Inject
 class ChangelogRepositoryImpl(
