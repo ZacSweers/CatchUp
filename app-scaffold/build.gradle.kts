@@ -45,6 +45,7 @@ foundry {
       }
     }
     metro()
+    circuit()
     moshi(codegen = true)
   }
   // TODO

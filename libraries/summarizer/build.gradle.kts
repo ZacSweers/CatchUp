@@ -10,7 +10,7 @@ plugins {
 
 foundry {
   features {
-    circuit(codegen = true)
+    circuit()
     compose()
     metro()
     moshi(codegen = true)
