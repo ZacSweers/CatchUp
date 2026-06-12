@@ -12,7 +12,7 @@ emoji = "1.2.0"
 anvil = "0.5.4"
 # TODO 5.x
 apollo = "4.4.3"
-circuit = "0.33.1"
+circuit = "0.34.0"
 coil = "2.7.0"
 compose = "1.11.2"
 compose-jb = "1.11.1"
