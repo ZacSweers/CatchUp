@@ -167,11 +167,7 @@ class MainActivity(
                   intentAwareNavigator,
                   backStack,
                   decoratorFactory =
-                    GestureNavigationDecorationFactory(
-                      circuit.animatedNavDecoratorFactory,
-                      // Pop the back stack once the user has gone 'back'
-                      navigator::pop,
-                    ),
+                    GestureNavigationDecorationFactory(circuit.animatedNavDecoratorFactory),
                 )
               }
             }
