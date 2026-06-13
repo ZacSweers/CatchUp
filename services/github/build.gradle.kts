@@ -37,7 +37,7 @@ apollo {
     mapScalar("DateTime", "kotlin.time.Instant")
     mapScalar("URI", "okhttp3.HttpUrl")
     packageName.set("catchup.service.github")
-    schemaFiles.from(file("src/main/graphql/catchup/service/github/schema.json"))
+    schemaFiles.from(rootProject.file("scripts/github/schema.json"))
   }
 }
 

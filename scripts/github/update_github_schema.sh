@@ -4,8 +4,6 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CANONICAL_SCHEMA="${ROOT}/scripts/github/schema.json"
-SERVICE_SCHEMA="${ROOT}/services/github/src/main/graphql/catchup/service/github/schema.json"
-APP_SCHEMA="${ROOT}/app-scaffold/src/main/graphql/catchup/app/data/github/schema.json"
 TMP_SCHEMA="$(mktemp)"
 
 trap 'rm -f "${TMP_SCHEMA}"' EXIT
@@ -158,10 +156,6 @@ gh api graphql -f query="${INTROSPECTION_QUERY}" \
 jq empty "${TMP_SCHEMA}"
 
 cp "${TMP_SCHEMA}" "${CANONICAL_SCHEMA}"
-cp "${TMP_SCHEMA}" "${SERVICE_SCHEMA}"
-cp "${TMP_SCHEMA}" "${APP_SCHEMA}"
 
-echo "Updated GitHub GraphQL schemas:"
+echo "Updated GitHub GraphQL schema:"
 echo "  ${CANONICAL_SCHEMA}"
-echo "  ${SERVICE_SCHEMA}"
-echo "  ${APP_SCHEMA}"
