@@ -131,9 +131,24 @@ gh api graphql -f query="${INTROSPECTION_QUERY}" \
           .
         end;
 
+      def has_graphql_type($name):
+        if type != "object" then
+          false
+        elif .name == $name then
+          true
+        elif .ofType == null then
+          false
+        else
+          .ofType | has_graphql_type($name)
+        end;
+
       walk(
         if type == "object" and has("defaultValue") and .defaultValue != null then
-          .defaultValue |= normalize_default
+          if .type | has_graphql_type("ProjectCardArchivedState") then
+            .defaultValue = null
+          else
+            .defaultValue |= normalize_default
+          end
         else
           .
         end
