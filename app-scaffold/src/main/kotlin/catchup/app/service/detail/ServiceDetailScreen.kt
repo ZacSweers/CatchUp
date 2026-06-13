@@ -371,8 +371,8 @@ private fun HeaderItem(state: ServiceDetailScreen.State, modifier: Modifier = Mo
           HorizontalDivider(thickness = Dp.Hairline)
           Markdown(
             it,
-            typography = catchupMarkdownTypography(),
-            colors = catchupMarkdownColors(state.themeColor),
+            typography = catchupMarkdownTypography(linkColor = state.themeColor),
+            colors = catchupMarkdownColors(),
           )
         }
 
@@ -474,8 +474,8 @@ private fun CommentItem(
               Spacer(Modifier.height(4.dp))
               Markdown(
                 comment.text,
-                colors = catchupMarkdownColors(themeColor),
-                typography = catchupMarkdownTypography(),
+                colors = catchupMarkdownColors(),
+                typography = catchupMarkdownTypography(linkColor = themeColor),
               )
               if (comment.clickableUrls.isNotEmpty()) {
                 Spacer(Modifier.height(4.dp))
@@ -575,17 +575,14 @@ private fun UnfurlText(
   }
 }
 
-@Composable
-fun catchupMarkdownColors(linkColor: Color): MarkdownColors {
-  @Suppress("DEPRECATION")
-  return markdownColor(linkText = linkColor)
-}
+@Composable fun catchupMarkdownColors(): MarkdownColors = markdownColor()
 
 private val defaultSmallTextSize = 12.sp
 
 // TODO any other tunings/stylings?
 @Composable
 fun catchupMarkdownTypography(
+  linkColor: Color,
   seedSize: TextUnit = defaultSmallTextSize,
   h1: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 2.0f),
   h2: TextStyle = MaterialTheme.typography.titleLarge.copy(fontSize = seedSize * 1.8f),
@@ -610,6 +607,7 @@ fun catchupMarkdownTypography(
   list: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = seedSize),
   link: TextStyle =
     MaterialTheme.typography.bodyLarge.copy(
+      color = linkColor,
       fontWeight = FontWeight.Bold,
       textDecoration = TextDecoration.Underline,
     ),
@@ -630,7 +628,6 @@ fun catchupMarkdownTypography(
     bullet = bullet,
     list = list,
     inlineCode = inlineCode,
-    link = link,
     textLink = textLink,
     table = text,
   )
