@@ -159,14 +159,16 @@ class ChangelogRepositoryImpl(
         @Suppress("UNCHECKED_CAST")
         it.data!!.repository!!.onRepository.releases.nodes as List<RepoReleasesQuery.Node>
       }
-      .mapIndexed { index, node ->
+      .mapIndexedNotNull { index, node ->
         with(node.onRelease) {
+          val tag = tag ?: return@mapIndexedNotNull null
+          val target = tag.target ?: return@mapIndexedNotNull null
           CatchUpItem(
-            id = tag!!.target.abbreviatedOid.hashCode().toLong(),
+            id = target.abbreviatedOid.hashCode().toLong(),
             title = markdownConverter.replaceMarkdownEmojisIn(name!!),
             timestamp = publishedAt!!,
             tag = tag.name,
-            source = tag.target.abbreviatedOid, // sha
+            source = target.abbreviatedOid, // sha
             itemClickUrl = url.toString(),
             // TODO render markdown at some point?
             description = markdownConverter.replaceMarkdownEmojisIn(description!!),
