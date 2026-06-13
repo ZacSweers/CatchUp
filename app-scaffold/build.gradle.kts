@@ -92,7 +92,7 @@ apollo {
     mapScalar("DateTime", "kotlin.time.Instant")
     mapScalar("URI", "okhttp3.HttpUrl")
     packageName.set("catchup.app.data.github")
-    schemaFiles.from(file("src/main/graphql/catchup/app/data/github/schema.json"))
+    schemaFiles.from(rootProject.file("scripts/github/schema.json"))
   }
 }
 

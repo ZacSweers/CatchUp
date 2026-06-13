@@ -14,7 +14,8 @@ fun DisableableContent(enabled: Boolean, content: @Composable () -> Unit) {
   CompositionLocalProvider(
     LocalEnabled provides enabled,
     LocalContentColor provides
-      if (enabled) currentContentColor else currentContentColor.copy(alpha = ContentAlphas.Disabled),
+      if (enabled) currentContentColor
+      else currentContentColor.copy(alpha = ContentAlphas.Disabled),
   ) {
     content()
   }

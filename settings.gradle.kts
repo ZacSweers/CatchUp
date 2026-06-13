@@ -206,8 +206,8 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version "4.4.1"
-  id("com.fueledbycaffeine.spotlight") version "1.3.4"
+  id("com.gradle.develocity") version "4.4.2"
+  id("com.fueledbycaffeine.spotlight") version "1.6.10"
 }
 
 develocity {
@@ -267,7 +267,6 @@ configureIncludedBuild("anvil") { path ->
   }
 }
 
-include(":platform")
 
 // https://docs.gradle.org/5.6/userguide/groovy_plugin.html#sec:groovy_compilation_avoidance
 enableFeaturePreview("GROOVY_COMPILATION_AVOIDANCE")
