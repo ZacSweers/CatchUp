@@ -26,7 +26,6 @@ plugins {
   alias(libs.plugins.spotless)
   alias(libs.plugins.doctor) apply false
   alias(libs.plugins.ksp) apply false
-  alias(libs.plugins.anvil) apply false
   alias(libs.plugins.cacheFixPlugin) apply false
   //  alias(libs.plugins.detekt) apply false
   alias(libs.plugins.kotlin.noarg) apply false
