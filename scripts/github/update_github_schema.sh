@@ -1,11 +1,161 @@
 #!/usr/bin/env bash
 
-# Because I always have to go look up how to do this
-# First and only argument should be the auth token
-if [[ $# -eq 0 ]] ; then
-    echo 'Missing GitHub auth token argument!'
-    exit 1
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+CANONICAL_SCHEMA="${ROOT}/scripts/github/schema.json"
+TMP_SCHEMA="$(mktemp)"
+
+trap 'rm -f "${TMP_SCHEMA}"' EXIT
+
+read -r -d '' INTROSPECTION_QUERY <<'GRAPHQL' || true
+query IntrospectionQuery {
+  __schema {
+    queryType {
+      name
+    }
+    mutationType {
+      name
+    }
+    subscriptionType {
+      name
+    }
+    types {
+      ...FullType
+    }
+    directives {
+      name
+      description
+      locations
+      args {
+        ...InputValue
+      }
+    }
+  }
+}
+
+fragment FullType on __Type {
+  kind
+  name
+  description
+  fields(includeDeprecated: true) {
+    name
+    description
+    args {
+      ...InputValue
+    }
+    type {
+      ...TypeRef
+    }
+    isDeprecated
+    deprecationReason
+  }
+  inputFields {
+    ...InputValue
+  }
+  interfaces {
+    ...TypeRef
+  }
+  enumValues(includeDeprecated: true) {
+    name
+    description
+    isDeprecated
+    deprecationReason
+  }
+  possibleTypes {
+    ...TypeRef
+  }
+}
+
+fragment InputValue on __InputValue {
+  name
+  description
+  type {
+    ...TypeRef
+  }
+  defaultValue
+}
+
+fragment TypeRef on __Type {
+  kind
+  name
+  ofType {
+    kind
+    name
+    ofType {
+      kind
+      name
+      ofType {
+        kind
+        name
+        ofType {
+          kind
+          name
+          ofType {
+            kind
+            name
+            ofType {
+              kind
+              name
+              ofType {
+                kind
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+GRAPHQL
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "Missing GitHub CLI. Install gh and run 'gh auth login' first." >&2
+  exit 1
 fi
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/schema.json"
-curl -H "Authorization: bearer $1" https://api.github.com/graphql | python3 -m json.tool > "${DIR}"
+if ! command -v jq >/dev/null 2>&1; then
+  echo "Missing jq. Install jq before regenerating the GitHub schema." >&2
+  exit 1
+fi
+
+gh api graphql -f query="${INTROSPECTION_QUERY}" \
+  | jq '
+      def normalize_default:
+        if type == "string" then
+          gsub("\"(?<value>[A-Z][A-Z0-9_]*)\""; .value)
+        else
+          .
+        end;
+
+      def has_graphql_type($name):
+        if type != "object" then
+          false
+        elif .name == $name then
+          true
+        elif .ofType == null then
+          false
+        else
+          .ofType | has_graphql_type($name)
+        end;
+
+      walk(
+        if type == "object" and has("defaultValue") and .defaultValue != null then
+          if .type | has_graphql_type("ProjectCardArchivedState") then
+            .defaultValue = null
+          else
+            .defaultValue |= normalize_default
+          end
+        else
+          .
+        end
+      )
+    ' > "${TMP_SCHEMA}"
+
+jq empty "${TMP_SCHEMA}"
+
+cp "${TMP_SCHEMA}" "${CANONICAL_SCHEMA}"
+
+echo "Updated GitHub GraphQL schema:"
+echo "  ${CANONICAL_SCHEMA}"
