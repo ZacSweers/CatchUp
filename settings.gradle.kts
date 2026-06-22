@@ -207,7 +207,7 @@ dependencyResolutionManagement {
 
 plugins {
   id("com.gradle.develocity") version "4.4.3"
-  id("com.fueledbycaffeine.spotlight") version "1.6.10"
+  id("com.fueledbycaffeine.spotlight") version "1.6.11"
 }
 
 develocity {
