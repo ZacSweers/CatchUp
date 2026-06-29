@@ -13,4 +13,4 @@ if [[ -e build/rake/aggregated_missing_identifiers.txt ]] && [[ -s build/rake/ag
 fi
 
 ./gradlew sortDependencies
-./gradlew spotlessApply
+kempt format --all

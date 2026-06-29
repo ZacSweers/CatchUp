@@ -1,8 +1,7 @@
 /*
- * Copyright (C) 2020. Zac Sweers
+ * Copyright (C) 2026. Zac Sweers
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -137,13 +136,12 @@ class OrderServicesPresenter(
 
   @Composable
   override fun present(): State {
-    val storedOrder by
-      remember {
-          catchUpPreferences.servicesOrder.mapToStateFlow {
-            it ?: serviceMetas.keys.toImmutableList()
-          }
-        }
-        .collectAsState()
+    val storedOrder by remember {
+      catchUpPreferences.servicesOrder.mapToStateFlow {
+        it ?: serviceMetas.keys.toImmutableList()
+      }
+    }
+      .collectAsState()
 
     val initialOrderedServices =
       remember(storedOrder) {

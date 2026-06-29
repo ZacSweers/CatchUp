@@ -9,7 +9,8 @@
     ],
     "neverSkipPatterns": [
       ".github/workflows/**",
-      "spotless/**",
+      ".kempt.toml",
+      "config/license-header.txt",
       "scripts/github/schema.json",
       "config/lint/lint.xml"
     ]

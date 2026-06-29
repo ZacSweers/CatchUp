@@ -3,6 +3,32 @@
   "extends": [
     "config:recommended"
   ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "(^|/)\\.kempt\\.toml$"
+      ],
+      "matchStrings": [
+        "\\[ktfmt\\][^\\[]*?version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "maven",
+      "registryUrlTemplate": "https://repo1.maven.org/maven2",
+      "depNameTemplate": "com.facebook:ktfmt"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "(^|/)\\.kempt\\.toml$"
+      ],
+      "matchStrings": [
+        "\\[gjf\\][^\\[]*?version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "maven",
+      "registryUrlTemplate": "https://repo1.maven.org/maven2",
+      "depNameTemplate": "com.google.googlejavaformat:google-java-format"
+    }
+  ],
   "prHourlyLimit": 20,
   "packageRules": [
     {
