@@ -9,6 +9,9 @@ version = "1.35.0"
 [license-header]
 file = "config/license-header.txt"
 
+[ktfmt.license-header]
+excludes = "config/license-header-excludes-kt.txt"
+
 [paths]
 exclude = [
   "**/build/**",
