@@ -1,8 +1,7 @@
 /*
- * Copyright (C) 2019. Zac Sweers
+ * Copyright (C) 2026. Zac Sweers
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -77,58 +76,58 @@ private suspend fun EmojiMarkdownConverter.replaceMarkdownEmojisIn(
   val aliasBuilder = StringBuilder(MAX_ALIAS_LENGTH)
   var startAlias = false
   return flow {
-      for (char in markdown) {
-        if (startAlias || aliasBuilder.isNotEmpty()) {
-          if (startAlias && char == ':') {
-            // Double ::, so emit a colon and keep startAlias set
+    for (char in markdown) {
+      if (startAlias || aliasBuilder.isNotEmpty()) {
+        if (startAlias && char == ':') {
+          // Double ::, so emit a colon and keep startAlias set
+          emit(':')
+          continue
+        }
+        startAlias = false
+        when (char) {
+          ' ' -> {
+            // Aliases can't have spaces, so bomb out and restart
             emit(':')
-            continue
+            emitAll(aliasBuilder.asSequence().asFlow())
+            emit(' ')
+            aliasBuilder.setLength(0)
           }
-          startAlias = false
-          when (char) {
-            ' ' -> {
-              // Aliases can't have spaces, so bomb out and restart
+          ':' -> {
+            val potentialAlias = aliasBuilder.toString()
+            val potentialEmoji = convert(potentialAlias)
+            // If we find an emoji append it and reset alias start, if we don't find an emoji
+            // append between the potential start and this index *and* consider this index the new
+            // potential start.
+            if (potentialEmoji != null) {
+              emitAll(potentialEmoji.asSequence().asFlow())
+            } else {
               emit(':')
-              emitAll(aliasBuilder.asSequence().asFlow())
-              emit(' ')
-              aliasBuilder.setLength(0)
+              emitAll(potentialAlias.asSequence().asFlow())
+              // Start a new alias from this colon as we didn't have a match with the existing
+              // close
+              startAlias = true
             }
-            ':' -> {
-              val potentialAlias = aliasBuilder.toString()
-              val potentialEmoji = convert(potentialAlias)
-              // If we find an emoji append it and reset alias start, if we don't find an emoji
-              // append between the potential start and this index *and* consider this index the new
-              // potential start.
-              if (potentialEmoji != null) {
-                emitAll(potentialEmoji.asSequence().asFlow())
-              } else {
-                emit(':')
-                emitAll(potentialAlias.asSequence().asFlow())
-                // Start a new alias from this colon as we didn't have a match with the existing
-                // close
-                startAlias = true
-              }
-              aliasBuilder.setLength(0)
-            }
-            else -> aliasBuilder.append(char)
+            aliasBuilder.setLength(0)
           }
+          else -> aliasBuilder.append(char)
+        }
+      } else {
+        if (char == ':') {
+          startAlias = true
         } else {
-          if (char == ':') {
-            startAlias = true
-          } else {
-            emit(char)
-          }
+          emit(char)
         }
       }
-
-      // If we started an alias but ran out of characters, flush it
-      if (startAlias) {
-        emit(':')
-      } else if (aliasBuilder.isNotEmpty()) {
-        emit(':')
-        emitAll(aliasBuilder.asSequence().asFlow())
-      }
     }
+
+    // If we started an alias but ran out of characters, flush it
+    if (startAlias) {
+      emit(':')
+    } else if (aliasBuilder.isNotEmpty()) {
+      emit(':')
+      emitAll(aliasBuilder.asSequence().asFlow())
+    }
+  }
     .collectToString()
 }
 

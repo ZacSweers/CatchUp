@@ -1,3 +1,17 @@
+/*
+ * Copyright (C) 2026. Zac Sweers
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package catchup.app.ui.debug
 
 import android.animation.ValueAnimator
@@ -216,112 +230,112 @@ class DebugSettingsPresenter(
 
   private fun items(displayMetrics: DisplayMetrics, cache: Cache): ImmutableList<DebugItem> {
     return buildList {
-        add(Header("Network"))
-        add(
-          Element.SpinnerElement(
-            "Data Mode",
-            CatchUpPreferences.Keys.dataMode,
-            DataMode.entries.map { it.name },
-            ValueType.STRING,
-            defaultOptionIndex = DataMode.REAL.ordinal,
-          )
+      add(Header("Network"))
+      add(
+        Element.SpinnerElement(
+          "Data Mode",
+          CatchUpPreferences.Keys.dataMode,
+          DataMode.entries.map { it.name },
+          ValueType.STRING,
+          defaultOptionIndex = DataMode.REAL.ordinal,
         )
-        // TODO conditional based on mock mode?
-        add(
-          Element.SpinnerElement(
-            "Delay",
-            DebugPreferences.Keys.networkDelay,
-            listOf(250, 500, 1000, 2000, 3000, 5000),
-            ValueType.LONG,
-            defaultOptionIndex = 3,
-          ) { index ->
-            "${index}ms"
-          }
-        )
-        add(
-          Element.SpinnerElement(
-            "Variance",
-            DebugPreferences.Keys.networkVariancePercent,
-            listOf(20, 40, 60),
-            ValueType.INT,
-            defaultOptionIndex = 1,
-          ) { index ->
-            "${index}%"
-          }
-        )
-        add(
-          Element.SpinnerElement(
-            "Error",
-            DebugPreferences.Keys.networkFailurePercent,
-            listOf(0, 3, 10, 25, 50, 75, 100),
-            ValueType.INT,
-            defaultOptionIndex = 1,
-          ) { index ->
-            "${index}%"
-          }
-        )
+      )
+      // TODO conditional based on mock mode?
+      add(
+        Element.SpinnerElement(
+          "Delay",
+          DebugPreferences.Keys.networkDelay,
+          listOf(250, 500, 1000, 2000, 3000, 5000),
+          ValueType.LONG,
+          defaultOptionIndex = 3,
+        ) { index ->
+          "${index}ms"
+        }
+      )
+      add(
+        Element.SpinnerElement(
+          "Variance",
+          DebugPreferences.Keys.networkVariancePercent,
+          listOf(20, 40, 60),
+          ValueType.INT,
+          defaultOptionIndex = 1,
+        ) { index ->
+          "${index}%"
+        }
+      )
+      add(
+        Element.SpinnerElement(
+          "Error",
+          DebugPreferences.Keys.networkFailurePercent,
+          listOf(0, 3, 10, 25, 50, 75, 100),
+          ValueType.INT,
+          defaultOptionIndex = 1,
+        ) { index ->
+          "${index}%"
+        }
+      )
 
-        add(Header("User Interface"))
-        add(
-          Element.SpinnerElement(
-            "Animations",
-            DebugPreferences.Keys.animationSpeed,
-            listOf(1, 2, 3, 5, 10),
-            ValueType.INT,
-            defaultOptionIndex = 0,
-          ) { index ->
-            if (index == 1) {
-              "Normal"
-            } else {
-              "${index}x slower"
-            }
+      add(Header("User Interface"))
+      add(
+        Element.SpinnerElement(
+          "Animations",
+          DebugPreferences.Keys.animationSpeed,
+          listOf(1, 2, 3, 5, 10),
+          ValueType.INT,
+          defaultOptionIndex = 0,
+        ) { index ->
+          if (index == 1) {
+            "Normal"
+          } else {
+            "${index}x slower"
           }
+        }
+      )
+      add(Header("Logs"))
+      add(Element.ButtonElement("Show logs", LogsModal))
+      add(
+        Element.ButtonElement(
+          "Leak Analysis",
+          IntentScreen(LeakCanary.newLeakDisplayActivityIntent()),
         )
-        add(Header("Logs"))
-        add(Element.ButtonElement("Show logs", LogsModal))
-        add(
-          Element.ButtonElement(
-            "Leak Analysis",
-            IntentScreen(LeakCanary.newLeakDisplayActivityIntent()),
-          )
-        )
-        add(Header("Build Information"))
-        add(Element.ValueElement("Name", appConfig.versionName))
-        add(Element.ValueElement("Code", appConfig.versionCode.toString()))
-        add(Element.ValueElement("Date", appConfig.timestamp))
+      )
+      add(Header("Build Information"))
+      add(Element.ValueElement("Name", appConfig.versionName))
+      add(Element.ValueElement("Code", appConfig.versionCode.toString()))
+      add(Element.ValueElement("Date", appConfig.timestamp))
 
-        add(Header("Device Information"))
-        add(Element.ValueElement("Make", Build.MANUFACTURER truncateAt 20))
-        add(Element.ValueElement("Model", Build.MODEL truncateAt 20))
-        add(
-          Element.ValueElement(
-            "Resolution",
-            "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}",
-          )
+      add(Header("Device Information"))
+      add(Element.ValueElement("Make", Build.MANUFACTURER truncateAt 20))
+      add(Element.ValueElement("Model", Build.MODEL truncateAt 20))
+      add(
+        Element.ValueElement(
+          "Resolution",
+          "${displayMetrics.heightPixels}x${displayMetrics.widthPixels}",
         )
-        add(
-          Element.ValueElement(
-            "Density",
-            "${displayMetrics.densityDpi}dpi (${displayMetrics.bucket})",
-          )
+      )
+      add(
+        Element.ValueElement(
+          "Density",
+          "${displayMetrics.densityDpi}dpi (${displayMetrics.bucket})",
         )
-        add(Element.ValueElement("Release", Build.VERSION.RELEASE))
-        add(Element.ValueElement("API", appConfig.sdkInt.toString()))
+      )
+      add(Element.ValueElement("Release", Build.VERSION.RELEASE))
+      add(Element.ValueElement("API", appConfig.sdkInt.toString()))
 
-        add(Header("OkHttp Cache"))
-        add(Element.ValueElement("Max Size", cache.maxSize().sizeString))
-        val writeTotal = cache.writeSuccessCount() + cache.writeAbortCount()
-        val percentage = (1f * cache.writeAbortCount() / writeTotal * 100).toInt()
-        add(
-          Element.ValueElement(
-            "Write Errors",
-            "${cache.writeAbortCount()} / $writeTotal ($percentage%)",
-          )
+      add(Header("OkHttp Cache"))
+      add(Element.ValueElement("Max Size", cache.maxSize().sizeString))
+      val writeTotal = cache.writeSuccessCount() + cache.writeAbortCount()
+      val percentage = (1f * cache.writeAbortCount() / writeTotal * 100).toInt()
+      add(
+        Element.ValueElement(
+          "Write Errors",
+          "${cache.writeAbortCount()} / $writeTotal ($percentage%)",
         )
-        add(Element.ValueElement("Request Count", cache.requestCount().toString()))
-        add(Element.ValueElement("   Network Count", cache.networkCount().toString()))
-        add(Element.ValueElement("   Hit Count", cache.hitCount().toString()))
-      }
+      )
+      add(Element.ValueElement("Request Count", cache.requestCount().toString()))
+      add(Element.ValueElement("   Network Count", cache.networkCount().toString()))
+      add(Element.ValueElement("   Hit Count", cache.hitCount().toString()))
+    }
       .toImmutableList()
   }
 }

@@ -28,7 +28,6 @@ jvmTarget = "17"
 kotlin = "2.4.0"
 kotlinx-serialization = "1.11.0"
 ksp = "2.3.9"
-ktfmt = "0.63"
 leakcanary = "3.0-alpha-8"
 lifecycle = "2.11.0-beta01"
 markdown = "0.41.0"
@@ -41,7 +40,6 @@ preferences = "1.2.1"
 retrofit = "3.0.0"
 slack-lint = "0.11.1"
 sortDependencies = "0.19.0"
-spotless = "8.7.0"
 sqldelight = "2.3.2"
 telephoto = "0.19.0"
 tikxml = "0.8.15"
@@ -77,7 +75,6 @@ retry = { id = "org.gradle.test-retry", version = "1.6.5" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
 foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
 sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sortDependencies" }
-spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
 [libraries]
@@ -258,7 +255,6 @@ okhttp-bom = { module = "com.squareup.okhttp3:okhttp-bom", version.ref = "okhttp
 okhttp-core = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 okhttp-debug-loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 
-renovateTrigger-ktfmt = { module = "com.facebook:ktfmt", version.ref = "ktfmt" }
 
 retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-debug-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
