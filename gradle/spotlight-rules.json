@@ -1,0 +1,11 @@
+{
+  "implicitRules": [
+    {
+      "type": "buildscript-match-rule",
+      "pattern": "alias\\(libs\\.plugins\\.foundry\\.base\\)\\s*$",
+      "includedProjects": [
+        ":platform"
+      ]
+    }
+  ]
+}
