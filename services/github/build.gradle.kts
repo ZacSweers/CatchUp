@@ -23,7 +23,7 @@ android {
     buildConfigField(
       "String",
       "GITHUB_DEVELOPER_TOKEN",
-      "\"${properties["catchup_github_developer_token"]}\"",
+      "\"${project.findProperty("catchup_github_developer_token")}\"",
     )
   }
   buildFeatures { buildConfig = true }
@@ -57,7 +57,6 @@ dependencies {
 
   implementation(project(":libraries:retrofitconverters"))
   implementation(project(":libraries:util"))
-  implementation(libs.apollo.httpcache)
   // Apollo
   implementation(libs.apollo.runtime)
   implementation(libs.kotlin.datetime)

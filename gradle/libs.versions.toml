@@ -152,7 +152,6 @@ firebase-core = "com.google.firebase:firebase-core:21.1.1"
 firebase-database = "com.google.firebase:firebase-database:22.0.1"
 
 apollo-api = { module = "com.apollographql.apollo:apollo-api", version.ref = "apollo" }
-apollo-httpcache = { module = "com.apollographql.apollo:apollo-http-cache", version.ref = "apollo" }
 apollo-normalizedCache = { module = "com.apollographql.apollo:apollo-normalized-cache", version.ref = "apollo" }
 apollo-normalizedCache-api = { module = "com.apollographql.apollo:apollo-normalized-cache-api", version.ref = "apollo" }
 apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }

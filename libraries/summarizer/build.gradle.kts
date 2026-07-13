@@ -44,7 +44,7 @@ androidComponents {
   onVariants {
     it.buildConfigFields?.put(
       "OPEN_AI_KEY",
-      BuildConfigField("String", "\"${properties["catchup_openAiKey"]}\"", ""),
+      BuildConfigField("String", "\"${project.findProperty("catchup_openAiKey")}\"", ""),
     )
   }
 }

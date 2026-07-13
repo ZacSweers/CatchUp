@@ -37,6 +37,7 @@ import dev.zacsweers.metro.IntoMap
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.Qualifier
 import dev.zacsweers.metro.binding
+import nl.adaptivity.xmlutil.serialization.DefaultXmlSerializationPolicy.Builder
 import nl.adaptivity.xmlutil.serialization.XML
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -109,7 +110,10 @@ interface SlashdotModule {
   companion object {
     @Provides fun provideXml(): XML = createXml()
 
-    @VisibleForTesting fun createXml(): XML = XML { defaultPolicy { ignoreUnknownChildren() } }
+    @VisibleForTesting
+    fun createXml(): XML = XML.recommended_1_0 {
+      policy { ignoreUnknownChildren() }
+    }
 
     @Provides
     @InternalApi

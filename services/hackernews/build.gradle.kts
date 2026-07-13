@@ -39,7 +39,7 @@ configure<LibraryAndroidComponentsExtension> {
         if (resolveName && buildTypeName == "debug") {
           "$property.debug"
         } else property
-      val value = project.properties[name].toString()
+      val value = project.findProperty(name).toString()
       variant.resValues.put(
         variant.makeResValueKey("string", property.removePrefix("catchup.")),
         com.android.build.api.variant.ResValue(value),

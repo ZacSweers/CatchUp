@@ -60,7 +60,7 @@ android {
     buildConfigField(
       "String",
       "GITHUB_DEVELOPER_TOKEN",
-      "\"${properties["catchup_github_developer_token"]}\"",
+      "\"${project.findProperty("catchup_github_developer_token")}\"",
     )
     resValue("string", "changelog_text", "haha")
   }
@@ -76,11 +76,15 @@ android {
       buildConfigField(
         "String",
         "IMGUR_CLIENT_ACCESS_TOKEN",
-        "\"${project.properties["catchup_imgur_access_token"]}\"",
+        "\"${project.findProperty("catchup_imgur_access_token")}\"",
       )
     }
     getByName("release") {
-      buildConfigField("String", "BUGSNAG_KEY", "\"${properties["catchup_bugsnag_key"]}\"")
+      buildConfigField(
+        "String",
+        "BUGSNAG_KEY",
+        "\"${project.findProperty("catchup_bugsnag_key")}\"",
+      )
     }
   }
   namespace = "dev.zacsweers.catchup.app.scaffold"
@@ -156,7 +160,6 @@ dependencies {
   implementation(libs.androidx.sqlite)
   implementation(libs.androidx.window)
   implementation(libs.apollo.api)
-  implementation(libs.apollo.httpcache)
   implementation(libs.apollo.normalizedCache)
   implementation(libs.apollo.normalizedCache.api)
   implementation(libs.apollo.runtime)

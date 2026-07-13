@@ -65,8 +65,6 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.cache.http.HttpFetchPolicy
-import com.apollographql.apollo.cache.http.httpFetchPolicy
 import com.apollographql.apollo.exception.ApolloException
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
@@ -283,13 +281,7 @@ class LicensesRepositoryImpl(
         .asFlow()
         .map { RepositoryByNameAndOwnerQuery(it.owner, it.name) }
         .map {
-          val response =
-            apolloClient
-              .newBuilder()
-              .httpFetchPolicy(HttpFetchPolicy.CacheFirst)
-              .build()
-              .query(it)
-              .execute()
+          val response = apolloClient.query(it).execute()
           with(response.data!!.repository!!.onRepository) { id to owner.id }
         }
         .distinctUntilChangedBy { it }
@@ -301,12 +293,7 @@ class LicensesRepositoryImpl(
     val userIdToNameMap =
       withContext(Dispatchers.IO) {
         val response =
-          apolloClient
-            .newBuilder()
-            .httpFetchPolicy(HttpFetchPolicy.CacheFirst)
-            .build()
-            .query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct()))
-            .execute()
+          apolloClient.query(ProjectOwnersByIdsQuery(idsToOwnerIds.values.distinct())).execute()
 
         response.data!!
           .nodes
@@ -322,9 +309,6 @@ class LicensesRepositoryImpl(
       }
     // Fetch the repositories by their IDs, map down to its
     return apolloClient
-      .newBuilder()
-      .httpFetchPolicy(HttpFetchPolicy.CacheFirst)
-      .build()
       .query(RepositoriesByIdsQuery(idsToOwnerIds.keys.toList()))
       .execute()
       .data!!
