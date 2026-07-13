@@ -52,7 +52,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 android-kmp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
-bugsnag = { id = "com.bugsnag.android.gradle", version = "8.2.0" }
+bugsnag = { id = "com.bugsnag.gradle", version = "1.1.1" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.3" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.16.1" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
