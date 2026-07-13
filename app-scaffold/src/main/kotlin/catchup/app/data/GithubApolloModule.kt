@@ -14,12 +14,10 @@
  */
 package catchup.app.data
 
-import android.content.Context
 import catchup.app.data.github.type.DateTime
 import catchup.app.data.github.type.URI
 import catchup.util.apollo.HttpUrlApolloAdapter
 import catchup.util.apollo.ISO8601InstantApolloAdapter
-import catchup.util.injection.qualifiers.ApplicationContext
 import catchup.util.network.AuthInterceptor
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.CompiledField
@@ -27,7 +25,6 @@ import com.apollographql.apollo.api.CustomScalarAdapters
 import com.apollographql.apollo.api.Executable.Variables
 import com.apollographql.apollo.api.http.DefaultHttpRequestComposer
 import com.apollographql.apollo.api.http.HttpRequestComposer
-import com.apollographql.apollo.cache.http.DiskLruHttpCache
 import com.apollographql.apollo.cache.normalized.api.CacheKey
 import com.apollographql.apollo.cache.normalized.api.CacheKeyGenerator
 import com.apollographql.apollo.cache.normalized.api.CacheKeyGeneratorContext
@@ -46,7 +43,6 @@ import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.Qualifier
 import dev.zacsweers.metro.SingleIn
 import okhttp3.OkHttpClient
-import okio.FileSystem
 
 @ContributesTo(AppScope::class)
 interface GithubApolloModule {
@@ -56,12 +52,6 @@ interface GithubApolloModule {
   }
 
   @Qualifier private annotation class InternalApi
-
-  /** TODO this hits disk on startup -_- */
-  @Provides
-  @SingleIn(AppScope::class)
-  fun provideHttpCacheStore(@ApplicationContext context: Context): DiskLruHttpCache =
-    DiskLruHttpCache(FileSystem.SYSTEM, context.cacheDir, 1_000_000)
 
   @Provides
   @InternalApi
@@ -120,7 +110,7 @@ interface GithubApolloModule {
   @Provides
   @SingleIn(AppScope::class)
   fun provideGitHubHttpRequestComposer(): HttpRequestComposer {
-    return DefaultHttpRequestComposer(SERVER_URL)
+    return DefaultHttpRequestComposer(serverUrl = SERVER_URL, enablePostCaching = true)
   }
 
   @Provides

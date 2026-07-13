@@ -39,8 +39,6 @@ import catchup.service.github.type.OrderDirection
 import catchup.util.e
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
-import com.apollographql.apollo.cache.http.HttpFetchPolicy.NetworkOnly
-import com.apollographql.apollo.cache.http.httpFetchPolicy
 import com.apollographql.apollo.exception.DefaultApolloException
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Binds
@@ -115,9 +113,6 @@ class GitHubService(
 
     val searchQuery =
       apolloClient.value
-        .newBuilder()
-        .httpFetchPolicy(NetworkOnly)
-        .build()
         .query(
           GitHubSearchQuery(
             queryString = query,
@@ -126,6 +121,7 @@ class GitHubService(
             after = Optional.presentIfNotNull(request.pageKey),
           )
         )
+        .addHttpHeader("cache-control", "no-cache")
         .execute()
 
     if (searchQuery.hasErrors()) {

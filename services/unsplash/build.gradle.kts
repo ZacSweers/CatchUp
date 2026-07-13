@@ -22,7 +22,7 @@ android {
     buildConfigField(
       "String",
       "UNSPLASH_API_KEY",
-      "\"${project.properties["catchup_unsplash_api_key"]}\"",
+      "\"${project.findProperty("catchup_unsplash_api_key")}\"",
     )
   }
   buildFeatures { buildConfig = true }

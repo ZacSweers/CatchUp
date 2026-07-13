@@ -23,12 +23,12 @@ android {
     buildConfigField(
       "String",
       "PRODUCT_HUNT_CLIENT_ID",
-      "\"${project.properties["catchup_product_hunt_client_id"]}\"",
+      "\"${project.findProperty("catchup_product_hunt_client_id")}\"",
     )
     buildConfigField(
       "String",
       "PRODUCT_HUNT_CLIENT_SECRET",
-      "\"${project.properties["catchup_product_hunt_client_secret"]}\"",
+      "\"${project.findProperty("catchup_product_hunt_client_secret")}\"",
     )
   }
   buildFeatures { buildConfig = true }
@@ -64,7 +64,6 @@ dependencies {
   api(libs.okhttp.core)
 
   implementation(libs.androidx.datastore.preferences)
-  implementation(libs.apollo.httpcache)
   implementation(libs.kotlin.datetime)
   implementation(libs.misc.okio)
   implementation(libs.okhttp.core)

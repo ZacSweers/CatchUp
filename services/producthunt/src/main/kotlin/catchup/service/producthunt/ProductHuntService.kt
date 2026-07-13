@@ -41,8 +41,6 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.api.http.DefaultHttpRequestComposer
 import com.apollographql.apollo.api.http.HttpRequestComposer
-import com.apollographql.apollo.cache.http.HttpFetchPolicy
-import com.apollographql.apollo.cache.http.httpFetchPolicy
 import com.apollographql.apollo.exception.DefaultApolloException
 import com.apollographql.apollo.network.NetworkTransport
 import com.apollographql.apollo.network.http.DefaultHttpEngine
@@ -271,7 +269,7 @@ interface ProductHuntModule {
   @Provides
   @SingleIn(AppScope::class)
   fun providePhHttpRequestComposer(): HttpRequestComposer {
-    return DefaultHttpRequestComposer(SERVER_URL)
+    return DefaultHttpRequestComposer(serverUrl = SERVER_URL, enablePostCaching = true)
   }
 
   @InternalApi
@@ -295,7 +293,7 @@ interface ProductHuntModule {
   ): ApolloClient {
     return apolloClient
       .newBuilder()
-      .httpFetchPolicy(HttpFetchPolicy.NetworkOnly)
+      .addHttpHeader("cache-control", "no-cache")
       .addCustomScalarAdapter(DateTime.type, ISO8601InstantApolloAdapter)
       .networkTransport(networkTransport)
       .build()
