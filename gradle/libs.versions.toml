@@ -2,23 +2,22 @@
 accompanist = "0.37.3"
 agp = "9.2.1"
 androidx-activity = "1.13.0"
-androidx-core = "1.18.0"
-androidx-sqlite = "2.7.0-rc01"
+androidx-core = "1.19.0"
+androidx-sqlite = "2.7.0"
 appcompat = "1.8.0-alpha01"
-benchmark = "1.5.0-alpha06"
-bouncycastle = "1.84"
+benchmark = "1.5.0-alpha07"
+bouncycastle = "1.85"
 compose-material3 = "1.4.0"
 emoji = "1.2.0"
-# TODO 5.x
-apollo = "5.0.0"
+apollo = "5.0.1"
 circuit = "0.34.0"
 coil = "2.7.0"
-compose = "1.11.3"
+compose = "1.11.4"
 compose-jb = "1.11.1"
 compose-jb-material3 = "1.9.0"
 corbind = "1.12.1"
 coroutines = "1.11.0"
-dagger = "2.59.2"
+dagger = "2.60.1"
 datastore = "1.3.0-alpha09"
 detekt = "1.23.8"
 eithernet = "2.0.0"
@@ -27,13 +26,13 @@ jdk = "25"
 jvmTarget = "17"
 kotlin = "2.4.20-Beta1"
 kotlinx-serialization = "1.11.0"
-ksp = "2.3.9"
-leakcanary = "3.0-alpha-8"
-lifecycle = "2.11.0-beta01"
-markdown = "0.41.0"
-metro = "1.2.1"
+ksp = "2.3.10"
+leakcanary = "3.0-alpha-9"
+lifecycle = "2.11.0"
+markdown = "0.43.0"
+metro = "1.3.1"
 moshi = "1.15.2"
-moshix = "0.36.0"
+moshix = "0.37.0"
 okhttp = "5.4.0"
 okio = "3.17.0"
 preferences = "1.2.1"
@@ -53,9 +52,9 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 android-kmp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
-bugsnag = { id = "com.bugsnag.android.gradle", version = "8.2.0" }
+bugsnag = { id = "com.bugsnag.gradle", version = "1.1.1" }
 cacheFixPlugin = { id = "org.gradle.android.cache-fix", version = "3.0.3" }
-dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.15.0" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version = "3.16.1" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 doctor = { id = "com.osacky.doctor", version = "0.12.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -70,7 +69,7 @@ licensee = { id = "app.cash.licensee", version = "1.14.1" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
 playPublisher = { id = "com.github.triplet.play", version = "4.0.0" }
-redacted = { id = "dev.zacsweers.redacted", version = "1.17.0" }
+redacted = { id = "dev.zacsweers.redacted", version = "1.18.0" }
 retry = { id = "org.gradle.test-retry", version = "1.6.5" }
 foundry-base = { id = "com.slack.foundry.base", version.ref = "foundry" }
 foundry-root = { id = "com.slack.foundry.root", version.ref = "foundry" }
@@ -96,13 +95,13 @@ androidx-design = "com.google.android.material:material:1.14.0"
 
 androidx-emojiAppcompat = { module = "androidx.emoji:emoji-appcompat", version.ref = "emoji" }
 # Amusingly, appcompat depends on fragment 1.0.0, so we have to have this version to force the latest
-androidx-fragment = "androidx.fragment:fragment:1.9.0-alpha01"
+androidx-fragment = "androidx.fragment:fragment:1.9.0-alpha02"
 
 androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
 
-androidx-palette = "androidx.palette:palette:1.0.0"
-androidx-paletteKtx = "androidx.palette:palette-ktx:1.0.0"
+androidx-palette = "androidx.palette:palette:1.1.0-alpha01"
+androidx-paletteKtx = "androidx.palette:palette-ktx:1.1.0-alpha01"
 
 androidx-preference = { module = "androidx.preference:preference", version.ref = "preferences" }
 androidx-preferenceKtx = { module = "androidx.preference:preference-ktx", version = "1.2.1" }
@@ -134,7 +133,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0"
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.3.0"
 androidx-test-monitor = "androidx.test:monitor:1.9.0-alpha01"
-androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
+androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.4.0"
 
 # Hopefully BC someday publishes a BOM: https://github.com/bcgit/bc-java/issues/899
 bouncycastle-pkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
@@ -212,11 +211,11 @@ kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-te
 kotlin-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat"
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.0"
+kotlinx-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.1"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
-lints-compose = "com.slack.lint.compose:compose-lint-checks:1.5.2"
+lints-compose = "com.slack.lint.compose:compose-lint-checks:1.5.3"
 
 markdown = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "markdown" }
 
@@ -286,8 +285,8 @@ collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "coll
 test-junit = "junit:junit:4.13.2"
 test-truth = "com.google.truth:truth:1.4.5"
 
-xmlutil-core = "io.github.pdvrieze.xmlutil:core:0.91.3"
-xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:0.91.3"
+xmlutil-core = "io.github.pdvrieze.xmlutil:core:1.0.1"
+xmlutil-serialization = "io.github.pdvrieze.xmlutil:serialization:1.0.1"
 
 [bundles]
 common-lint = ["slack-lint-checks", "lints-compose"]
