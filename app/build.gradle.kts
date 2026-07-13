@@ -125,8 +125,8 @@ baselineProfile {
 }
 
 bugsnag {
-  enabled.set(false) // Reenable whenever this matters
-  overwrite.set(true)
+  enabled = false // Reenable whenever this matters
+  overwrite = true
 }
 
 // play {
