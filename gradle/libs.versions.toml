@@ -102,7 +102,7 @@ androidx-lifecycle-viewmodel-core = { module = "androidx.lifecycle:lifecycle-vie
 androidx-lifecycle-viewmodel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
 
 androidx-palette = "androidx.palette:palette:1.0.0"
-androidx-paletteKtx = "androidx.palette:palette-ktx:1.0.0"
+androidx-paletteKtx = "androidx.palette:palette-ktx:1.1.0-alpha01"
 
 androidx-preference = { module = "androidx.preference:preference", version.ref = "preferences" }
 androidx-preferenceKtx = { module = "androidx.preference:preference-ktx", version = "1.2.1" }
