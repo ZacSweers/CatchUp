@@ -113,6 +113,7 @@ class ProductHuntService(
             indexInResponse = index + request.pageOffset,
             serviceId = meta().id,
             contentType = ContentType.HTML,
+            imagePreviewUrl = thumbnail?.url,
           )
         }
       }
