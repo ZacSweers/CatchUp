@@ -42,7 +42,7 @@ sortDependencies = "0.20.0"
 sqldelight = "2.3.2"
 telephoto = "0.19.0"
 tikxml = "0.8.15"
-xerial = "3.53.2.0"
+xerial = "3.53.2.1"
 collapsingToolbar = "2.3.5"
 
 [plugins]
