@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:DependsOn("com.slack.foundry:cli:0.35.2")
+@file:DependsOn("com.slack.foundry:cli:0.36.0")
 @file:OptIn(ExperimentalPathApi::class)
 
 import foundry.cli.skipBuildAndCacheDirs
