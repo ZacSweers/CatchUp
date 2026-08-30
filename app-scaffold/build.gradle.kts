@@ -211,9 +211,6 @@ dependencies {
   implementation(libs.telephoto.zoomableImageCoil)
   implementation(libs.xmlutil.serialization)
 
-  releaseImplementation(libs.misc.bugsnag)
-  releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
-
   debugImplementation(project(":libraries:retrofitconverters"))
   debugImplementation(libs.androidx.compose.uiTooling)
   debugImplementation(libs.corbind)
@@ -225,6 +222,9 @@ dependencies {
   debugImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
   debugImplementation(libs.okhttp.debug.loggingInterceptor)
   debugImplementation(libs.retrofit.moshi)
+
+  releaseImplementation(libs.misc.bugsnag)
+  releaseImplementation(libs.misc.leakCanaryObjectWatcherAndroid)
 
   testImplementation(libs.kotlin.coroutines.test)
   testImplementation(libs.misc.okio.fakeFileSystem)
