@@ -15,8 +15,8 @@
 package catchup.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.RememberObserver
-import com.slack.circuit.retained.rememberRetained
+import androidx.compose.runtime.retain.RetainObserver
+import androidx.compose.runtime.retain.retain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,20 +25,23 @@ import kotlinx.coroutines.cancel
 /** https://chrisbanes.me/posts/retaining-beyond-viewmodels/ */
 @Composable
 fun rememberRetainedCoroutineScope(): CoroutineScope {
-  return rememberRetained("coroutine_scope") {
-      object : RememberObserver {
+  return retain("coroutine_scope") {
+      object : RetainObserver {
         val scope = CoroutineScope(Dispatchers.Main + Job())
 
-        override fun onForgotten() {
-          // We've been forgotten, cancel the CoroutineScope
+        override fun onRetired() {
           scope.cancel(null)
         }
 
-        // Not called by Circuit
-        override fun onAbandoned() = Unit
+        override fun onUnused() {
+          scope.cancel(null)
+        }
 
-        // Nothing to do here
-        override fun onRemembered() = Unit
+        override fun onRetained() = Unit
+
+        override fun onEnteredComposition() = Unit
+
+        override fun onExitedComposition() = Unit
       }
     }
     .scope

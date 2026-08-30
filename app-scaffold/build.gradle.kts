@@ -17,7 +17,7 @@ import foundry.gradle.DelicateFoundryGradlePluginApi
 
 plugins {
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.parcelize)
+  alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.apollo)
   alias(libs.plugins.sqldelight)
@@ -141,6 +141,7 @@ dependencies {
   implementation(libs.androidx.compose.material.ripple)
   implementation(libs.androidx.compose.materialIcons)
   implementation(libs.androidx.compose.runtime)
+  implementation(libs.androidx.compose.runtime.retain)
   implementation(libs.androidx.compose.ui)
   implementation(libs.androidx.core)
   implementation(libs.androidx.coreKtx)
@@ -172,6 +173,7 @@ dependencies {
   implementation(libs.circuit.runtime.presenter)
   implementation(libs.circuit.runtime.screen)
   implementation(libs.circuit.runtime.ui)
+  implementation(libs.circuit.serialization)
   implementation(libs.circuitx.android)
   implementation(libs.circuitx.gestureNav)
   implementation(libs.circuitx.overlays)

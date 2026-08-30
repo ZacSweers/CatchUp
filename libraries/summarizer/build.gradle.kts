@@ -17,7 +17,7 @@ import com.android.build.api.variant.BuildConfigField
 plugins {
   alias(libs.plugins.foundry.base)
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.parcelize)
+  alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.ksp)
 }
@@ -74,6 +74,7 @@ dependencies {
   implementation(libs.androidx.compose.material.material3)
   implementation(libs.androidx.compose.ui)
   implementation(libs.androidx.sqlite)
+  implementation(libs.circuit.serialization)
   implementation(libs.kotlin.coroutines)
   implementation(libs.retrofit.moshi)
 }

@@ -22,7 +22,10 @@ import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.LocalCircuit
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import com.slack.circuit.runtime.screen.CircuitSaver
 import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.serialization.CircuitSerializerRegistration
+import com.slack.circuit.serialization.SerializableCircuitSaver
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Multibinds
@@ -34,15 +37,23 @@ interface CircuitModule {
 
   @Multibinds fun viewFactories(): Set<Ui.Factory>
 
+  @Multibinds fun circuitSerializerRegistrations(): Set<CircuitSerializerRegistration>
+
   companion object {
+    @Provides
+    fun provideCircuitSaver(registrations: Set<CircuitSerializerRegistration>): CircuitSaver =
+      SerializableCircuitSaver(registrations)
+
     @Provides
     fun provideCircuit(
       presenterFactories: Set<Presenter.Factory>,
       uiFactories: Set<Ui.Factory>,
+      circuitSaver: CircuitSaver,
     ): Circuit {
       return Circuit.Builder()
         .addPresenterFactories(presenterFactories)
         .addUiFactories(uiFactories)
+        .setCircuitSaver(circuitSaver)
         .setOnUnavailableContent { screen, modifier ->
           val circuit = LocalCircuit.current
           BasicText(

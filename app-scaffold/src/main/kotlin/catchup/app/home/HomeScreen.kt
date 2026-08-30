@@ -54,6 +54,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -106,12 +107,13 @@ import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.produceRetainedState
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.serialization.CircuitSerializable
+import com.slack.circuitx.android.rememberAndroidScreenAwareNavigator
 import com.slack.circuitx.overlays.BottomSheetOverlay
 import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import dev.zacsweers.metro.AppScope
@@ -135,12 +137,11 @@ import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
 
 // TODO generalize metas to allow dynamic ones, like settings/bookmarks
 @ContributesIntoMap(AppScope::class, binding = binding<DeepLinkable>())
 @StringKey("home")
-@Parcelize
+@CircuitSerializable(AppScope::class)
 data object HomeScreen : Screen, DeepLinkable {
   override fun createScreen(queryParams: ImmutableMap<String, List<String?>>): Screen = HomeScreen
 
@@ -182,8 +183,8 @@ class HomePresenter(
 
   @Composable
   override fun present(): State {
-    val currentOrder by rememberRetained { catchUpPreferences.servicesOrder }.collectAsState()
-    var selectedIndex by rememberRetained(currentOrder) { mutableIntStateOf(0) }
+    val currentOrder by retain { catchUpPreferences.servicesOrder }.collectAsState()
+    var selectedIndex by retain(currentOrder) { mutableIntStateOf(0) }
     val serviceMetas by
       produceRetainedState(initialValue = persistentListOf(), currentOrder) {
         // TODO make enabledPrefKey live?
@@ -202,7 +203,7 @@ class HomePresenter(
     val context = LocalContext.current
     val changelogAvailable by changelogHelper.changelogAvailable(context).collectAsState(false)
 
-    val countFlow = rememberRetained { bookmarkRepository.bookmarksCountFlow() }
+    val countFlow = retain { bookmarkRepository.bookmarksCountFlow() }
     val bookmarksCount by countFlow.collectAsRetainedState(0L)
 
     val scope = rememberStableCoroutineScope()
@@ -308,7 +309,11 @@ fun Home(state: State, modifier: Modifier = Modifier) {
                 }
               }
             val nestedBackStack = rememberSaveableBackStack(screen)
-            val nestedNavigator = rememberCircuitNavigator(nestedBackStack)
+            val nestedNavigator =
+              rememberAndroidScreenAwareNavigator(
+                rememberCircuitNavigator(nestedBackStack),
+                LocalContext.current,
+              )
             showTopBar = nestedBackStack.size == 1
             NavigableCircuitContent(
               nestedNavigator,

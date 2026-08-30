@@ -24,10 +24,10 @@ foundry { features { compose() } }
 dependencies {
   api(libs.androidx.compose.foundation)
   api(libs.androidx.compose.runtime)
+  api(libs.androidx.compose.runtime.retain)
   api(libs.androidx.compose.ui)
   api(libs.androidx.compose.uiTooling)
   api(libs.androidx.window)
-  api(libs.circuit.retained)
   api(libs.kotlin.coroutines)
 
   implementation(project(":libraries:base-ui"))

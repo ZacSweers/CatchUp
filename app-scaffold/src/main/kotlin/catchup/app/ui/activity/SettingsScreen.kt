@@ -77,6 +77,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.serialization.CircuitSerializable
 import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
@@ -90,10 +91,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.Parcelize
 import okhttp3.Cache
 
-@Parcelize
+@CircuitSerializable(AppScope::class)
 data class SettingsScreen(val showTopAppBar: Boolean = true) : Screen {
 
   @ContributesIntoMap(AppScope::class)

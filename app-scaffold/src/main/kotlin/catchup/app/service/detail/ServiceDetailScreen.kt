@@ -58,6 +58,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -107,12 +108,12 @@ import com.mikepenz.markdown.model.MarkdownTypography
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.internal.rememberStableCoroutineScope
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.serialization.CircuitSerializable
 import com.slack.circuitx.overlays.showFullScreenOverlay
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
@@ -122,9 +123,8 @@ import kotlin.time.Instant
 import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
+@CircuitSerializable(AppScope::class)
 data class ServiceDetailScreen(
   val serviceId: String,
   val itemId: Long,
@@ -194,17 +194,17 @@ class ServiceDetailPresenter(
 
   @Composable
   override fun present(): ServiceDetailScreen.State {
-    val detailRepository = rememberRetained {
+    val detailRepository = retain {
       detailRepoFactory.create(screen.itemId, screen.serviceId)
     }
-    val collapsedItems = rememberRetained { mutableStateMapOf<String, Unit>() }
-    val detailFlow = rememberRetained(init = detailRepository::loadDetail)
+    val collapsedItems = retain { mutableStateMapOf<String, Unit>() }
+    val detailFlow = retain(calculation = detailRepository::loadDetail)
     val compositeDetail by detailFlow.collectAsRetainedState(initial = null)
     val scope = rememberStableCoroutineScope()
     val overlayHost = LocalOverlayHost.current
     val (detail, unfurl) = compositeDetail ?: return initialState
     val filteredDetail by
-      rememberRetained(detail, collapsedItems) {
+      retain(detail, collapsedItems) {
         derivedStateOf {
           when (detail) {
             is Detail.Shallow -> detail

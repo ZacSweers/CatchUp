@@ -101,6 +101,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuit.serialization.CircuitSerializable
 import com.slack.circuitx.android.IntentScreen
 import com.slack.circuitx.overlays.BottomSheetOverlay
 import dev.zacsweers.catchup.app.scaffold.R
@@ -117,19 +118,18 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.Parcelize
 import leakcanary.LeakCanary
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 
-@Parcelize private data object LogsModal : Screen
+@CircuitSerializable(AppScope::class) internal data object LogsModal : Screen
 
 @ContributesTo(AppScope::class)
 interface ContributorModule {
   @Provides fun provideDrawerScreen(): DrawerScreen = DrawerScreen(DebugSettingsScreen)
 }
 
-@Parcelize
+@CircuitSerializable(AppScope::class)
 data object DebugSettingsScreen : Screen {
   data class State(
     val items: ImmutableList<DebugItem>,
