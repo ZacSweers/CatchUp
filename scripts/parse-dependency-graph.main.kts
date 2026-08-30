@@ -18,7 +18,7 @@
 @file:DependsOn("com.slack.foundry:cli:0.36.0")
 @file:DependsOn("com.slack.foundry:skippy:0.36.0")
 @file:DependsOn("com.github.ajalt.clikt:clikt-jvm:5.1.0")
-@file:DependsOn("com.fueledbycaffeine.spotlight:buildscript-utils:1.6.12")
+@file:DependsOn("com.fueledbycaffeine.spotlight:buildscript-utils:1.7.0")
 
 import com.fueledbycaffeine.spotlight.buildscript.GradlePath
 import com.fueledbycaffeine.spotlight.buildscript.SpotlightRulesList
