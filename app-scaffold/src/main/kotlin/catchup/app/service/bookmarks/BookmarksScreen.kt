@@ -80,6 +80,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.serialization.CircuitSerializable
 import com.slack.circuitx.android.IntentScreen
 import dev.zacsweers.catchup.app.scaffold.R.string
 import dev.zacsweers.metro.AppScope
@@ -97,11 +98,10 @@ import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.Parcelize
 
 @ContributesIntoMap(AppScope::class, binding = binding<DeepLinkable>())
 @StringKey("bookmarks")
-@Parcelize
+@CircuitSerializable(AppScope::class)
 data object BookmarksScreen : Screen, DeepLinkable {
   override fun createScreen(queryParams: ImmutableMap<String, List<String?>>) = BookmarksScreen
 

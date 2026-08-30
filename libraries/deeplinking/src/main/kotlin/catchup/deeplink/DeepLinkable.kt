@@ -30,7 +30,7 @@ import okhttp3.HttpUrl
  * ```kotlin
  * @ContributesMultibinding(AppScope::class, binding = binding<DeepLinkable>)
  * @StringKey("home") // The segment/route
- * @Parcelize
+ * @CircuitSerializable(AppScope::class)
  * object HomeScreen : Screen, DeepLinkable {
  *   override fun createScreen(queryParams: ImmutableMap<String, List<String?>): Screen = HomeScreen
  * }
@@ -40,7 +40,7 @@ import okhttp3.HttpUrl
  * creates the instance to return.
  *
  * ```kotlin
- * @Parcelize
+ * @CircuitSerializable(AppScope::class)
  * data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenComponent.DEFAULT) : Screen {
  *   @ContributesMultibinding(AppScope::class)
  *   @StringKey("about")
@@ -60,7 +60,7 @@ import okhttp3.HttpUrl
  * ```kotlin
  * @ContributesIntoMap(AppScope::class, binding = binding<DeepLinkable>)
  * @StringKey("home")
- * @Parcelize
+ * @CircuitSerializable(AppScope::class)
  * object HomeScreen : Screen, DeepLinkable
  * ```
  */

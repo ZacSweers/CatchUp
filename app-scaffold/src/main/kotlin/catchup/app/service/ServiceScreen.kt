@@ -42,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -87,12 +88,12 @@ import catchup.service.db.CatchUpDatabase
 import catchup.summarizer.SummarizerScreen
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.overlay.LocalOverlayHost
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.serialization.CircuitSerializable
 import com.slack.circuitx.overlays.showFullScreenOverlay
 import dev.zacsweers.catchup.app.scaffold.R
 import dev.zacsweers.metro.AppScope
@@ -103,10 +104,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-@Parcelize
+@CircuitSerializable(AppScope::class)
 data class ServiceScreen(val serviceKey: String) : Screen {
   sealed interface State : CircuitUiState {
     val items: LazyPagingItems<CatchUpItem>
@@ -260,7 +260,7 @@ class ServicePresenter(
     // too
     // We use Paging's `cachedIn` operator with our retained CoroutineScope
     val items =
-      rememberRetained(dataMode) {
+      retain(dataMode) {
           // TODO
           //  preference page size
           createPager(service, dataMode, 20).cachedIn(pagingScope)

@@ -41,6 +41,7 @@ import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.serialization.CircuitSerializable
 import dev.zacsweers.catchup.app.scaffold.R as AppScaffoldR
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
@@ -52,10 +53,9 @@ import java.util.Locale
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
-@Parcelize
+@CircuitSerializable(AppScope::class)
 data class AboutScreen(val selectedTab: AboutScreenComponent = AboutScreenComponent.DEFAULT) :
   Screen {
 

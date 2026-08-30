@@ -51,13 +51,13 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.serialization.CircuitSerializable
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
+@CircuitSerializable(AppScope::class)
 data class SummarizerScreen(val title: String, val url: String) : Screen {
   sealed interface State : CircuitUiState {
     val title: String

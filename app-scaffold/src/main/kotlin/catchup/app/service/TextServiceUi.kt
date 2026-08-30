@@ -42,6 +42,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,7 +75,6 @@ import catchup.service.api.Mark
 import catchup.service.api.canBeSummarized
 import catchup.util.kotlin.format
 import catchup.util.primaryLocale
-import com.slack.circuit.retained.rememberRetained
 import dev.zacsweers.catchup.app.scaffold.R
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -91,8 +91,8 @@ fun TextServiceUi(
   ScrollToTopHandler(state)
 
   // Only animate items in on first load
-  var animatePlacement by rememberRetained { mutableStateOf(true) }
-  var expandedItemIndex by rememberRetained { mutableIntStateOf(-1) }
+  var animatePlacement by retain { mutableStateOf(true) }
+  var expandedItemIndex by retain { mutableIntStateOf(-1) }
   LazyColumn(modifier = modifier, state = state) {
     items(
       count = lazyItems.itemCount,

@@ -71,6 +71,7 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
+import com.slack.circuit.serialization.CircuitSerializable
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -97,12 +98,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.Parcelize
 import okio.buffer
 import okio.source
 import timber.log.Timber
 
-@Parcelize
+@CircuitSerializable(AppScope::class)
 data object LicensesScreen : Screen {
   data class State(val items: ImmutableList<OssBaseItem>?, val eventSink: (Event) -> Unit) :
     CircuitUiState
