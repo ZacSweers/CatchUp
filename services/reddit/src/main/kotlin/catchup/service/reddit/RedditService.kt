@@ -86,6 +86,7 @@ class RedditService(@InternalApi private val serviceMeta: ServiceMeta, private v
             // If it's a selftext, mark it as HTML for summarizing.
             contentType = if (link.isSelf) ContentType.HTML else null,
             detailKey = link.id,
+            imagePreviewUrl = link.getPreviewUrl(),
           )
         }
       DataResult(data, redditListingRedditResponse.data.after)
@@ -162,6 +163,7 @@ interface RedditMetaModule {
         R.color.catchup_service_reddit_accent,
         R.drawable.catchup_service_reddit_logo,
         firstPageKey = null,
+        supportsRichTextItems = true,
       )
   }
 }

@@ -34,6 +34,7 @@ fun CatchUpItem.toCatchUpDbItem(): CatchUpDbItem {
     serviceId = serviceId,
     indexInResponse = indexInResponse,
     contentType = contentType?.name,
+    imagePreviewUrl = imagePreviewUrl,
     imageUrl = imageInfo?.url,
     imageDetailUrl = imageInfo?.detailUrl,
     imageAnimatable = imageInfo?.animatable,
@@ -69,6 +70,7 @@ fun CatchUpDbItem.toCatchUpItem(): CatchUpItem {
     serviceId = serviceId,
     indexInResponse = indexInResponse,
     contentType = contentType?.let { ContentType.valueOf(it) },
+    imagePreviewUrl = imagePreviewUrl,
     imageInfo =
       imageUrl?.let {
         ImageInfo(

@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS catchUpDbItem (
   serviceId TEXT,
   indexInResponse INTEGER AS Int,
   contentType TEXT,
+  imagePreviewUrl TEXT,
 --   Image info
   imageUrl TEXT,
   imageDetailUrl TEXT,
@@ -83,6 +84,7 @@ INSERT OR REPLACE INTO catchUpDbItem (
   serviceId,
   indexInResponse,
   contentType,
+  imagePreviewUrl,
   imageUrl,
   imageDetailUrl,
   imageAnimatable,
