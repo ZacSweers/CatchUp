@@ -17,6 +17,7 @@ package catchup.service.reddit.model
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlin.math.abs
 import kotlin.time.Instant
 
 @Keep @JsonClass(generateAdapter = false) sealed interface RedditObject
@@ -82,7 +83,8 @@ data class RedditLink(
   val selftext: String?,
   @Json(name = "selftext_html") val selftextHtml: String?,
   val stickied: Boolean,
-  val thumbnail: String,
+  val thumbnail: String?,
+  val preview: RedditPreview?,
   val title: String,
   val url: String,
   val visited: Boolean,
@@ -101,7 +103,18 @@ data class RedditLink(
   override val score: Int,
   override val subreddit: String,
   override val ups: Int,
-) : RedditObject, RedditSubmission
+) : RedditObject, RedditSubmission {
+  fun getPreviewUrl(preferredWidthPx: Int = Int.MAX_VALUE): String? {
+    if (preview == null) return null
+    if (!preview.enabled) return null
+    if (preview.images.isEmpty()) return null
+    preview.images.firstOrNull()?.resolutions?.let { resolutions ->
+      val bestFit = resolutions.minByOrNull { abs(it.width - preferredWidthPx) }
+      return bestFit?.url
+    }
+    return thumbnail?.takeUnless(String::isBlank)
+  }
+}
 
 @Keep
 @JsonClass(generateAdapter = true)
@@ -139,3 +152,13 @@ data class RedditMore(
   val depth: Int,
   val children: List<String>,
 ) : RedditObject
+
+@Keep
+@JsonClass(generateAdapter = true)
+data class RedditPreview(val images: List<RedditImage>, val enabled: Boolean) : RedditObject {
+  @JsonClass(generateAdapter = true)
+  data class RedditImage(val source: RedditImageSource, val resolutions: List<RedditImageSource>) {
+    @JsonClass(generateAdapter = true)
+    data class RedditImageSource(val url: String, val width: Int, val height: Int)
+  }
+}
